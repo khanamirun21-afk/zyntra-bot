@@ -1,1 +1,3 @@
-# zyntra-bot
+# Zyntra Bot
+
+Telegram bot project.

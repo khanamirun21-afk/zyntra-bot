@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: zyntra-bot
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python newfile.py
+    envVars:
+      - key: TOKEN
+        sync: false

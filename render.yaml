@@ -3,6 +3,7 @@ services:
     name: zyntra-bot
     env: python
     plan: free
+    pythonVersion: 3.13.7
     buildCommand: pip install -r requirements.txt
     startCommand: python newfile.py
     envVars:

@@ -1,36 +1,54 @@
 import os
-import json
-from telegram import Update
-from telegram.ext import Application, CommandHandler, ContextTypes
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import (
+    Application,
+    CommandHandler,
+    CallbackQueryHandler,
+    ContextTypes,
+)
 
 TOKEN = os.environ["TOKEN"]
-DB_FILE = "users.json"
 
-def load_users():
-    try:
-        with open(DB_FILE, "r") as f:
-            return json.load(f)
-    except:
-        return {}
-
-def save_users(users):
-    with open(DB_FILE, "w") as f:
-        json.dump(users, f)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    users = load_users()
+    keyboard = [
+        [InlineKeyboardButton("🎮 Play Games", callback_data="games")],
+        [InlineKeyboardButton("💰 Wallet", callback_data="wallet")],
+        [InlineKeyboardButton("👤 Profile", callback_data="profile")],
+        [InlineKeyboardButton("👥 Referral", callback_data="referral")],
+    ]
 
-    user_id = str(update.effective_user.id)
+    reply_markup = InlineKeyboardMarkup(keyboard)
 
-    if user_id not in users:
-        users[user_id] = {
-            "name": update.effective_user.first_name,
-            "balance": 0
-        }
-        save_users(users)
+    await update.message.reply_text(
+        "🚀 Welcome to Zyntra!\n\nChoose an option:",
+        reply_markup=reply_markup,
+    )
 
-    await update.message.reply_text("🚀 Welcome to Zyntra!")
 
-app = Application.builder().token(TOKEN).build()
-app.add_handler(CommandHandler("start", start))
-app.run_polling()
+async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+
+    messages = {
+        "games": "🎮 Games section is coming soon!",
+        "wallet": "💰 Wallet section is coming soon!",
+        "profile": "👤 Profile section is coming soon!",
+        "referral": "👥 Referral section is coming soon!",
+    }
+
+    await query.edit_message_text(messages.get(query.data, "Unknown option"))
+
+
+def main():
+    app = Application.builder().token(TOKEN).build()
+
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CallbackQueryHandler(button))
+
+    print("✅ Zyntra Bot Started...")
+    app.run_polling()
+
+
+if __name__ == "__main__":
+    main()

@@ -1,4 +1,5 @@
 import os
+import sqlite3
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     Application,
@@ -9,8 +10,19 @@ from telegram.ext import (
 
 TOKEN = os.environ["TOKEN"]
 
+conn = sqlite3.connect("zyntra.db", check_same_thread=False)
+cursor = conn.cursor()
+
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+
+    cursor.execute(
+        "INSERT OR IGNORE INTO users (user_id, username, name) VALUES (?, ?, ?)",
+        (user.id, user.username, user.first_name),
+    )
+    conn.commit()
+
     keyboard = [
         [InlineKeyboardButton("🎮 Play Games", callback_data="games")],
         [InlineKeyboardButton("💰 Wallet", callback_data="wallet")],
@@ -21,7 +33,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     await update.message.reply_text(
-        "🚀 Welcome to Zyntra!\n\nChoose an option:",
+        f"🚀 Welcome to Zyntra, {user.first_name}!\n\nChoose an option:",
         reply_markup=reply_markup,
     )
 

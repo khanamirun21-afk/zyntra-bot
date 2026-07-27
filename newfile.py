@@ -1,5 +1,5 @@
 import os
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update
 from telegram.ext import (
     Application,
     CommandHandler,
@@ -7,18 +7,13 @@ from telegram.ext import (
     ContextTypes,
 )
 
+from handlers import home_menu
+
 TOKEN = os.environ["TOKEN"]
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    keyboard = [
-        [InlineKeyboardButton("🎮 Play Games", callback_data="games")],
-        [InlineKeyboardButton("💰 Wallet", callback_data="wallet")],
-        [InlineKeyboardButton("👤 Profile", callback_data="profile")],
-        [InlineKeyboardButton("👥 Referral", callback_data="referral")],
-    ]
-
-    reply_markup = InlineKeyboardMarkup(keyboard)
+    reply_markup = await home_menu(update, context)
 
     await update.message.reply_text(
         "🚀 Welcome to Zyntra!\n\nChoose an option:",
@@ -31,10 +26,13 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
 
     messages = {
-        "games": "🎮 Games section is coming soon!",
+        "play": "🎮 Play section is coming soon!",
         "wallet": "💰 Wallet section is coming soon!",
         "profile": "👤 Profile section is coming soon!",
         "referral": "👥 Referral section is coming soon!",
+        "tasks": "📋 Tasks section is coming soon!",
+        "leaderboard": "🏆 Leaderboard section is coming soon!",
+        "settings": "⚙️ Settings section is coming soon!",
     }
 
     await query.edit_message_text(messages.get(query.data, "Unknown option"))

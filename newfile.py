@@ -21,6 +21,7 @@ add_user(
     user.username,
     user.first_name,
 )
+
 await update.message.reply_text(
         "🚀 Welcome to Zyntra!\n\nChoose an option:",
         reply_markup=await home_menu(update, context),

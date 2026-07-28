@@ -8,7 +8,7 @@ from telegram.ext import (
 )
 
 from handlers import home_menu, play_menu
-from database import add_user
+from database import add_user, get_wallet
 
 TOKEN = os.environ["TOKEN"]
 
@@ -45,7 +45,25 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
     elif query.data == "wallet":
-        await query.edit_message_text("💰 Wallet (Coming Soon)")
+        wallet = get_wallet(query.from_user.id)
+
+        if wallet:
+            zyn, bttc = wallet
+        else:
+            zyn, bttc = (0, 0)
+
+        await query.edit_message_text(
+            f"""💰 Zyntra Wallet
+
+🪙 ZYN Balance: {zyn}
+💎 BTTC Balance: {bttc}
+
+🎁 Daily Reward (Coming Soon)
+💸 Withdraw (Coming Soon)
+
+⬅️ Type /start to go back
+"""
+        )
 
     elif query.data == "profile":
         await query.edit_message_text("👤 Profile (Coming Soon)")

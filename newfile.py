@@ -7,17 +7,15 @@ from telegram.ext import (
     ContextTypes,
 )
 
-from handlers import home_menu
+from handlers import home_menu, play_menu
 
 TOKEN = os.environ["TOKEN"]
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    reply_markup = await home_menu(update, context)
-
     await update.message.reply_text(
         "🚀 Welcome to Zyntra!\n\nChoose an option:",
-        reply_markup=reply_markup,
+        reply_markup=await home_menu(update, context),
     )
 
 
@@ -25,17 +23,53 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
 
-    messages = {
-        "play": "🎮 Play section is coming soon!",
-        "wallet": "💰 Wallet section is coming soon!",
-        "profile": "👤 Profile section is coming soon!",
-        "referral": "👥 Referral section is coming soon!",
-        "tasks": "📋 Tasks section is coming soon!",
-        "leaderboard": "🏆 Leaderboard section is coming soon!",
-        "settings": "⚙️ Settings section is coming soon!",
-    }
+    if query.data == "play":
+        await query.edit_message_text(
+            "🎮 Zyntra Game Hub\n\nChoose a game:",
+            reply_markup=await play_menu(update, context),
+        )
 
-    await query.edit_message_text(messages.get(query.data, "Unknown option"))
+    elif query.data == "home":
+        await query.edit_message_text(
+            "🏠 Home Menu",
+            reply_markup=await home_menu(update, context),
+        )
+
+    elif query.data == "wallet":
+        await query.edit_message_text("💰 Wallet (Coming Soon)")
+
+    elif query.data == "profile":
+        await query.edit_message_text("👤 Profile (Coming Soon)")
+
+    elif query.data == "referral":
+        await query.edit_message_text("👥 Referral (Coming Soon)")
+
+    elif query.data == "tasks":
+        await query.edit_message_text("📋 Tasks (Coming Soon)")
+
+    elif query.data == "leaderboard":
+        await query.edit_message_text("🏆 Leaderboard (Coming Soon)")
+
+    elif query.data == "settings":
+        await query.edit_message_text("⚙️ Settings (Coming Soon)")
+
+    elif query.data == "tap":
+        await query.edit_message_text("⚡ Zyntra Tap (Coming Soon)")
+
+    elif query.data == "daily_reward":
+        await query.edit_message_text("🎁 Daily Reward (Coming Soon)")
+
+    elif query.data == "lucky_spin":
+        await query.edit_message_text("🎰 Lucky Spin (Coming Soon)")
+
+    elif query.data == "missions":
+        await query.edit_message_text("🎯 Missions (Coming Soon)")
+
+    elif query.data == "farming":
+        await query.edit_message_text("🌱 Farming (Coming Soon)")
+
+    elif query.data == "more_games":
+        await query.edit_message_text("🎮 More Games (Coming Soon)")
 
 
 def main():

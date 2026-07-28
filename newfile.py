@@ -1,5 +1,4 @@
 import os
-from database import add_user, get_wallet
 from telegram import Update
 from telegram.ext import (
     Application,
@@ -14,15 +13,7 @@ TOKEN = os.environ["TOKEN"]
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-   user = update.effective_user
-
-add_user(
-    user.id,
-    user.username,
-    user.first_name,
-)
-
-await update.message.reply_text(
+    await update.message.reply_text(
         "🚀 Welcome to Zyntra!\n\nChoose an option:",
         reply_markup=await home_menu(update, context),
     )

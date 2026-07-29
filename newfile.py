@@ -80,18 +80,18 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif query.data == "settings":
         await query.edit_message_text("⚙️ Settings (Coming Soon)")
 
-    elif query.data == "tap":
-    add_zyn(query.from_user.id, 1)
+        elif query.data == "tap":
+        add_zyn(query.from_user.id, 1)
 
-    wallet = get_wallet(query.from_user.id)
+        wallet = get_wallet(query.from_user.id)
 
-    if wallet:
-        zyn, bttc = wallet
-    else:
-        zyn, bttc = (0, 0)
+        if wallet:
+            zyn, bttc = wallet
+        else:
+            zyn, bttc = (0, 0)
 
-    await query.edit_message_text(
-        f"""⚡ Zyntra Tap
+        await query.edit_message_text(
+            f"""⚡ Zyntra Tap
 
 🪙 +1 ZYN Earned!
 
@@ -100,7 +100,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 ⬅️ Type /start to go back
 """
-    )
+        )
 
     elif query.data == "daily_reward":
         await query.edit_message_text("🎁 Daily Reward (Coming Soon)")

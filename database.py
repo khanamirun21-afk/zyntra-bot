@@ -1,4 +1,5 @@
 import sqlite3
+from datetime import datetime
 
 conn = sqlite3.connect("zyntra.db", check_same_thread=False)
 cursor = conn.cursor()
@@ -57,11 +58,14 @@ def add_zyn(user_id, amount):
     conn.commit()
 
 
-def update_daily_reward(user_id, date):
+def update_daily_reward(user_id):
+    today = datetime.utcnow().strftime("%Y-%m-%d")
+
     cursor.execute(
         "UPDATE wallet SET last_daily_reward=? WHERE user_id=?",
-        (date, user_id),
+        (today, user_id),
     )
+
     conn.commit()
 
 
@@ -70,5 +74,21 @@ def get_last_daily_reward(user_id):
         "SELECT last_daily_reward FROM wallet WHERE user_id=?",
         (user_id,),
     )
+
     row = cursor.fetchone()
-    return row[0] if row else None
+
+    if row:
+        return row[0]
+
+    return None
+
+
+def can_claim_daily_reward(user_id):
+    today = datetime.utcnow().strftime("%Y-%m-%d")
+
+    last = get_last_daily_reward(user_id)
+
+    if last == today:
+        return False
+
+    return True

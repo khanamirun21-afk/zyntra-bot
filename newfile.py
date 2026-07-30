@@ -9,6 +9,7 @@ from telegram.ext import (
 
 from handlers import home_menu, play_menu
 from database import add_user, get_wallet
+from tap import tap
 
 TOKEN = os.environ["TOKEN"]
 

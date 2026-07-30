@@ -1,32 +1,32 @@
 from database import add_zyn, get_wallet
-from energy import use_energy
-
+from energy import get_energy, use_energy
 
 async def tap(query):
-    if not use_energy(query.from_user.id):
+    energy = get_energy(query.from_user.id)
+
+    if energy <= 0:
         await query.edit_message_text(
-            "⚡ No Energy Left!\n\nPlease wait for energy refill."
+            "⚡ No Energy!\n\nWait for recharge."
         )
         return
 
+    use_energy(query.from_user.id)
     add_zyn(query.from_user.id, 1)
 
     wallet = get_wallet(query.from_user.id)
+    zyn, bttc = wallet
 
-    if wallet:
-        zyn, bttc = wallet
-    else:
-        zyn, bttc = (0, 0)
+    energy = get_energy(query.from_user.id)
 
     await query.edit_message_text(
         f"""⚡ Zyntra Tap
 
 🪙 +1 ZYN Earned!
 
+⚡ Energy: {energy}/1000
+
 💰 ZYN Balance: {zyn}
 💎 BTTC Balance: {bttc}
-
-⚡ Energy: 1000/1000
 
 ⬅️ Type /start to go back
 """

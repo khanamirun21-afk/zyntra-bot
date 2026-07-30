@@ -1,14 +1,23 @@
 from database import add_zyn, get_wallet
 
+async def tap(query):
+    add_zyn(query.from_user.id, 1)
 
-def tap(user_id):
-    add_zyn(user_id, 1)
-
-    wallet = get_wallet(user_id)
+    wallet = get_wallet(query.from_user.id)
 
     if wallet:
         zyn, bttc = wallet
     else:
         zyn, bttc = (0, 0)
 
-    return zyn, bttc
+    await query.edit_message_text(
+        f"""⚡ Zyntra Tap
+
+🪙 +1 ZYN Earned!
+
+💰 ZYN Balance: {zyn}
+💎 BTTC Balance: {bttc}
+
+⬅️ Type /start to go back
+"""
+    )

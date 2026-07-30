@@ -105,5 +105,5 @@ app.add_handler(CallbackQueryHandler(button))
 print("✅ Zyntra Bot Started...")
 app.run_polling()
 
-if name == "main":
+if name == "__main__":
 main()

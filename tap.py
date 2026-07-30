@@ -1,6 +1,7 @@
 from database import add_zyn, get_wallet
 from energy import get_energy, use_energy
 
+
 async def tap(query):
     energy = get_energy(query.from_user.id)
 
@@ -11,10 +12,15 @@ async def tap(query):
         return
 
     use_energy(query.from_user.id)
+
     add_zyn(query.from_user.id, 1)
 
     wallet = get_wallet(query.from_user.id)
-    zyn, bttc = wallet
+
+    if wallet:
+        zyn, bttc = wallet
+    else:
+        zyn, bttc = (0, 0)
 
     energy = get_energy(query.from_user.id)
 

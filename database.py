@@ -21,6 +21,8 @@ CREATE TABLE IF NOT EXISTS wallet (
     zyn INTEGER DEFAULT 0,
     bttc REAL DEFAULT 0,
     last_daily_reward TEXT DEFAULT NULL,
+    energy INTEGER DEFAULT 1000,
+    last_energy_time TEXT DEFAULT NULL,
     FOREIGN KEY(user_id) REFERENCES users(user_id)
 )
 """)
@@ -57,6 +59,39 @@ def add_zyn(user_id, amount):
     )
     conn.commit()
 
+
+# ---------- Energy Functions ----------
+
+def get_energy(user_id):
+    cursor.execute(
+        "SELECT energy FROM wallet WHERE user_id=?",
+        (user_id,),
+    )
+
+    row = cursor.fetchone()
+
+    if row:
+        return row[0]
+
+    return 1000
+
+
+def use_energy(user_id):
+    energy = get_energy(user_id)
+
+    if energy <= 0:
+        return False
+
+    cursor.execute(
+        "UPDATE wallet SET energy = energy - 1 WHERE user_id=?",
+        (user_id,),
+    )
+
+    conn.commit()
+    return True
+
+
+# ---------- Daily Reward ----------
 
 def update_daily_reward(user_id):
     today = datetime.utcnow().strftime("%Y-%m-%d")

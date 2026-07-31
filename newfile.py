@@ -86,14 +86,14 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif query.data == "daily_reward":
     if can_claim_daily_reward(query.from_user.id):
-            add_zyn(query.from_user.id, 100)
-            update_daily_reward(query.from_user.id)
+        add_zyn(query.from_user.id, 100)
+        update_daily_reward(query.from_user.id)
 
-            wallet = get_wallet(query.from_user.id)
-            zyn, bttc = wallet
+        wallet = get_wallet(query.from_user.id)
+        zyn, bttc = wallet
 
-            await query.edit_message_text(
-                f"""🎁 Daily Reward Claimed!
+        await query.edit_message_text(
+            f"""🎁 Daily Reward Claimed!
 
 🪙 +100 ZYN
 
@@ -102,11 +102,12 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 Come back tomorrow! 🚀
 """
-            )
-        else:
-            await query.edit_message_text(
-                "❌ You already claimed today's reward.\n\nCome back tomorrow."
-            )
+        )
+
+    else:
+        await query.edit_message_text(
+            "❌ You already claimed today's reward."
+        )
 
     elif query.data == "lucky_spin":
         await query.edit_message_text("🎰 Lucky Spin (Coming Soon)")

@@ -84,8 +84,8 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif query.data == "tap":
         await tap(query)
 
-        elif query.data == "daily_reward":
-        if can_claim_daily_reward(query.from_user.id):
+    elif query.data == "daily_reward":
+    if can_claim_daily_reward(query.from_user.id):
             add_zyn(query.from_user.id, 100)
             update_daily_reward(query.from_user.id)
 

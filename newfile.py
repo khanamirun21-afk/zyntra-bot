@@ -85,7 +85,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await tap(query)
 
     elif query.data == "daily_reward":
-        await query.edit_message_text("🎁 Daily Reward (Coming Soon)")
+    await daily_reward(query)
 
     elif query.data == "lucky_spin":
         await query.edit_message_text("🎰 Lucky Spin (Coming Soon)")

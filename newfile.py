@@ -10,6 +10,7 @@ from telegram.ext import (
 from handlers import home_menu, play_menu
 from database import add_user, get_wallet
 from tap import tap
+from daily_reward import daily_reward
 
 TOKEN = os.environ["TOKEN"]
 
@@ -59,7 +60,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 🪙 ZYN Balance: {zyn}
 💎 BTTC Balance: {bttc}
 
-🎁 Daily Reward (Coming Soon)
+🎁 Daily Reward
 💸 Withdraw (Coming Soon)
 
 ⬅️ Type /start to go back
@@ -85,8 +86,8 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await tap(query)
 
     elif query.data == "daily_reward":
-    await daily_reward(query)
-
+        await daily_reward(query)   
+    
     elif query.data == "lucky_spin":
         await query.edit_message_text("🎰 Lucky Spin (Coming Soon)")
 

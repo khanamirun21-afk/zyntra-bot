@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS users (
     user_id INTEGER PRIMARY KEY,
     username TEXT,
     name TEXT,
-    referrals INTEGER DEFAULT 0
+    referrals INTEGER DEFAULT 0,
+    referred_by INTEGER DEFAULT NULL
 )
 """)
 
@@ -94,3 +95,49 @@ def can_claim_daily_reward(user_id):
         return False
 
     return True
+
+
+# ---------- Referral System ----------
+
+def add_referral(referrer_id):
+    cursor.execute(
+        "UPDATE users SET referrals = referrals + 1 WHERE user_id=?",
+        (referrer_id,),
+    )
+    conn.commit()
+
+
+def get_referrals(user_id):
+    cursor.execute(
+        "SELECT referrals FROM users WHERE user_id=?",
+        (user_id,),
+    )
+
+    row = cursor.fetchone()
+
+    if row:
+        return row[0]
+
+    return 0
+
+
+def set_referred_by(user_id, referrer_id):
+    cursor.execute(
+        "UPDATE users SET referred_by=? WHERE user_id=?",
+        (referrer_id, user_id),
+    )
+    conn.commit()
+
+
+def get_referred_by(user_id):
+    cursor.execute(
+        "SELECT referred_by FROM users WHERE user_id=?",
+        (user_id,),
+    )
+
+    row = cursor.fetchone()
+
+    if row:
+        return row[0]
+
+    return None

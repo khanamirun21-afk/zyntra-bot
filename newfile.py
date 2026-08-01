@@ -8,7 +8,7 @@ from telegram.ext import (
 )
 
 from handlers import home_menu, play_menu
-from database import add_user, get_wallet
+from database import add_user, get_wallet, get_referrals
 from tap import tap
 
 TOKEN = os.environ["TOKEN"]
@@ -70,7 +70,27 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text("👤 Profile (Coming Soon)")
 
     elif query.data == "referral":
-        await query.edit_message_text("👥 Referral (Coming Soon)")
+        referrals = get_referrals(query.from_user.id)
+
+        bot_username = (await context.bot.get_me()).username
+
+        link = f"https://t.me/{bot_username}?start={query.from_user.id}"
+
+        await query.edit_message_text(
+            f"""👥 Referral System
+
+🔗 Your Referral Link:
+
+{link}
+
+👤 Total Referrals: {referrals}
+
+🎁 Reward:
+100 ZYN per referral
+
+Share your link and earn! 🚀
+"""
+        )
 
     elif query.data == "tasks":
         await query.edit_message_text("📋 Tasks (Coming Soon)")

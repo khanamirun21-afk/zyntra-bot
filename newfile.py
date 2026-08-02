@@ -8,7 +8,14 @@ from telegram.ext import (
 )
 
 from handlers import home_menu, play_menu
-from database import add_user, get_wallet, get_referrals
+from database import (
+    add_user,
+    get_wallet,
+    get_referrals,
+    add_zyn,
+    can_claim_daily_reward,
+    update_daily_reward,
+)
 from tap import tap
 
 TOKEN = os.environ["TOKEN"]
@@ -59,7 +66,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 🪙 ZYN Balance: {zyn}
 💎 BTTC Balance: {bttc}
 
-🎁 Daily Reward (Coming Soon)
+🎁 Daily Reward
 💸 Withdraw (Coming Soon)
 
 ⬅️ Type /start to go back
@@ -73,7 +80,6 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         referrals = get_referrals(query.from_user.id)
 
         bot_username = (await context.bot.get_me()).username
-
         link = f"https://t.me/{bot_username}?start={query.from_user.id}"
 
         await query.edit_message_text(
@@ -105,7 +111,38 @@ Share your link and earn! 🚀
         await tap(query)
 
     elif query.data == "daily_reward":
-        await query.edit_message_text("🎁 Daily Reward (Coming Soon)")
+
+        if can_claim_daily_reward(query.from_user.id):
+
+            add_zyn(query.from_user.id, 100)
+            update_daily_reward(query.from_user.id)
+
+            wallet = get_wallet(query.from_user.id)
+
+            if wallet:
+                zyn, bttc = wallet
+            else:
+                zyn, bttc = (0, 0)
+
+            await query.edit_message_text(
+                f"""🎁 Daily Reward Claimed!
+
+🪙 +100 ZYN
+
+💰 ZYN Balance: {zyn}
+💎 BTTC Balance: {bttc}
+
+Come back tomorrow! 🚀
+"""
+            )
+
+        else:
+
+            await query.edit_message_text(
+                """❌ You already claimed today's reward.
+
+Come back tomorrow!"""
+            )
 
     elif query.data == "lucky_spin":
         await query.edit_message_text("🎰 Lucky Spin (Coming Soon)")

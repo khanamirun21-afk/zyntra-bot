@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS wallet (
     zyn INTEGER DEFAULT 0,
     bttc REAL DEFAULT 0,
     last_daily_reward TEXT DEFAULT NULL,
+    last_lucky_spin TEXT DEFAULT NULL,
     FOREIGN KEY(user_id) REFERENCES users(user_id)
 )
 """)
@@ -141,3 +142,41 @@ def get_referred_by(user_id):
         return row[0]
 
     return None
+
+
+# ---------- Lucky Spin ----------
+
+def update_lucky_spin(user_id):
+    today = datetime.utcnow().strftime("%Y-%m-%d")
+
+    cursor.execute(
+        "UPDATE wallet SET last_lucky_spin=? WHERE user_id=?",
+        (today, user_id),
+    )
+
+    conn.commit()
+
+
+def get_last_lucky_spin(user_id):
+    cursor.execute(
+        "SELECT last_lucky_spin FROM wallet WHERE user_id=?",
+        (user_id,),
+    )
+
+    row = cursor.fetchone()
+
+    if row:
+        return row[0]
+
+    return None
+
+
+def can_spin(user_id):
+    today = datetime.utcnow().strftime("%Y-%m-%d")
+
+    last = get_last_lucky_spin(user_id)
+
+    if last == today:
+        return False
+
+    return True

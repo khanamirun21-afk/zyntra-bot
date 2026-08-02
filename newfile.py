@@ -1,4 +1,5 @@
 import os
+import random
 from telegram import Update
 from telegram.ext import (
     Application,
@@ -15,6 +16,8 @@ from database import (
     add_zyn,
     can_claim_daily_reward,
     update_daily_reward,
+    can_spin,
+    update_lucky_spin,
 )
 from tap import tap
 
@@ -145,7 +148,39 @@ Come back tomorrow!"""
             )
 
     elif query.data == "lucky_spin":
-        await query.edit_message_text("🎰 Lucky Spin (Coming Soon)")
+
+        if can_spin(query.from_user.id):
+
+            rewards = [10, 25, 50, 100]
+            reward = random.choice(rewards)
+
+            add_zyn(query.from_user.id, reward)
+            update_lucky_spin(query.from_user.id)
+
+            wallet = get_wallet(query.from_user.id)
+
+            if wallet:
+                zyn, bttc = wallet
+            else:
+                zyn, bttc = (0, 0)
+
+            await query.edit_message_text(
+                f"""🎰 Lucky Spin
+
+🎉 You won {reward} ZYN!
+
+💰 ZYN Balance: {zyn}
+💎 BTTC Balance: {bttc}
+
+Come back tomorrow for another spin! 🚀
+"""
+            )
+
+        else:
+
+            await query.edit_message_text(
+                "❌ You already used today's Lucky Spin.\n\nCome back tomorrow!"
+            )
 
     elif query.data == "missions":
         await query.edit_message_text("🎯 Missions (Coming Soon)")

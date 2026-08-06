@@ -23,6 +23,8 @@ CREATE TABLE IF NOT EXISTS wallet (
     bttc REAL DEFAULT 0,
     last_daily_reward TEXT DEFAULT NULL,
     last_lucky_spin TEXT DEFAULT NULL,
+    farming_start TEXT DEFAULT NULL,
+    farming_claim TEXT DEFAULT NULL,
     FOREIGN KEY(user_id) REFERENCES users(user_id)
 )
 """)
@@ -92,10 +94,7 @@ def can_claim_daily_reward(user_id):
 
     last = get_last_daily_reward(user_id)
 
-    if last == today:
-        return False
-
-    return True
+    return last != today
 
 
 # ---------- Referral System ----------
@@ -176,7 +175,30 @@ def can_spin(user_id):
 
     last = get_last_lucky_spin(user_id)
 
-    if last == today:
-        return False
+    return last != today
 
-    return True
+
+# ---------- Farming ----------
+
+def start_farming(user_id, start_time, claim_time):
+    cursor.execute(
+        "UPDATE wallet SET farming_start=?, farming_claim=? WHERE user_id=?",
+        (start_time, claim_time, user_id),
+    )
+    conn.commit()
+
+
+def get_farming(user_id):
+    cursor.execute(
+        "SELECT farming_start, farming_claim FROM wallet WHERE user_id=?",
+        (user_id,),
+    )
+    return cursor.fetchone()
+
+
+def reset_farming(user_id):
+    cursor.execute(
+        "UPDATE wallet SET farming_start=NULL, farming_claim=NULL WHERE user_id=?",
+        (user_id,),
+    )
+    conn.commit()

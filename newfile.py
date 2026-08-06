@@ -20,6 +20,7 @@ from database import (
     update_lucky_spin,
 )
 from tap import tap
+from farming import farming
 
 TOKEN = os.environ["TOKEN"]
 
@@ -186,7 +187,7 @@ Come back tomorrow for another spin! 🚀
         await query.edit_message_text("🎯 Missions (Coming Soon)")
 
     elif query.data == "farming":
-        await query.edit_message_text("🌱 Farming (Coming Soon)")
+        await farming(query)
 
     elif query.data == "more_games":
         await query.edit_message_text("🎮 More Games (Coming Soon)")

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zyntra</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #0b1020;
+      color: white;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .app {
+      max-width: 500px;
+      margin: auto;
+    }
+
+    .header {
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .logo {
+      font-size: 42px;
+    }
+
+    .title {
+      font-size: 30px;
+      font-weight: bold;
+    }
+
+    .subtitle {
+      color: #9ca3af;
+      margin-top: 5px;
+    }
+
+    .balance-card {
+      background: linear-gradient(135deg, #172554, #312e81);
+      border-radius: 20px;
+      padding: 22px;
+      margin: 15px 0;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .balance-title {
+      color: #cbd5e1;
+      font-size: 14px;
+    }
+
+    .zyn {
+      font-size: 34px;
+      font-weight: bold;
+      margin: 8px 0;
+    }
+
+    .bttc {
+      color: #93c5fd;
+      font-size: 16px;
+    }
+
+    .tap-button {
+      width: 190px;
+      height: 190px;
+      border-radius: 50%;
+      border: none;
+      display: block;
+      margin: 30px auto;
+      background: linear-gradient(145deg, #2563eb, #7c3aed);
+      color: white;
+      font-size: 25px;
+      font-weight: bold;
+      box-shadow: 0 15px 35px rgba(37,99,235,0.4);
+      cursor: pointer;
+    }
+
+    .tap-button:active {
+      transform: scale(0.94);
+    }
+
+    .tap-info {
+      text-align: center;
+      color: #9ca3af;
+      margin-bottom: 25px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .card {
+      background: #151b2e;
+      border: 1px solid #27304a;
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .icon {
+      font-size: 30px;
+      margin-bottom: 8px;
+    }
+
+    .card-title {
+      font-weight: bold;
+    }
+
+    .card-text {
+      color: #9ca3af;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    .nav {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 25px;
+      padding: 10px;
+      background: #151b2e;
+      border-radius: 18px;
+    }
+
+    .nav-item {
+      text-align: center;
+      padding: 10px 4px;
+      color: #9ca3af;
+      font-size: 12px;
+    }
+
+    .nav-icon {
+      font-size: 22px;
+      display: block;
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+
+    <div class="header">
+      <div class="logo">⚡</div>
+      <div class="title">Zyntra</div>
+      <div class="subtitle">Earn • Play • Grow</div>
+    </div>
+
+    <div class="balance-card">
+      <div class="balance-title">YOUR BALANCE</div>
+
+      <div class="zyn">
+        🪙 <span id="zynBalance">0</span> ZYN
+      </div>
+
+      <div class="bttc">
+        💎 <span id="bttcBalance">0</span> BTTC
+      </div>
+    </div>
+
+    <button class="tap-button" onclick="tap()">
+      ⚡ TAP
+    </button>
+
+    <div class="tap-info">
+      Total Taps: <span id="tapCount">0</span>
+    </div>
+
+    <div class="grid">
+
+      <div class="card">
+        <div class="icon">🎁</div>
+        <div class="card-title">Daily Reward</div>
+        <div class="card-text">Claim daily ZYN</div>
+      </div>
+
+      <div class="card">
+        <div class="icon">🌱</div>
+        <div class="card-title">Farming</div>
+        <div class="card-text">Earn while farming</div>
+      </div>
+
+      <div class="card">
+        <div class="icon">🎯</div>
+        <div class="card-title">Missions</div>
+        <div class="card-text">Complete missions</div>
+      </div>
+
+      <div class="card">
+        <div class="icon">👥</div>
+        <div class="card-title">Referral</div>
+        <div class="card-text">Invite friends</div>
+      </div>
+
+      <div class="card">
+        <div class="icon">🎰</div>
+        <div class="card-title">Lucky Spin</div>
+        <div class="card-text">Spin & win</div>
+      </div>
+
+      <div class="card">
+        <div class="icon">🏆</div>
+        <div class="card-title">Milestones</div>
+        <div class="card-text">Reach milestones</div>
+      </div>
+
+    </div>
+
+    <div class="nav">
+
+      <div class="nav-item">
+        <span class="nav-icon">🏠</span>
+        Home
+      </div>
+
+      <div class="nav-item">
+        <span class="nav-icon">🎮</span>
+        Games
+      </div>
+
+      <div class="nav-item">
+        <span class="nav-icon">🎯</span>
+        Missions
+      </div>
+
+      <div class="nav-item">
+        <span class="nav-icon">👤</span>
+        Profile
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    let zyn = 0;
+    let taps = 0;
+
+    function tap() {
+      zyn += 1;
+      taps += 1;
+
+      document.getElementById("zynBalance").innerText = zyn;
+      document.getElementById("tapCount").innerText = taps;
+    }
+  </script>
+
+</body>
+      </html>

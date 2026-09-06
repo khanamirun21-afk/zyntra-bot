@@ -1,6 +1,5 @@
 import sqlite3
-import time
-from datetime import datetime, timedelta
+from datetime import datetime
 
 DB = "zyntra.db"
 
@@ -22,7 +21,6 @@ def init_db():
     )""")
     conn.commit()
     conn.close()
-
 init_db()
 
 def add_user(user_id, username, first_name, referred_by=None):
@@ -30,10 +28,8 @@ def add_user(user_id, username, first_name, referred_by=None):
     c = conn.cursor()
     c.execute("SELECT id FROM users WHERE id=?", (user_id,))
     if not c.fetchone():
-        # Referred by logic
         if referred_by and referred_by!= user_id:
             c.execute("INSERT INTO users (id, username, first_name, referred_by) VALUES (?,?,?,?)", (user_id, username, first_name, referred_by))
-            # Referrer ko 100 ZYN do
             c.execute("UPDATE users SET zyn = zyn + 100, referrals = referrals + 1 WHERE id=?", (referred_by,))
         else:
             c.execute("INSERT INTO users (id, username, first_name) VALUES (?,?,?)", (user_id, username, first_name))
@@ -96,6 +92,31 @@ def update_lucky_spin(user_id):
     c.execute("UPDATE users SET last_spin=? WHERE id=?", (datetime.now().strftime("%Y-%m-%d"), user_id))
     conn.commit()
     conn.close()
+
+# TAP KE LIYE YE 3 NAYE FUNCTION - Yahi missing the
+def add_tap(user_id):
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
+    c.execute("UPDATE users SET zyn = zyn + 1, tap_count = tap_count + 1 WHERE id=?", (user_id,))
+    conn.commit()
+    conn.close()
+
+def can_show_tap_ad(user_id):
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
+    c.execute("SELECT tap_count FROM users WHERE id=?", (user_id,))
+    row = c.fetchone()
+    conn.close()
+    if not row: return False
+    return row[0] % 15 == 0 and row[0]!= 0
+
+def get_tap_count(user_id):
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
+    c.execute("SELECT tap_count FROM users WHERE id=?", (user_id,))
+    row = c.fetchone()
+    conn.close()
+    return row[0] if row else 0
 
 def get_profile(user_id):
     conn = sqlite3.connect(DB)

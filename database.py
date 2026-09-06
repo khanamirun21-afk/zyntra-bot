@@ -1,4 +1,5 @@
 import sqlite3
+import time
 from datetime import datetime
 
 DB = "zyntra.db"
@@ -17,6 +18,7 @@ def init_db():
         last_daily TEXT,
         last_spin TEXT,
         last_farm INTEGER DEFAULT 0,
+        farm_amount INTEGER DEFAULT 0,
         tap_count INTEGER DEFAULT 0
     )""")
     conn.commit()
@@ -66,8 +68,7 @@ def can_claim_daily_reward(user_id):
     row = c.fetchone()
     conn.close()
     if not row or not row[0]: return True
-    last = datetime.strptime(row[0], "%Y-%m-%d")
-    return datetime.now().date() > last.date()
+    return datetime.now().strftime("%Y-%m-%d")!= row[0]
 
 def update_daily_reward(user_id):
     conn = sqlite3.connect(DB)
@@ -83,8 +84,7 @@ def can_spin(user_id):
     row = c.fetchone()
     conn.close()
     if not row or not row[0]: return True
-    last = datetime.strptime(row[0], "%Y-%m-%d")
-    return datetime.now().date() > last.date()
+    return datetime.now().strftime("%Y-%m-%d")!= row[0]
 
 def update_lucky_spin(user_id):
     conn = sqlite3.connect(DB)
@@ -93,7 +93,7 @@ def update_lucky_spin(user_id):
     conn.commit()
     conn.close()
 
-# TAP KE LIYE YE 3 NAYE FUNCTION - Yahi missing the
+# TAP SYSTEM
 def add_tap(user_id):
     conn = sqlite3.connect(DB)
     c = conn.cursor()
@@ -107,8 +107,7 @@ def can_show_tap_ad(user_id):
     c.execute("SELECT tap_count FROM users WHERE id=?", (user_id,))
     row = c.fetchone()
     conn.close()
-    if not row: return False
-    return row[0] % 15 == 0 and row[0]!= 0
+    return row and row[0] % 15 == 0 and row[0]!= 0
 
 def get_tap_count(user_id):
     conn = sqlite3.connect(DB)
@@ -117,6 +116,37 @@ def get_tap_count(user_id):
     row = c.fetchone()
     conn.close()
     return row[0] if row else 0
+
+# FARMING SYSTEM - Yahi missing tha
+def start_farming(user_id):
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
+    c.execute("UPDATE users SET last_farm=?, farm_amount=100 WHERE id=?", (int(time.time()), user_id))
+    conn.commit()
+    conn.close()
+
+def get_farming_status(user_id):
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
+    c.execute("SELECT last_farm, farm_amount FROM users WHERE id=?", (user_id,))
+    row = c.fetchone()
+    conn.close()
+    return row if row else (0,0)
+
+def can_claim_farming(user_id):
+    last_farm, _ = get_farming_status(user_id)
+    if last_farm == 0: return False
+    return int(time.time()) - last_farm >= 21600 # 6 ghante
+
+def claim_farming(user_id):
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
+    c.execute("SELECT farm_amount FROM users WHERE id=?", (user_id,))
+    amount = c.fetchone()[0]
+    c.execute("UPDATE users SET zyn = zyn +?, last_farm=0, farm_amount=0 WHERE id=?", (amount, user_id))
+    conn.commit()
+    conn.close()
+    return amount
 
 def get_profile(user_id):
     conn = sqlite3.connect(DB)

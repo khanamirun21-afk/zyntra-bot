@@ -4,7 +4,6 @@ from datetime import datetime
 conn = sqlite3.connect("zyntra.db", check_same_thread=False)
 cursor = conn.cursor()
 
-# ---------- Users Table ----------
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS users (
     user_id INTEGER PRIMARY KEY,
@@ -15,7 +14,6 @@ CREATE TABLE IF NOT EXISTS users (
 )
 """)
 
-# ---------- Wallet Table ----------
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS wallet (
     user_id INTEGER PRIMARY KEY,
@@ -31,7 +29,6 @@ CREATE TABLE IF NOT EXISTS wallet (
 )
 """)
 
-# ---------- Missions Table ----------
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS mission_claims (
     user_id INTEGER NOT NULL,
@@ -42,7 +39,6 @@ CREATE TABLE IF NOT EXISTS mission_claims (
 )
 """)
 
-# ---------- Social Tasks Tables ----------
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS tasks (
     task_id INTEGER PRIMARY KEY,
@@ -62,7 +58,6 @@ CREATE TABLE IF NOT EXISTS task_claims (
 )
 """)
 
-# ---------- Migration ----------
 def add_column_if_missing(table, column, definition):
     cursor.execute(f"PRAGMA table_info({table})")
     columns = [row[1] for row in cursor.fetchall()]
@@ -73,7 +68,6 @@ add_column_if_missing("wallet", "taps", "INTEGER DEFAULT 0")
 add_column_if_missing("wallet", "ads_watched", "INTEGER DEFAULT 0")
 conn.commit()
 
-# ---------- Default Tasks With YOUR LINKS ----------
 cursor.execute("SELECT COUNT(*) FROM tasks")
 if cursor.fetchone()[0] == 0:
     default_tasks = [
@@ -85,13 +79,11 @@ if cursor.fetchone()[0] == 0:
     cursor.executemany("INSERT INTO tasks (task_id, title, link, reward, type) VALUES (?,?,?,?,?)", default_tasks)
     conn.commit()
 
-# ---------- User System ----------
 def add_user(user_id, username, name):
     cursor.execute("INSERT OR IGNORE INTO users (user_id, username, name) VALUES (?,?,?)", (user_id, username, name))
     cursor.execute("INSERT OR IGNORE INTO wallet (user_id) VALUES (?)", (user_id,))
     conn.commit()
 
-# ---------- Wallet ----------
 def get_wallet(user_id):
     cursor.execute("SELECT zyn, bttc FROM wallet WHERE user_id=?", (user_id,))
     return cursor.fetchone()
@@ -100,7 +92,6 @@ def add_zyn(user_id, amount):
     cursor.execute("UPDATE wallet SET zyn = zyn +? WHERE user_id=?", (amount, user_id))
     conn.commit()
 
-# ---------- Tap System ----------
 def add_tap(user_id):
     cursor.execute("UPDATE wallet SET taps = taps + 1 WHERE user_id=?", (user_id,))
     conn.commit()
@@ -113,7 +104,6 @@ def get_taps(user_id):
     row = cursor.fetchone()
     return row[0] if row else 0
 
-# ---------- Ad Counter ----------
 def get_ads_watched(user_id):
     cursor.execute("SELECT ads_watched FROM wallet WHERE user_id=?", (user_id,))
     row = cursor.fetchone()
@@ -127,7 +117,6 @@ def can_show_tap_ad(user_id):
     taps = get_taps(user_id)
     return taps > 0 and taps % 1000 == 0
 
-# ---------- Tap Missions ----------
 MISSIONS = [
     (1, "🌱 Tap Beginner", 5, 100),
     (2, "⚡ Tap Starter", 100, 1000),
@@ -164,7 +153,6 @@ def claim_mission(user_id, mission_id):
     conn.commit()
     return True
 
-# ---------- Daily Reward ----------
 def update_daily_reward(user_id):
     today = datetime.utcnow().strftime("%Y-%m-%d")
     cursor.execute("UPDATE wallet SET last_daily_reward=? WHERE user_id=?", (today, user_id))
@@ -179,7 +167,6 @@ def can_claim_daily_reward(user_id):
     today = datetime.utcnow().strftime("%Y-%m-%d")
     return get_last_daily_reward(user_id)!= today
 
-# ---------- Referral System ----------
 def add_referral(referrer_id):
     cursor.execute("UPDATE users SET referrals = referrals + 1 WHERE user_id=?", (referrer_id,))
     conn.commit()
@@ -187,4 +174,69 @@ def add_referral(referrer_id):
 def get_referrals(user_id):
     cursor.execute("SELECT referrals FROM users WHERE user_id=?", (user_id,))
     row = cursor.fetchone()
-    return row[0] if row else
+    return row[0] if row else 0
+
+def set_referred_by(user_id, referrer_id):
+    cursor.execute("UPDATE users SET referred_by=? WHERE user_id=?", (referrer_id, user_id))
+    conn.commit()
+
+def get_referred_by(user_id):
+    cursor.execute("SELECT referred_by FROM users WHERE user_id=?", (user_id,))
+    row = cursor.fetchone()
+    return row[0] if row else None
+
+def update_lucky_spin(user_id):
+    today = datetime.utcnow().strftime("%Y-%m-%d")
+    cursor.execute("UPDATE wallet SET last_lucky_spin=? WHERE user_id=?", (today, user_id))
+    conn.commit()
+
+def get_last_lucky_spin(user_id):
+    cursor.execute("SELECT last_lucky_spin FROM wallet WHERE user_id=?", (user_id,))
+    row = cursor.fetchone()
+    return row[0] if row else None
+
+def can_spin(user_id):
+    today = datetime.utcnow().strftime("%Y-%m-%d")
+    return get_last_lucky_spin(user_id)!= today
+
+def start_farming(user_id, start_time, claim_time):
+    cursor.execute("UPDATE wallet SET farming_start=?, farming_claim=? WHERE user_id=?", (start_time, claim_time, user_id))
+    conn.commit()
+
+def get_farming(user_id):
+    cursor.execute("SELECT farming_start, farming_claim FROM wallet WHERE user_id=?", (user_id,))
+    return cursor.fetchone()
+
+def reset_farming(user_id):
+    cursor.execute("UPDATE wallet SET farming_start=NULL, farming_claim=NULL WHERE user_id=?", (user_id,))
+    conn.commit()
+
+def get_all_tasks():
+    cursor.execute("SELECT task_id, title, link, reward FROM tasks")
+    return cursor.fetchall()
+
+def is_task_claimed(user_id, task_id):
+    cursor.execute("SELECT claimed FROM task_claims WHERE user_id=? AND task_id=?", (user_id, task_id))
+    row = cursor.fetchone()
+    return row and row[0]==1
+
+def claim_task(user_id, task_id):
+    if is_task_claimed(user_id, task_id):
+        return False
+    cursor.execute("SELECT reward FROM tasks WHERE task_id=?", (task_id,))
+    row = cursor.fetchone()
+    if not row:
+        return False
+    reward = row[0]
+    cursor.execute("INSERT OR REPLACE INTO task_claims (user_id, task_id, claimed) VALUES (?,?,1)", (user_id, task_id))
+    cursor.execute("UPDATE wallet SET zyn=zyn+? WHERE user_id=?", (reward, user_id))
+    conn.commit()
+    return reward
+
+def get_full_profile(user_id):
+    cursor.execute("SELECT u.user_id, u.username, u.name, u.referrals, w.zyn, w.bttc, w.taps FROM users u JOIN wallet w ON u.user_id=w.user_id WHERE u.user_id=?", (user_id,))
+    return cursor.fetchone()
+
+def get_leaderboard_top():
+    cursor.execute("SELECT u.name, w.zyn FROM users u JOIN wallet w ON u.user_id=w.user_id ORDER BY w.zyn DESC LIMIT 10")
+    return cursor.fetchall()

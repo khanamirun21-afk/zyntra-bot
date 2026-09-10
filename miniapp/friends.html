@@ -1,34 +1,80 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-<title>Friends - Zyntra</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZYN Friends</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
-body{background:#070A14;color:#fff;padding-bottom:90px}
-.header{padding:16px;font-weight:800;display:flex;justify-content:space-between;align-items:center}
-.card{margin:12px 16px;background:#12182C;border:1px solid #1E293B;border-radius:20px;padding:18px}
-.invite-box{background:linear-gradient(135deg,#6366F1,#8B5CF6);border-radius:16px;padding:16px;text-align:center;margin:12px 0}
-.btn{width:100%;padding:14px;border:none;border-radius:12px;font-weight:800;cursor:pointer;margin-top:10px}
-.btn-primary{background:#fff;color:#000}
-.btn-sec{background:#1E293B;color:#fff;border:1px solid #2D3A4F}
-.friend-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #1E293B}
-.friend-row:last-child{border:none}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#0B0F20;border-top:1px solid #1E293B;display:flex;justify-content:space-around;padding:10px 0 18px}
-.nav-item{color:#475569;font-size:11px;text-align:center;text-decoration:none}
-.nav-item.active{color:#fff}
+*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
+body{background:#000;color:#fff;padding:15px;padding-bottom:80px}
+.card{background:#111;border:1px solid #222;border-radius:16px;padding:16px;margin-bottom:14px}
+h2{margin-bottom:10px}
+.ref-box{background:#1a1a1a;padding:12px;border-radius:12px;word-break:break-all;font-size:14px;border:1px dashed #444;margin:10px 0}
+.btn{width:100%;padding:14px;background:#fff;color:#000;border:none;border-radius:12px;font-weight:700;font-size:15px;margin-top:10px}
+.btn2{background:#222;color:#fff;border:1px solid #333}
+.row{display:flex;justify-content:space-between;margin:8px 0}
+.leader{font-size:14px;padding:8px 0;border-bottom:1px solid #1a1a1a}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#0a0a0a;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #222}
+.nav a{color:#888;text-decoration:none;font-size:12px;text-align:center}
+.nav a.active{color:#fff}
 </style>
 </head>
 <body>
-<div class="header">
-<div onclick="location.href='index.html'" style="cursor:pointer">← Back</div>
-<div>👥 Friends</div>
-<div style="width:40px"></div>
+
+<h2>Invite Friends</h2>
+<p style="color:#888;font-size:14px">Har friend pe +500 ZYN + 10% uski earning ka</p>
+
+<div class="card">
+<div class="row"><span>Total Friends</span><b id="fCount">0</b></div>
+<div class="row"><span>Total Earned</span><b id="fEarn">0 ZYN</b></div>
+<div class="ref-box" id="refLink">Loading...</div>
+<button class="btn" onclick="copyRef()">Copy Invite Link</button>
+<button class="btn btn2" onclick="shareRef()">Share on Telegram</button>
 </div>
 
 <div class="card">
-<div style="font-size:13px;color:#94A3B8">TOTAL EARNED FROM FRIENDS</div>
-<div style="font-size:28px;font-weight:800;margin:6px 0">🟡 <span id="refEarn">0</span> ZYN</div>
-<div style="display:flex;gap:12px;margin-top:12px">
-<div style="flex:1;background:#0E1324;padding:10px;border-radius:12px;text-align:center"><div style="font-size:20px;font
+<h3>Your Friends</h3>
+<div id="fList" style="margin-top:10px;color:#888;font-size:14px">Abhi koi friend nahi hai. Invite karo!</div>
+</div>
+
+<div class="card">
+<h3>Leaderboard - Top 10</h3>
+<div id="board"></div>
+</div>
+
+<div class="nav">
+<a href="index.html">Home</a>
+<a href="friends.html" class="active">Friends</a>
+<a href="wallet.html">Wallet</a>
+</div>
+
+<script>
+let tg = window.Telegram?.WebApp; if(tg) tg.expand();
+let uid = tg?.initDataUnsafe?.user?.id || Math.floor(Math.random()*1000000);
+let ref = `https://t.me/Zyntra_bot?start=${uid}`;
+
+document.getElementById('refLink').innerText = ref;
+
+let fCount = parseInt(localStorage.getItem('friends_count')||'0');
+let fEarn = parseInt(localStorage.getItem('friends_earn')||'0');
+
+document.getElementById('fCount').innerText = fCount;
+document.getElementById('fEarn').innerText = fEarn + ' ZYN';
+
+function copyRef(){
+ navigator.clipboard.writeText(ref);
+ alert('Link Copied!');
+}
+function shareRef(){
+ let url = `https://t.me/share/url?url=${encodeURIComponent(ref)}&text=${encodeURIComponent('Join ZYN and earn 500 ZYN bonus!')}`;
+ window.open(url,'_blank');
+}
+
+// fake leaderboard
+let names = ['Arjun','Rohit','Sahil','Aman','Vikash','Priya','Ankit','Ravi','Kunal','Neha'];
+let html='';
+for(let i=0;i<10;i++){
+ html+=`<div class="leader"><span>${i+1}. ${names[i]} - ${Math.floor(5000-i*300)} Friends</span></div>`;
+}
+document.getElementById('board').innerHTML = html;
+
+//

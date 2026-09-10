@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-<title>Zyntra</title>
+<title>Zyntra - Real Missions</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
@@ -10,132 +10,149 @@ body{background:#070A14;color:#fff;padding-bottom:90px;user-select:none}
 .header{display:flex;justify-content:space-between;padding:16px;font-weight:800}
 .balance-card{margin:10px 16px;background:#12182C;border:1px solid #1E293B;border-radius:20px;padding:18px}
 .tap-wrap{display:flex;flex-direction:column;align-items:center;margin-top:10px}
-.tap-btn{width:200px;height:200px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#6366F1,#1E1B4B);border:8px solid #171D36;box-shadow:0 0 40px rgba(99,102,241,.4);font-size:60px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.05s}
+.tap-btn{width:200px;height:200px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#6366F1,#1E1B4B);border:8px solid #171D36;box-shadow:0 0 40px rgba(99,102,241,.4);font-size:60px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .tap-btn:active{transform:scale(0.92)}
 .energy-bar{margin-top:16px;width:85%;background:#141A2E;height:12px;border-radius:20px;overflow:hidden;border:1px solid #1E293B}
 .energy-fill{height:100%;background:#22C55E;width:100%}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px}
 .card{background:#12182C;border:1px solid #1E293B;border-radius:18px;padding:16px;cursor:pointer}
 .card:active{background:#1A2442}
+.mission-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);display:none;z-index:999;padding:20px;overflow-y:auto}
+.mission-box{background:#12182C;border:1px solid #1E293B;border-radius:20px;padding:20px;margin-top:60px}
+.mission-item{background:#0E1324;border:1px solid #1E293B;border-radius:14px;padding:14px;margin:10px 0;display:flex;justify-content:space-between;align-items:center}
+.m-btn{padding:8px 16px;border-radius:20px;border:none;font-weight:700;cursor:pointer}
+.m-btn-go{background:#6366F1;color:#fff}
+.m-btn-claim{background:#22C55E;color:#000}
+.m-btn-done{background:#1E293B;color:#64748B}
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#0B0F20;border-top:1px solid #1E293B;display:flex;justify-content:space-around;padding:10px 0 18px}
-.nav-item{color:#475569;font-size:10px;text-align:center}
 </style>
 </head>
 <body>
-<div class="header"><div>⚡ ZYNTRA</div><div style="background:#1A1E32;padding:5px 10px;border-radius:20px;font-size:12px" id="lvl">LVL 1</div></div>
-
+<div class="header"><div>⚡ ZYNTRA</div><div style="background:#1A1E32;padding:5px 10px;border-radius:20px;font-size:12px">REAL TASKS</div></div>
 <div class="balance-card">
 <div style="font-size:11px;color:#64748B">TOTAL BALANCE</div>
-<div style="font-size:34px;font-weight:800;margin:6px 0">🟡 <span id="zyn">188</span> ZYN</div>
+<div style="font-size:34px;font-weight:800;margin:6px 0">🟡 <span id="zyn">0</span> ZYN</div>
 <div style="font-size:13px;color:#94A3B8">⚡ <span id="energyTxt">500</span>/500 • 🎯 <span id="taps">0</span></div>
 </div>
-
 <div class="tap-wrap">
 <div class="tap-btn" id="tapBtn">⚡</div>
 <div class="energy-bar"><div class="energy-fill" id="energyFill"></div></div>
-<div style="margin-top:8px;font-size:12px;color:#64748B" id="rechargeTxt">100/hr • 500/500 Full</div>
+<div style="margin-top:8px;font-size:12px;color:#64748B" id="rechargeTxt">100/hr Charging</div>
 </div>
-
 <div class="grid">
-<div class="card" id="btnDaily">🎁<br><b>Daily Bonus</b><br><small style="color:#64748B">Claim +50 ZYN</small></div>
+<div class="card" id="btnDaily">🎁<br><b>Daily Bonus</b><br><small style="color:#64748B">+50 ZYN</small></div>
 <div class="card" id="btnFarm">🌱<br><b>Farming</b><br><small id="farmDesc" style="color:#64748B">Start 3H +120</small></div>
-<div class="card" id="btnMissions">🎯<br><b>Missions</b><br><small style="color:#64748B">Earn more</small></div>
+<div class="card" id="btnMissions">🎯<br><b>Missions</b><br><small style="color:#FFD60A">4 Tasks +400 ZYN</small></div>
 <div class="card" id="btnFriends">👥<br><b>Friends</b><br><small style="color:#64748B">10% bonus</small></div>
 <div class="card" id="btnSpin">🎰<br><b>Lucky Spin</b><br><small id="spinDesc" style="color:#64748B">3 / day</small></div>
 <div class="card" id="btnBoost">🚀<br><b>Boost</b><br><small style="color:#64748B">Coming soon</small></div>
 </div>
 
-<div class="bottom-nav"><div class="nav-item">Exchange</div><div class="nav-item">Mine</div><div class="nav-item">Friends</div><div class="nav-item">Earn</div><div class="nav-item">Wallet</div></div>
+<!-- MISSIONS MODAL -->
+<div class="mission-modal" id="missionModal">
+<div class="mission-box">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h3>🎯 Real Missions</h3><div onclick="closeMissions()" style="background:#1E293B;padding:6px 12px;border-radius:20px;cursor:pointer">✕</div></div>
+<p style="color:#64748B;font-size:12px;margin-bottom:12px">Task complete karo aur 400 ZYN earn karo! Link open karke 10 sec ruko fir claim karo.</p>
+
+<div class="mission-item">
+<div><div style="font-weight:700">📢 Join Telegram</div><small style="color:#64748B">@ZyntraBotOfficial</small></div>
+<button class="m-btn m-btn-go" id="m1Btn" onclick="doMission('m1','https://t.me/ZyntraBotOfficial')">Go</button>
+</div>
+
+<div class="mission-item">
+<div><div style="font-weight:700">▶️ Subscribe YouTube</div><small style="color:#64748B">@zyntraearn</small></div>
+<button class="m-btn m-btn-go" id="m2Btn" onclick="doMission('m2','https://youtube.com/@zyntraearn?si=3nnk7Lgmpu8mHSl1')">Go</button>
+</div>
+
+<div class="mission-item">
+<div><div style="font-weight:700">🐦 Follow on X</div><small style="color:#64748B">@FaisalKhan9h7</small></div>
+<button class="m-btn m-btn-go" id="m3Btn" onclick="doMission('m3','https://x.com/FaisalKhan9h7')">Go</button>
+</div>
+
+<div class="mission-item">
+<div><div style="font-weight:700">📸 Follow Instagram</div><small style="color:#64748B">zyntra_official_bot</small></div>
+<button class="m-btn m-btn-go" id="m4Btn" onclick="doMission('m4','https://www.instagram.com/zyntra_official_bot?stkn=Ynp4bTdpbm92ZmR6')">Go</button>
+</div>
+
+<div style="margin-top:16px;background:#0E1324;padding:12px;border-radius:12px;text-align:center;color:#94A3B8;font-size:12px">Completed: <span id="mDone">0</span>/4 • Earned: <span id="mEarn">0</span> ZYN</div>
+</div>
+</div>
+
+<div class="bottom-nav"><div style="color:#fff">Exchange</div><div>Mine</div><div>Friends</div><div>Earn</div><div>Wallet</div></div>
 
 <script>
-let tg = window.Telegram?.WebApp; if(tg){tg.expand(); tg.ready();}
-let maxEnergy = 500;
-let zyn = parseInt(localStorage.getItem("zyn_final") || "188");
-let taps = parseInt(localStorage.getItem("taps_final") || "0");
-let energy = parseInt(localStorage.getItem("energy_final") || "500");
+let tg=window.Telegram?.WebApp; if(tg){tg.expand(); tg.ready();}
+let maxEnergy=500;
+let zyn=parseInt(localStorage.getItem("zyn_final")||"353");
+let taps=parseInt(localStorage.getItem("taps_final")||"50");
+let energy=parseInt(localStorage.getItem("energy_final")||"451");
 
-function save(){
- localStorage.setItem("zyn_final", zyn);
- localStorage.setItem("taps_final", taps);
- localStorage.setItem("energy_final", energy);
- render();
-}
+function save(){localStorage.setItem("zyn_final",zyn);localStorage.setItem("taps_final",taps);localStorage.setItem("energy_final",energy);render();}
 function render(){
- document.getElementById("zyn").innerText = zyn.toLocaleString();
- document.getElementById("taps").innerText = taps;
- document.getElementById("energyTxt").innerText = energy;
- document.getElementById("energyFill").style.width = (energy/maxEnergy*100)+"%";
- document.getElementById("rechargeTxt").innerText = energy>=maxEnergy ? "100/hr • 500/500 Full" : "100/hr • "+energy+"/500 Charging";
- let today = new Date().toDateString();
- let spins = parseInt(localStorage.getItem("spins_final")||"0");
- let lastDay = localStorage.getItem("spinDay_final")||"";
- if(lastDay!==today) spins=0;
- document.getElementById("spinDesc").innerText = (3-spins)+" left today";
+ document.getElementById("zyn").innerText=zyn.toLocaleString();
+ document.getElementById("taps").innerText=taps;
+ document.getElementById("energyTxt").innerText=energy;
+ document.getElementById("energyFill").style.width=(energy/maxEnergy*100)+"%";
+ document.getElementById("rechargeTxt").innerText=energy>=maxEnergy?"100/hr • 500/500 Full":"100/hr • "+energy+"/500 Charging";
+ let today=new Date().toDateString(), spins=parseInt(localStorage.getItem("spins_final")||"0"), lastDay=localStorage.getItem("spinDay_final")||""; if(lastDay!==today) spins=0;
+ document.getElementById("spinDesc").innerText=(3-spins)+" left today";
+ updateMissionsUI();
 }
 render();
-
 let lastTap=0;
 document.getElementById("tapBtn").addEventListener("touchstart", doTap);
 document.getElementById("tapBtn").addEventListener("click", doTap);
+function doTap(e){if(e) e.preventDefault(); let now=Date.now(); if(now-lastTap<80) return; lastTap=now; if(energy<=0) return; zyn++; taps++; energy--; if(tg?.HapticFeedback) tg.HapticFeedback.impactOccurred("light"); save();}
+setInterval(()=>{ if(energy<maxEnergy){ energy++; save(); } },36000);
 
-function doTap(e){
- if(e) e.preventDefault();
- let now=Date.now();
- if(now-lastTap<80) return;
- lastTap=now;
- if(energy<=0){ if(tg) tg.HapticFeedback.notificationOccurred("error"); return; }
- zyn++; taps++; energy--;
- if(tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred("light");
- save();
-}
-
-// 100 per hour = 36 sec per 1 energy
-setInterval(()=>{ if(energy<maxEnergy){ energy++; save(); } }, 36000);
-
-document.getElementById("btnDaily").addEventListener("click", ()=>{
- let last=parseInt(localStorage.getItem("daily_final")||"0");
- if(Date.now()-last < 86400000){ alert("Already claimed! Tomorrow"); return; }
- zyn+=50; localStorage.setItem("daily_final", Date.now()); save(); alert("+50 ZYN Claimed!");
-});
-
-document.getElementById("btnFarm").addEventListener("click", ()=>{
- let fs=localStorage.getItem("farm_final");
- if(!fs){ localStorage.setItem("farm_final", Date.now()); alert("Farming started! 3hr me 120 ZYN"); }
- else{
-  let diff=Date.now()-parseInt(fs);
-  if(diff>=10800000){ zyn+=120; localStorage.removeItem("farm_final"); save(); alert("Farming done +120 ZYN"); }
-  else alert("Wait "+Math.floor((10800000-diff)/60000)+" min");
- }
-});
-
-document.getElementById("btnSpin").addEventListener("click", ()=>{
- let today=new Date().toDateString();
- let spins=parseInt(localStorage.getItem("spins_final")||"0");
- let lastDay=localStorage.getItem("spinDay_final")||"";
- if(lastDay!==today){spins=0; localStorage.setItem("spinDay_final", today);}
- if(spins>=3){ alert("3 spins done today!"); return; }
- let lastT=parseInt(localStorage.getItem("spinTime_final")||"0");
- if(Date.now()-lastT < 600000 && spins>0){ alert("Wait "+Math.ceil((600000-(Date.now()-lastT))/60000)+" min"); return; }
- let win=Math.floor(Math.random()*91)+10;
- zyn+=win; spins++; localStorage.setItem("spins_final", spins); localStorage.setItem("spinTime_final", Date.now()); localStorage.setItem("spinDay_final", today); save();
- alert("You won "+win+" ZYN! ("+spins+"/3)");
-});
-
-document.getElementById("btnMissions").addEventListener("click", ()=> alert("Missions:\nJoin Channel +100\nFollow X +100\nInvite 3 friends +300"));
-document.getElementById("btnFriends").addEventListener("click", ()=>{
- let uid=tg?.initDataUnsafe?.user?.id || "8527942261";
- let link="https://t.me/zyntra_bot?start="+uid;
- prompt("Your referral link (copy):", link);
-});
+document.getElementById("btnDaily").addEventListener("click", ()=>{ let last=parseInt(localStorage.getItem("daily_final")||"0"); if(Date.now()-last<86400000){alert("Already claimed!");return;} zyn+=50; localStorage.setItem("daily_final",Date.now()); save(); alert("+50 ZYN"); });
+document.getElementById("btnFarm").addEventListener("click", ()=>{ let fs=localStorage.getItem("farm_final"); if(!fs){localStorage.setItem("farm_final",Date.now()); alert("Farming started 3H!");} else{ let diff=Date.now()-parseInt(fs); if(diff>=10800000){zyn+=120; localStorage.removeItem("farm_final"); save(); alert("+120 ZYN");} else alert(Math.floor((10800000-diff)/60000)+"m left"); }});
+document.getElementById("btnSpin").addEventListener("click", ()=>{ let today=new Date().toDateString(), spins=parseInt(localStorage.getItem("spins_final")||"0"), lastDay=localStorage.getItem("spinDay_final")||""; if(lastDay!==today){spins=0; localStorage.setItem("spinDay_final",today);} if(spins>=3){alert("3 spins done!");return;} let lastT=parseInt(localStorage.getItem("spinTime_final")||"0"); if(Date.now()-lastT<600000 && spins>0){alert("Wait "+Math.ceil((600000-(Date.now()-lastT))/60000)+" min");return;} let win=Math.floor(Math.random()*91)+10; zyn+=win; spins++; localStorage.setItem("spins_final",spins); localStorage.setItem("spinTime_final",Date.now()); localStorage.setItem("spinDay_final",today); save(); alert("Won "+win+" ZYN!"); });
+document.getElementById("btnFriends").addEventListener("click", ()=>{ let uid=tg?.initDataUnsafe?.user?.id||"8527942261"; let link="https://t.me/zyntra_bot?start="+uid; prompt("Your referral link:",link); });
 document.getElementById("btnBoost").addEventListener("click", ()=> alert("Boost coming soon!"));
 
-// Anti-cheat - 8 lakh fix
-if(zyn>20000){ zyn=500; save(); }
+// MISSIONS LOGIC
+function openMissions(){ document.getElementById("missionModal").style.display="block"; updateMissionsUI(); }
+function closeMissions(){ document.getElementById("missionModal").style.display="none"; }
+document.getElementById("btnMissions").addEventListener("click", openMissions);
 
-setInterval(()=>{
- let fs=localStorage.getItem("farm_final");
- if(fs){ let diff=10800000-(Date.now()-parseInt(fs)); if(diff>0) document.getElementById("farmDesc").innerText=Math.floor(diff/60000)+"m "+Math.floor((diff%60000)/1000)+"s left"; else document.getElementById("farmDesc").innerText="CLAIM +120!"; }
-},1000);
+let missionTimers={};
+function doMission(id, url){
+ let status=localStorage.getItem(id+"_status");
+ if(status==="done"){return;}
+ if(status==="pending"){
+   // Claim
+   zyn+=100; localStorage.setItem(id+"_status","done"); save(); alert("✅ +100 ZYN! Mission completed");
+   updateMissionsUI(); return;
+ }
+ // First time Go
+ window.open(url, "_blank");
+ localStorage.setItem(id+"_time", Date.now());
+ document.getElementById(id+"Btn").innerText="Wait 10s...";
+ document.getElementById(id+"Btn").className="m-btn m-btn-go";
+ let count=10;
+ missionTimers[id]=setInterval(()=>{
+   count--;
+   document.getElementById(id+"Btn").innerText="Wait "+count+"s";
+   if(count<=0){ clearInterval(missionTimers[id]); localStorage.setItem(id+"_status","pending"); document.getElementById(id+"Btn").innerText="Claim +100"; document.getElementById(id+"Btn").className="m-btn m-btn-claim"; }
+ },1000);
+}
+
+function updateMissionsUI(){
+ let done=0;
+ ["m1","m2","m3","m4"].forEach(id=>{
+   let status=localStorage.getItem(id+"_status");
+   let btn=document.getElementById(id+"Btn");
+   if(!btn) return;
+   if(status==="done"){ btn.innerText="Done ✓"; btn.className="m-btn m-btn-done"; done++; }
+   else if(status==="pending"){ btn.innerText="Claim +100"; btn.className="m-btn m-btn-claim"; }
+   else { btn.innerText="Go"; btn.className="m-btn m-btn-go"; }
+ });
+ document.getElementById("mDone").innerText=done;
+ document.getElementById("mEarn").innerText=done*100;
+ if(zyn>20000){zyn=500; save();}
+}
+setInterval(()=>{ let fs=localStorage.getItem("farm_final"); if(fs){ let diff=10800000-(Date.now()-parseInt(fs)); if(diff>0) document.getElementById("farmDesc").innerText=Math.floor(diff/60000)+"m "+Math.floor((diff%60000)/1000)+"s left"; else document.getElementById("farmDesc").innerText="CLAIM +120!"; } },1000);
 </script>
 </body>
 </html>

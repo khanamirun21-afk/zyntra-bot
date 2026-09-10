@@ -2,92 +2,140 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-<title>Zyntra Bot - Pro</title>
+<title>Zyntra</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;800&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,sans-serif}
-body{background:#070A14;color:#fff;padding-bottom:90px;-webkit-tap-highlight-color:transparent}
-.header{display:flex;justify-content:space-between;align-items:center;padding:16px}
-.logo{font-weight:800;letter-spacing:1px}
-.badge{background:#1A1E32;border:1px solid #1E293B;padding:6px 12px;border-radius:20px;font-size:12px}
-.balance-card{margin:12px 16px;background:linear-gradient(180deg,#12182C,#0E1324);border:1px solid #1E293B;border-radius:24px;padding:20px}
-.tap-wrap{display:flex;flex-direction:column;align-items:center;margin-top:12px}
-.tap-btn{width:210px;height:210px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#6366F1,#1E1B4B);border:8px solid #171D36;box-shadow:0 0 0 12px rgba(79,70,229,0.08),0 20px 60px rgba(79,70,229,0.4);font-size:54px;display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none}
-.tap-btn:active{transform:scale(0.95)}
-.energy-bar{margin-top:18px;width:86%;background:#141A2E;height:12px;border-radius:20px;overflow:hidden;border:1px solid #1E293B}
-.energy-fill{height:100%;background:linear-gradient(90deg,#22C55E,#86EFAC);width:100%;transition:0.3s}
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
+body{background:#070A14;color:#fff;padding-bottom:90px;user-select:none}
+.header{display:flex;justify-content:space-between;padding:16px;font-weight:800}
+.balance-card{margin:10px 16px;background:#12182C;border:1px solid #1E293B;border-radius:20px;padding:18px}
+.tap-wrap{display:flex;flex-direction:column;align-items:center;margin-top:10px}
+.tap-btn{width:200px;height:200px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#6366F1,#1E1B4B);border:8px solid #171D36;box-shadow:0 0 40px rgba(99,102,241,.4);font-size:60px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.05s}
+.tap-btn:active{transform:scale(0.92)}
+.energy-bar{margin-top:16px;width:85%;background:#141A2E;height:12px;border-radius:20px;overflow:hidden;border:1px solid #1E293B}
+.energy-fill{height:100%;background:#22C55E;width:100%}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px}
 .card{background:#12182C;border:1px solid #1E293B;border-radius:18px;padding:16px;cursor:pointer}
-.card:active{transform:scale(0.98)}
-.small{font-size:11px;color:#64748B;margin-top:4px}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(11,15,32,0.98);backdrop-filter:blur(20px);border-top:1px solid #1E293B;display:flex;justify-content:space-around;padding:10px 0 18px}
-.nav-item{text-align:center;color:#475569;font-size:10px;flex:1}.nav-item.active{color:#fff}.nav-icon{font-size:22px;display:block;margin-bottom:2px}
+.card:active{background:#1A2442}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#0B0F20;border-top:1px solid #1E293B;display:flex;justify-content:space-around;padding:10px 0 18px}
+.nav-item{color:#475569;font-size:10px;text-align:center}
 </style>
 </head>
 <body>
-<div class="header"><div class="logo">⚡ ZYNTRA</div><div class="badge" id="lvl">Level 1</div></div>
+<div class="header"><div>⚡ ZYNTRA</div><div style="background:#1A1E32;padding:5px 10px;border-radius:20px;font-size:12px" id="lvl">LVL 1</div></div>
 
 <div class="balance-card">
-<div style="font-size:11px;color:#64748B;letter-spacing:1px">TOTAL BALANCE</div>
-<div style="font-size:36px;font-weight:800;margin:8px 0">🟡 <span id="zyn">0</span> ZYN</div>
-<div style="font-size:13px;color:#94A3B8">⚡ <span id="energyTxt">500</span>/500 • 🎯 <span id="taps">0</span> Taps</div>
+<div style="font-size:11px;color:#64748B">TOTAL BALANCE</div>
+<div style="font-size:34px;font-weight:800;margin:6px 0">🟡 <span id="zyn">188</span> ZYN</div>
+<div style="font-size:13px;color:#94A3B8">⚡ <span id="energyTxt">500</span>/500 • 🎯 <span id="taps">0</span></div>
 </div>
 
 <div class="tap-wrap">
-<div class="tap-btn" onclick="doTap()">⚡</div>
+<div class="tap-btn" id="tapBtn">⚡</div>
 <div class="energy-bar"><div class="energy-fill" id="energyFill"></div></div>
-<div style="margin-top:8px;font-size:12px;color:#64748B" id="rechargeTxt">⚡ 100/hr • 500/500 Full</div>
+<div style="margin-top:8px;font-size:12px;color:#64748B" id="rechargeTxt">100/hr • 500/500 Full</div>
 </div>
 
 <div class="grid">
-<div class="card" onclick="openDaily()">🎁<br><b>Daily Bonus</b><div class="small" id="dailyTxt">Claim +50 ZYN</div></div>
-<div class="card" onclick="openFarm()">🌱<br><b id="farmTitle">Farming</b><div class="small" id="farmDesc">Start 3H Farm +120</div></div>
-<div class="card" onclick="openTasks()">🎯<br><b>Missions</b><div class="small">Earn more ZYN</div></div>
-<div class="card" onclick="openFriends()">👥<br><b>Friends</b><div class="small">10% bonus</div></div>
-<div class="card" onclick="openSpin()">🎰<br><b>Lucky Spin</b><div class="small" id="spinDesc">3 spins / day</div></div>
-<div class="card" onclick="openBoost()">🚀<br><b>Boost</b><div class="small">Multitap + Energy</div></div>
+<div class="card" id="btnDaily">🎁<br><b>Daily Bonus</b><br><small style="color:#64748B">Claim +50 ZYN</small></div>
+<div class="card" id="btnFarm">🌱<br><b>Farming</b><br><small id="farmDesc" style="color:#64748B">Start 3H +120</small></div>
+<div class="card" id="btnMissions">🎯<br><b>Missions</b><br><small style="color:#64748B">Earn more</small></div>
+<div class="card" id="btnFriends">👥<br><b>Friends</b><br><small style="color:#64748B">10% bonus</small></div>
+<div class="card" id="btnSpin">🎰<br><b>Lucky Spin</b><br><small id="spinDesc" style="color:#64748B">3 / day</small></div>
+<div class="card" id="btnBoost">🚀<br><b>Boost</b><br><small style="color:#64748B">Coming soon</small></div>
 </div>
 
-<div class="bottom-nav">
-<div class="nav-item active"><span class="nav-icon">💱</span>Exchange</div>
-<div class="nav-item"><span class="nav-icon">⛏️</span>Mine</div>
-<div class="nav-item"><span class="nav-icon">👥</span>Friends</div>
-<div class="nav-item"><span class="nav-icon">📋</span>Earn</div>
-<div class="nav-item"><span class="nav-icon">👛</span>Wallet</div>
-</div>
+<div class="bottom-nav"><div class="nav-item">Exchange</div><div class="nav-item">Mine</div><div class="nav-item">Friends</div><div class="nav-item">Earn</div><div class="nav-item">Wallet</div></div>
 
 <script>
-let tg=Telegram.WebApp; tg.expand();
-let maxEnergy=500; // ONLY 500
-let zyn=parseInt(localStorage.getItem("zyn_v3")||"188");
-let taps=parseInt(localStorage.getItem("taps_v3")||"0");
-let energy=parseInt(localStorage.getItem("energy_v3")||"500");
-let lastTap=0;
-
-// Anti-cheat reset for 8 lakh user
-if(zyn>20000){ zyn=5000; }
+let tg = window.Telegram?.WebApp; if(tg){tg.expand(); tg.ready();}
+let maxEnergy = 500;
+let zyn = parseInt(localStorage.getItem("zyn_final") || "188");
+let taps = parseInt(localStorage.getItem("taps_final") || "0");
+let energy = parseInt(localStorage.getItem("energy_final") || "500");
 
 function save(){
-localStorage.setItem("zyn_v3",zyn);
-localStorage.setItem("taps_v3",taps);
-localStorage.setItem("energy_v3",energy);
-render();
+ localStorage.setItem("zyn_final", zyn);
+ localStorage.setItem("taps_final", taps);
+ localStorage.setItem("energy_final", energy);
+ render();
 }
 function render(){
-document.getElementById("zyn").innerText=zyn.toLocaleString();
-document.getElementById("taps").innerText=taps;
-document.getElementById("energyTxt").innerText=energy;
-document.getElementById("energyFill").style.width=(energy/maxEnergy*100)+"%";
-document.getElementById("rechargeTxt").innerText=energy>=maxEnergy ? "⚡ 100/hr • 500/500 Full" : "⚡ 100/hr • "+energy+"/500 Recharging...";
-let spinsToday=parseInt(localStorage.getItem("spinsToday_v3")||"0");
-let lastDay=localStorage.getItem("lastSpinDay_v3")||"";
-let today=new Date().toDateString();
-if(lastDay!==today) spinsToday=0;
-document.getElementById("spinDesc").innerText=(3-spinsToday)+" spins left today";
+ document.getElementById("zyn").innerText = zyn.toLocaleString();
+ document.getElementById("taps").innerText = taps;
+ document.getElementById("energyTxt").innerText = energy;
+ document.getElementById("energyFill").style.width = (energy/maxEnergy*100)+"%";
+ document.getElementById("rechargeTxt").innerText = energy>=maxEnergy ? "100/hr • 500/500 Full" : "100/hr • "+energy+"/500 Charging";
+ let today = new Date().toDateString();
+ let spins = parseInt(localStorage.getItem("spins_final")||"0");
+ let lastDay = localStorage.getItem("spinDay_final")||"";
+ if(lastDay!==today) spins=0;
+ document.getElementById("spinDesc").innerText = (3-spins)+" left today";
 }
 render();
 
-function doTap(){
-let now=Date.now();
-if(now-lastTap<100) return; // anti autoc
+let lastTap=0;
+document.getElementById("tapBtn").addEventListener("touchstart", doTap);
+document.getElementById("tapBtn").addEventListener("click", doTap);
+
+function doTap(e){
+ if(e) e.preventDefault();
+ let now=Date.now();
+ if(now-lastTap<80) return;
+ lastTap=now;
+ if(energy<=0){ if(tg) tg.HapticFeedback.notificationOccurred("error"); return; }
+ zyn++; taps++; energy--;
+ if(tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred("light");
+ save();
+}
+
+// 100 per hour = 36 sec per 1 energy
+setInterval(()=>{ if(energy<maxEnergy){ energy++; save(); } }, 36000);
+
+document.getElementById("btnDaily").addEventListener("click", ()=>{
+ let last=parseInt(localStorage.getItem("daily_final")||"0");
+ if(Date.now()-last < 86400000){ alert("Already claimed! Tomorrow"); return; }
+ zyn+=50; localStorage.setItem("daily_final", Date.now()); save(); alert("+50 ZYN Claimed!");
+});
+
+document.getElementById("btnFarm").addEventListener("click", ()=>{
+ let fs=localStorage.getItem("farm_final");
+ if(!fs){ localStorage.setItem("farm_final", Date.now()); alert("Farming started! 3hr me 120 ZYN"); }
+ else{
+  let diff=Date.now()-parseInt(fs);
+  if(diff>=10800000){ zyn+=120; localStorage.removeItem("farm_final"); save(); alert("Farming done +120 ZYN"); }
+  else alert("Wait "+Math.floor((10800000-diff)/60000)+" min");
+ }
+});
+
+document.getElementById("btnSpin").addEventListener("click", ()=>{
+ let today=new Date().toDateString();
+ let spins=parseInt(localStorage.getItem("spins_final")||"0");
+ let lastDay=localStorage.getItem("spinDay_final")||"";
+ if(lastDay!==today){spins=0; localStorage.setItem("spinDay_final", today);}
+ if(spins>=3){ alert("3 spins done today!"); return; }
+ let lastT=parseInt(localStorage.getItem("spinTime_final")||"0");
+ if(Date.now()-lastT < 600000 && spins>0){ alert("Wait "+Math.ceil((600000-(Date.now()-lastT))/60000)+" min"); return; }
+ let win=Math.floor(Math.random()*91)+10;
+ zyn+=win; spins++; localStorage.setItem("spins_final", spins); localStorage.setItem("spinTime_final", Date.now()); localStorage.setItem("spinDay_final", today); save();
+ alert("You won "+win+" ZYN! ("+spins+"/3)");
+});
+
+document.getElementById("btnMissions").addEventListener("click", ()=> alert("Missions:\nJoin Channel +100\nFollow X +100\nInvite 3 friends +300"));
+document.getElementById("btnFriends").addEventListener("click", ()=>{
+ let uid=tg?.initDataUnsafe?.user?.id || "8527942261";
+ let link="https://t.me/zyntra_bot?start="+uid;
+ prompt("Your referral link (copy):", link);
+});
+document.getElementById("btnBoost").addEventListener("click", ()=> alert("Boost coming soon!"));
+
+// Anti-cheat - 8 lakh fix
+if(zyn>20000){ zyn=500; save(); }
+
+setInterval(()=>{
+ let fs=localStorage.getItem("farm_final");
+ if(fs){ let diff=10800000-(Date.now()-parseInt(fs)); if(diff>0) document.getElementById("farmDesc").innerText=Math.floor(diff/60000)+"m "+Math.floor((diff%60000)/1000)+"s left"; else document.getElementById("farmDesc").innerText="CLAIM +120!"; }
+},1000);
+</script>
+</body>
+</html>

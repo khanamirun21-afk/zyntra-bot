@@ -1,80 +1,155 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ZYN Friends</title>
+
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
-body{background:#000;color:#fff;padding:15px;padding-bottom:80px}
-.card{background:#111;border:1px solid #222;border-radius:16px;padding:16px;margin-bottom:14px}
-h2{margin-bottom:10px}
-.ref-box{background:#1a1a1a;padding:12px;border-radius:12px;word-break:break-all;font-size:14px;border:1px dashed #444;margin:10px 0}
-.btn{width:100%;padding:14px;background:#fff;color:#000;border:none;border-radius:12px;font-weight:700;font-size:15px;margin-top:10px}
-.btn2{background:#222;color:#fff;border:1px solid #333}
-.row{display:flex;justify-content:space-between;margin:8px 0}
-.leader{font-size:14px;padding:8px 0;border-bottom:1px solid #1a1a1a}
-.nav{position:fixed;bottom:0;left:0;right:0;background:#0a0a0a;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #222}
-.nav a{color:#888;text-decoration:none;font-size:12px;text-align:center}
-.nav a.active{color:#fff}
+body {
+  background: #0f0f0f;
+  color: white;
+  font-family: sans-serif;
+  padding: 15px;
+}
+
+.card {
+  background: #1e1e1e;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+
+button {
+  background: #2aabee;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin: 5px;
+  cursor: pointer;
+}
+
+input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+#friendsList {
+  margin-top: 10px;
+}
+
+.friend {
+  background: #292929;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+}
 </style>
 </head>
+
 <body>
 
-<h2>Invite Friends</h2>
-<p style="color:#888;font-size:14px">Har friend pe +500 ZYN + 10% uski earning ka</p>
-
 <div class="card">
-<div class="row"><span>Total Friends</span><b id="fCount">0</b></div>
-<div class="row"><span>Total Earned</span><b id="fEarn">0 ZYN</b></div>
-<div class="ref-box" id="refLink">Loading...</div>
-<button class="btn" onclick="copyRef()">Copy Invite Link</button>
-<button class="btn btn2" onclick="shareRef()">Share on Telegram</button>
+  <h2>Invite & Earn</h2>
+
+  <p>Your Link:</p>
+
+  <input
+    id="refLink"
+    readonly
+    value="https://t.me/your_bot?start=123456"
+  >
+
+  <button onclick="copyLink()">📋 Copy</button>
+  <button onclick="shareTG()">📤 Share</button>
 </div>
 
-<div class="card">
-<h3>Your Friends</h3>
-<div id="fList" style="margin-top:10px;color:#888;font-size:14px">Abhi koi friend nahi hai. Invite karo!</div>
+<div class="card stats">
+  <div>Total: <span id="totalFriends">0</span></div>
+  <div>Earned: <span id="bonusEarned">0 ZYN</span></div>
+
+  <button onclick="claimBonus()">Claim Bonus</button>
 </div>
 
-<div class="card">
-<h3>Leaderboard - Top 10</h3>
-<div id="board"></div>
-</div>
-
-<div class="nav">
-<a href="index.html">Home</a>
-<a href="friends.html" class="active">Friends</a>
-<a href="wallet.html">Wallet</a>
+<div class="card" id="friendsList">
+  Loading...
 </div>
 
 <script>
-let tg = window.Telegram?.WebApp; if(tg) tg.expand();
-let uid = tg?.initDataUnsafe?.user?.id || Math.floor(Math.random()*1000000);
-let ref = `https://t.me/Zyntra_bot?start=${uid}`;
+let userId =
+  window.Telegram?.WebApp?.initDataUnsafe?.user?.id || "123456";
 
-document.getElementById('refLink').innerText = ref;
+let documentGetElementById =
+  id => document.getElementById(id);
 
-let fCount = parseInt(localStorage.getItem('friends_count')||'0');
-let fEarn = parseInt(localStorage.getItem('friends_earn')||'0');
+let refLink =
+  documentGetElementById("refLink");
 
-document.getElementById('fCount').innerText = fCount;
-document.getElementById('fEarn').innerText = fEarn + ' ZYN';
+refLink.value =
+  "https://t.me/your_bot?start=" + userId;
 
-function copyRef(){
- navigator.clipboard.writeText(ref);
- alert('Link Copied!');
+
+// Copy Link
+function copyLink() {
+  navigator.clipboard.writeText(refLink.value)
+    .then(() => {
+      alert("✅ Link Copied!");
+    })
+    .catch(() => {
+      refLink.select();
+      document.execCommand("copy");
+      alert("✅ Link Copied!");
+    });
 }
-function shareRef(){
- let url = `https://t.me/share/url?url=${encodeURIComponent(ref)}&text=${encodeURIComponent('Join ZYN and earn 500 ZYN bonus!')}`;
- window.open(url,'_blank');
+
+
+// Telegram Share
+function shareTG() {
+  let url =
+    "https://t.me/share/url?url=" +
+    encodeURIComponent(refLink.value) +
+    "&text=" +
+    encodeURIComponent("Join Zyntra using my invite link!");
+
+  window.open(url, "_blank");
 }
 
-// fake leaderboard
-let names = ['Arjun','Rohit','Sahil','Aman','Vikash','Priya','Ankit','Ravi','Kunal','Neha'];
-let html='';
-for(let i=0;i<10;i++){
- html+=`<div class="leader"><span>${i+1}. ${names[i]} - ${Math.floor(5000-i*300)} Friends</span></div>`;
-}
-document.getElementById('board').innerHTML = html;
 
-//
+// Claim Bonus
+function claimBonus() {
+  alert("🎁 Bonus claimed!");
+}
+
+
+// Friends List
+let friends =
+  JSON.parse(localStorage.getItem("zyntra_friends") || "[]");
+
+documentGetElementById("totalFriends").innerText =
+  friends.length;
+
+if (friends.length > 0) {
+
+  documentGetElementById("friendsList").innerHTML =
+    friends.map(friend => `
+      <div class="friend">
+        👤 ${friend}
+      </div>
+    `).join("");
+
+} else {
+
+  documentGetElementById("friendsList").innerHTML =
+    "No friends yet - Invite now!";
+
+}
+</script>
+
+</body>
+</html>

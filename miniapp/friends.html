@@ -19,29 +19,44 @@ body {
   margin-bottom: 15px;
 }
 
-button {
-  background: #2aabee;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 8px;
-  margin: 5px;
-  cursor: pointer;
+.link-box {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
 input {
-  width: 100%;
+  flex: 1;
   box-sizing: border-box;
   padding: 10px;
   background: #000;
   color: #fff;
   border: none;
   border-radius: 8px;
-  margin-bottom: 8px;
+  min-width: 0;
 }
 
-#friendsList {
+button {
+  background: #2aabee;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.copy-btn {
+  white-space: nowrap;
+}
+
+.share-btn {
   margin-top: 10px;
+  background: #229ed9;
+}
+
+.claim-btn {
+  margin-top: 10px;
+  background: #28a745;
 }
 
 .friend {
@@ -60,95 +75,139 @@ input {
 
   <p>Your Link:</p>
 
-  <input
-    id="refLink"
-    readonly
-    value="https://t.me/your_bot?start=123456"
-  >
+  <div class="link-box">
+    <input id="refLink" readonly>
 
-  <button onclick="copyLink()">📋 Copy</button>
-  <button onclick="shareTG()">📤 Share</button>
+    <button id="copyBtn" class="copy-btn" onclick="copyLink()">
+      Copy
+    </button>
+  </div>
+
+  <button class="share-btn" onclick="shareTG()">
+    Share
+  </button>
 </div>
 
-<div class="card stats">
-  <div>Total: <span id="totalFriends">0</span></div>
-  <div>Earned: <span id="bonusEarned">0 ZYN</span></div>
 
-  <button onclick="claimBonus()">Claim Bonus</button>
+<div class="card">
+  <div>
+    Total:
+    <span id="totalFriends">0</span>
+  </div>
+
+  <div>
+    Earned:
+    <span id="bonusEarned">0 ZYN</span>
+  </div>
+
+  <button class="claim-btn" onclick="claimBonus()">
+    Claim Bonus
+  </button>
 </div>
+
 
 <div class="card" id="friendsList">
   Loading...
 </div>
 
+
 <script>
+
 let userId =
   window.Telegram?.WebApp?.initDataUnsafe?.user?.id || "123456";
 
-let documentGetElementById =
-  id => document.getElementById(id);
-
 let refLink =
-  documentGetElementById("refLink");
+  document.getElementById("refLink");
 
 refLink.value =
-  "https://t.me/your_bot?start=" + userId;
+  "https://t.me/zyntra_bot?start=" + userId;
 
 
-// Copy Link
+// COPY BUTTON
 function copyLink() {
-  navigator.clipboard.writeText(refLink.value)
-    .then(() => {
-      alert("✅ Link Copied!");
+
+  let link = refLink.value;
+  let copyBtn = document.getElementById("copyBtn");
+
+  navigator.clipboard.writeText(link)
+    .then(function() {
+
+      copyBtn.innerText = "Copied ✓";
+
+      setTimeout(function() {
+        copyBtn.innerText = "Copy";
+      }, 2000);
+
     })
-    .catch(() => {
+    .catch(function() {
+
       refLink.select();
+      refLink.setSelectionRange(0, 99999);
+
       document.execCommand("copy");
-      alert("✅ Link Copied!");
+
+      copyBtn.innerText = "Copied ✓";
+
+      setTimeout(function() {
+        copyBtn.innerText = "Copy";
+      }, 2000);
+
     });
 }
 
 
-// Telegram Share
+// TELEGRAM SHARE
 function shareTG() {
+
   let url =
     "https://t.me/share/url?url=" +
     encodeURIComponent(refLink.value) +
     "&text=" +
-    encodeURIComponent("Join Zyntra using my invite link!");
+    encodeURIComponent(
+      "Join Zyntra using my invite link!"
+    );
 
   window.open(url, "_blank");
 }
 
 
-// Claim Bonus
+// CLAIM BONUS
 function claimBonus() {
-  alert("🎁 Bonus claimed!");
+
+  alert("Bonus claimed!");
 }
 
 
-// Friends List
+// FRIENDS LIST
 let friends =
-  JSON.parse(localStorage.getItem("zyntra_friends") || "[]");
+  JSON.parse(
+    localStorage.getItem("zyntra_friends") || "[]"
+  );
 
-documentGetElementById("totalFriends").innerText =
+document.getElementById("totalFriends").innerText =
   friends.length;
+
 
 if (friends.length > 0) {
 
-  documentGetElementById("friendsList").innerHTML =
-    friends.map(friend => `
-      <div class="friend">
-        👤 ${friend}
-      </div>
-    `).join("");
+  document.getElementById("friendsList").innerHTML =
+    friends.map(function(friend) {
+
+      return `
+        <div class="friend">
+          👤 ${friend}
+        </div>
+      `;
+
+    }).join("");
 
 } else {
 
-  documentGetElementById("friendsList").innerHTML =
+  document.getElementById("friendsList").innerHTML =
     "No friends yet - Invite now!";
 
 }
+
 </script>
 
 </body>

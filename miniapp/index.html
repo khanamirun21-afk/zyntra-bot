@@ -1,63 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zyntra</title>
+<title>Zyntra Network</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src='//libtl.com/sdk.js' data-zone='11817232' data-sdk='show_11817232'></script>
 <style>
-  body{margin:0;background:#08081a;color:#fff;font-family:Inter,sans-serif;padding:15px;padding-bottom:80px}
-  .top{background:#191932;border-radius:18px;padding:16px;text-align:center;border:1px solid #2a2a4a}
-  .balance{font-size:28px;font-weight:800}
-  .sub{opacity:0.7;font-size:14px;margin-top:5px}
-  .main-circle{width:190px;height:190px;margin:25px auto;background:radial-gradient(circle at 30% 30%,#6c6cff,#3a3aff);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:70px;box-shadow:0 0 40px #3a3aff88}
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
-  .card{background:#1e1e3e;border:1px solid #2e2e5a;border-radius:16px;padding:16px;text-align:left;line-height:1.4}
-  .card b{display:block;margin-top:6px}
-  .card.friends{border-color:#2aabee;cursor:pointer;background:#1e2a4a}
-  .nav{position:fixed;bottom:0;left:0;right:0;background:#12122a;border-top:1px solid #2a2a4a;display:flex;justify-content:space-around;padding:12px 0}
-  .nav a{color:#888;text-decoration:none;font-size:13px;text-align:center}
-  .nav a.active{color:#fff}
+body{background:#0a0a0a;color:#fff;font-family:sans-serif;margin:0;padding:15px}
+.header{text-align:center;padding:15px 0}
+.header h1{color:#a855f7;margin:0;font-size:28px}
+.card{background:linear-gradient(135deg,#a855f7,#6366f1);border-radius:20px;padding:20px;text-align:center}
+.card h2{font-size:32px;margin:5px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}
+.btn{background:#1e1e1e;border:1px solid #333;border-radius:16px;padding:18px 8px;text-align:center;cursor:pointer}
+.btn:active{transform:scale(0.95)}
+.btn span{font-size:26px;display:block}
+.btn p{margin:6px 0 0 0;font-size:13px;font-weight:bold}
+.full{grid-column:span 2}
+.ad-main{background:linear-gradient(135deg,#22c55e,#16a34a);border:none;width:100%;padding:16px;border-radius:14px;color:#fff;font-weight:bold;font-size:16px;margin-top:15px;cursor:pointer}
+.progress{background:#333;height:10px;border-radius:10px;margin:10px 0;overflow:hidden}
+.fill{background:#22c55e;height:100%;width:0%;transition:0.5s}
+.social{margin-top:20px}
+.slink{display:flex;justify-content:space-between;align-items:center;background:#1e1e1e;padding:14px;border-radius:12px;margin:8px 0;text-decoration:none;color:#fff;border:1px solid #333}
 </style>
 </head>
 <body>
-
-<div class="top">
-  <div class="balance">🟡 <span id="bal">1,400</span> ZYN</div>
-  <div class="sub">⚡ <span id="energy">482</span>/500 • 🎯 151 • 👥 10% bonus</div>
-</div>
-
-<div class="main-circle">⚡</div>
-
-<div class="grid">
-  <div class="card"><span>🎁</span><b>Daily Bonus</b> +50 ZYN</div>
-  <div class="card"><span>🌱</span><b>Farming</b> <span id="farm">166m left</span></div>
-  <div class="card"><span>🎯</span><b>Missions</b> 4 Tasks +400 ZYN</div>
-  <div class="card friends" onclick="window.location.href='/friends.html'"><span>👥</span><b>Friends</b> 10% bonus<br><small style="color:#2aabee">Invite & Earn →</small></div>
-  <div class="card"><span>🎰</span><b>Lucky Spin</b> 2 left today</div>
-  <div class="card"><span>🚀</span><b>Boost</b> Coming soon</div>
-</div>
-
-<div class="nav">
-  <a>💱<br>Exchange</a>
-  <a class="active">⛏️<br>Mine</a>
-  <a href="/friends.html" class="active" style="color:#2aabee">👥<br>Friends</a>
-  <a>💰<br>Earn</a>
-  <a>👛<br>Wallet</a>
-</div>
-
-<script>
-  // Telegram ID
-  let tg = window.Telegram?.WebApp;
-  let userId = tg?.initDataUnsafe?.user?.id || '123456';
-  console.log("UserID:", userId);
-  
-  // Simple farming timer demo
-  let mins = 166;
-  setInterval(()=>{
-    if(mins>0){ mins--; document.getElementById('farm').innerText = mins + 'm left'; }
-  }, 60000);
-</script>
-
-</body>
-</html>
+<div class="header"><h1>ZYNTRA NETWORK</h1><p style="opacity:0.6;font-size:12px">ID: 3493602 | Official App</p></div>
+<div class="

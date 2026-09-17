@@ -8,9 +8,11 @@
 <style>
 body{font-family:Arial;background:#0f0f0f;color:#fff;text-align:center;padding:20px}
 .card{background:#1c1c1c;padding:20px;border-radius:15px;max-width:400px;margin:auto}
-button{background:#ff0040;color:#fff;border:none;padding:12px 20px;border-radius:10px;width:100%;margin-top:10px;font-weight:bold;font-size:16px}
+button{background:#ff0040;color:#fff;border:none;padding:12px 20px;border-radius:10px;width:100%;margin-top:10px;font-weight:bold;font-size:16px;cursor:pointer}
 input{width:92%;padding:10px;border-radius:8px;border:none;margin-top:10px;background:#2a2a2a;color:#fff}
 .small{font-size:12px;opacity:0.7;margin-top:10px}
+.box{background:#2a2a2a;padding:12px;border-radius:10px;margin-top:12px}
+a{color:#00e5ff;text-decoration:none}
 </style>
 </head>
 <body>
@@ -18,58 +20,56 @@ input{width:92%;padding:10px;border-radius:8px;border:none;margin-top:10px;backg
 <h2>🔥 BTTC Miner</h2>
 <p>Balance: <b id="bal">0</b> BTT</p>
 <p>Referral: <b id="ref">0</b></p>
-<button id="mineBtn" onclick="mine()">⛏️ Mine 1000 BTT</button>
+
+<div class="box">
+<p style="margin:5px">Ads Left Today: <b id="adsLeft">20</b>/20</p>
+<button id="mineBtn" onclick="watchAd()">📺 Watch Ad & Earn 1000 BTT</button>
+</div>
+
 <input id="wallet" placeholder="T... TRON Address (Trust Wallet / TronLink)" />
 <input id="amount" type="number" placeholder="Min 50000 BTT" value="50000" />
 <button onclick="withdraw()">💸 Withdraw BTT (TRC20)</button>
-<p class="small">Withdraw TRON (TRC20) Network pe hoga. Address T... se start hona chahiye. Fee 0!<br>Invite = 1000 BTT Bonus</p>
+
+<div class="box">
+<p style="margin:5px">📢 Meri Social ID:</p>
+<button onclick="window.open('https://t.me/YOUR_CHANNEL','_blank')" style="background:#0088cc">📲 Join Telegram - @YOUR_CHANNEL</button>
+<button onclick="window.open('https://youtube.com/@YOUR_ID','_blank')" style="background:#ff0000">▶️ YouTube - @YOUR_ID</button>
+<p class="small">Daily 20 Ads = 20000 BTT. Invite = 1000 BTT</p>
+</div>
+
+<p class="small">TRON TRC20 Network. Fee 0% (TronLink se bhejunga)</p>
 </div>
 
 <script>
-const tg = window.Telegram.WebApp;
-tg.expand();
-let balance = parseInt(localStorage.getItem('bttc_bal')||'0');
-let refCount = parseInt(localStorage.getItem('bttc_ref')||'0');
-document.getElementById('bal').innerText = balance;
-document.getElementById('ref').innerText = refCount;
+const tg = window.Telegram.WebApp; tg.expand();
+let balance = parseInt(localStorage.getItem('bttc_bal')||'17000');
+let adsWatched = parseInt(localStorage.getItem('bttc_ads')||'0');
+let lastDate = localStorage.getItem('bttc_date');
+let today = new Date().toDateString();
+if(lastDate !== today){ adsWatched=0; localStorage.setItem('bttc_ads','0'); localStorage.setItem('bttc_date',today); }
+document.getElementById('bal').innerText=balance;
+document.getElementById('adsLeft').innerText=20-adsWatched;
 
-function mine(){
-  balance += 1000;
-  localStorage.setItem('bttc_bal', balance);
-  document.getElementById('bal').innerText = balance;
+function watchAd(){
+  if(adsWatched>=20){ alert('Aaj ke 20 Ads khatam! Kal aana!'); return; }
+  adsWatched++; balance+=1000;
+  localStorage.setItem('bttc_bal',balance); localStorage.setItem('bttc_ads',adsWatched);
+  document.getElementById('bal').innerText=balance;
+  document.getElementById('adsLeft').innerText=20-adsWatched;
   tg.HapticFeedback.notificationOccurred('success');
 }
-
 function withdraw(){
-  let a = document.getElementById('wallet').value.trim();
-  let b = parseInt(document.getElementById('amount').value);
-  
-  if(!a.startsWith('T')){
-    alert('Bhai T... wala TRON Address daal! Trust Wallet me TRX > Receive se milega');
-    return;
-  }
-  if(b < 50000){
-    alert('Minimum 50000 BTT hai bhai!');
-    return;
-  }
-  if(b > balance){
-    alert('Balance kam hai! Pehle Mine kar le');
-    return;
-  }
-
-  let u = tg.initDataUnsafe?.user;
-  let msg = `🚨 BTTC WITHDRAW REQUEST\n\nUser ID: ${u?.id}\nName: ${u?.first_name}\nAmount: ${b} BTT (TRC20)\nWallet: ${a}\n\nTronLink se bhej de bhai!`;
-  
-  // Telegram pe message bhejega
+  let a=document.getElementById('wallet').value.trim();
+  let b=parseInt(document.getElementById('amount').value);
+  if(!a.startsWith('T')){ alert('T... wala TRON Address daal!'); return; }
+  if(b<50000){ alert('Min 50000!'); return; }
+  if(b>balance){ alert('Balance kam hai! Ad dekh le!'); return; }
+  let u=tg.initDataUnsafe?.user;
+  let msg=`🚨 WITHDRAW\nUser:${u?.id} ${u?.first_name}\nAmount:${b} BTT TRC20\nWallet:${a}`;
   tg.sendData(msg);
-  
-  // Balance kaat de
-  balance -= b;
-  localStorage.setItem('bttc_bal', balance);
-  document.getElementById('bal').innerText = balance;
-  
-  alert('Withdraw Request bhej diya! 24 ghante me TronLink se BTT aa jayega!');
-  document.getElementById('wallet').value = '';
+  balance-=b; localStorage.setItem('bttc_bal',balance);
+  document.getElementById('bal').innerText=balance;
+  alert('Request bhej diya!');
 }
 </script>
 </body>

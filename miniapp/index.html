@@ -3,57 +3,115 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zyntra - Only BTTC</title>
+<title>Zyntra BTTC Only</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src='//libtl.com/sdk.js' data-zone='11817232' data-sdk='show_11817232'></script>
 <style>
-*{box-sizing:border-box}
 body{background:#0a0a0a;color:#fff;font-family:sans-serif;margin:0;padding:15px}
-h1{color:#a855f7;text-align:center;margin:10px 0}
 .card{background:linear-gradient(135deg,#f59e0b,#ef4444);border-radius:20px;padding:20px;text-align:center}
-.card h2{font-size:36px;margin:5px 0}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:15px}
-.btn{background:#1e1e1e;border:1px solid #333;border-radius:16px;padding:20px 8px;text-align:center;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
-.btn:active{background:#2a2a2a;transform:scale(0.96)}
-.btn span{font-size:28px;display:block}
-.btn p{margin:8px 0 0 0;font-size:13px;font-weight:bold}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}
+button.btn{background:#1e1e1e;border:1px solid #333;border-radius:16px;padding:18px;color:#fff;font-weight:bold;cursor:pointer;font-size:14px}
+button.btn:active{transform:scale(0.95);background:#333}
 .full{grid-column:span 2}
-.ad-main{background:#22c55e;border:none;width:100%;padding:18px;border-radius:14px;color:#fff;font-weight:bold;font-size:17px;margin-top:15px;cursor:pointer}
-.withdraw{background:#ef4444;border:none;width:100%;padding:16px;border-radius:14px;color:#fff;font-weight:bold;font-size:15px;margin-top:12px;cursor:pointer}
-.progress{background:#333;height:12px;border-radius:10px;margin:12px 0;overflow:hidden}
-.fill{background:#22c55e;height:100%;width:0%;transition:0.5s}
-.slink{display:flex;justify-content:space-between;align-items:center;background:#1e1e1e;padding:16px;border-radius:12px;margin:10px 0;text-decoration:none;color:#fff;border:1px solid #333}
-#walletBox{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.95);padding:20px;z-index:100}
-.walletInner{background:#1e1e1e;border-radius:20px;padding:20px;margin-top:30px}
-.input{width:100%;padding:14px;border-radius:10px;border:none;margin:12px 0;font-size:16px}
+.main{background:#22c55e;color:#fff;border:none;width:100%;padding:18px;border-radius:14px;font-weight:bold;font-size:16px;margin-top:12px}
+.with{background:#ef4444;color:#fff;border:none;width:100%;padding:16px;border-radius:14px;font-weight:bold;margin-top:10px}
+.progress{background:#333;height:10px;border-radius:10px;margin:10px 0;overflow:hidden}.fill{background:#22c55e;height:100%;width:0%}
+.slink{background:#1e1e1e;padding:14px;border-radius:12px;margin:8px 0;display:flex;justify-content:space-between;border:1px solid #333;cursor:pointer}
+#walletBox{display:none;position:fixed;left:0;top:0;width:100%;height:100%;background:#000000f0;padding:20px;z-index:99}
+.inner{background:#1e1e1e;border-radius:20px;padding:20px}
+input{width:100%;padding:14px;border-radius:10px;border:none;margin:10px 0;font-size:16px}
 </style>
 </head>
 <body>
-<h1>ZYNTRA NETWORK</h1>
-<p style="text-align:center;opacity:0.6;font-size:11px;margin-top:0">ONLY REAL BTTC EARNING - ID 3493602</p>
-
+<h1 style="text-align:center;color:#a855f7">ZYNTRA NETWORK</h1>
 <div class="card">
-<p style="margin:0">My BTTC Balance</p>
-<h2 id="bttc">0 BTTC</h2>
-<p id="acnt">0 / 20 Ads Today</p>
-<div class="progress"><div class="fill" id="prog"></div></div>
-<p style="font-size:11px;margin:0">1 Ad = 500 BTTC | Social = 1000 BTTC</p>
+<h2 id="bttcBal" style="font-size:36px;margin:5px">0 BTTC</h2>
+<p id="adCount">0 / 20 Ads Today</p>
+<div class="progress"><div id="prog" class="fill"></div></div>
 </div>
 
 <div class="grid">
-<div class="btn" onclick="watchAd()"><span>📺</span><p>Watch 20 Ads</p></div>
-<div class="btn" onclick="openTasks()"><span>📋</span><p>Tasks</p></div>
-<div class="btn" onclick="invite()"><span>👥</span><p>Invite = 5000 BTTC</p></div>
-<div class="btn" onclick="openWallet()"><span>💰</span><p>Wallet & Withdraw</p></div>
-<div class="btn full" onclick="document.getElementById('socialBox').scrollIntoView({behavior:'smooth'})"><span>📱</span><p>Follow & Earn BTTC</p></div>
+<button class="btn" id="btnAd">📺 Watch Ads<br>500 BTTC</button>
+<button class="btn" id="btnTask">📋 Tasks</button>
+<button class="btn" id="btnInvite">👥 Invite<br>1000 BTTC</button>
+<button class="btn" id="btnWallet">💰 Wallet</button>
+<button class="btn full" id="btnSocial">📱 Follow & Earn</button>
 </div>
 
-<button class="ad-main" onclick="watchAd()">▶ WATCH AD & EARN 500 BTTC (20 Daily)</button>
-<button class="withdraw" onclick="openWallet()">💸 WITHDRAW REAL BTTC</button>
+<button class="main" id="btnMainAd">▶ WATCH AD + 500 BTTC</button>
+<button class="with" id="btnWith">💸 WITHDRAW REAL BTTC</button>
 
-<div id="socialBox" style="margin-top:25px">
-<h3>📱 Follow & Earn 1000 BTTC</h3>
-<div class="slink" onclick="socialReward('Telegram')"><span>✈️ Telegram - 1000 BTTC</span><span>Join ➔</span></div>
-<div class="slink" onclick="socialReward('Instagram')"><span>📸 Instagram - 1000 BTTC</span><span>Follow ➔</span></div>
-<div class="slink" onclick="socialReward('YouTube')"><span>▶️ YouTube - 1000 BTTC</span><span>Sub ➔</span></div>
-<p style="font-size:10px;opacity:0.5;text-align:center">Click
+<div id="socialBox" style="margin-top:20px">
+<h3>Follow = 1000 BTTC Each</h3>
+<div class="slink" id="sTele">✈️ Telegram <span>+1000 ➔</span></div>
+<div class="slink" id="sInsta">📸 Instagram <span>+1000 ➔</span></div>
+<div class="slink" id="sYou">▶️ YouTube <span>+1000 ➔</span></div>
+</div>
+
+<div id="walletBox"><div class="inner">
+<h2>Withdraw Real BTTC</h2>
+<p id="wBal">0 BTTC</p>
+<input id="addr" placeholder="BTTC BEP20 Address 0x...">
+<p style="font-size:11px;opacity:0.7">Min 10000 BTTC | Tu Trust Wallet se bhejega<br>Message tere Telegram pe ayega</p>
+<button class="main" id="doWith">✅ Request Withdraw</button>
+<button class="with" id="closeBox">Close</button>
+</div></div>
+
+<script>
+const BOT_TOKEN = "7737891822:AAH_YOUR_TOKEN"; // <-- Yaha BotFather ka token dal
+const ADMIN_ID = "6991713312"; // <-- Tera personal Telegram ID ( @userinfobot se le )
+
+let bttc = parseInt(localStorage.getItem('bttc')||'0');
+let ads = parseInt(localStorage.getItem('ads')||'0');
+let today = new Date().toDateString();
+if(localStorage.getItem('date')!==today){ads=0;localStorage.setItem('ads','0');localStorage.setItem('date',today);}
+function update(){document.getElementById('bttcBal').innerText=bttc+' BTTC';document.getElementById('wBal').innerText=bttc+' BTTC';document.getElementById('adCount').innerText=ads+' / 20 Ads Today';document.getElementById('prog').style.width=(ads/20*100)+'%';}
+update();
+
+function watchAd(){
+if(ads>=20){alert('20 Ads Done');return;}
+if(typeof show_11817232=='function'){show_11817232().then(()=>{ads++;bttc+=500;localStorage.setItem('ads',ads);localStorage.setItem('bttc',bttc);update();alert('+500 BTTC Mila!');});}
+else {alert('Ad loading... 2 sec baad dabao');}
+}
+function social(p){
+if(localStorage.getItem('s_'+p)){alert('Already claimed');return;}
+bttc+=1000;localStorage.setItem('bttc',bttc);localStorage.setItem('s_'+p,'1');update();
+let u={Telegram:'https://t.me/ZyntraBotOfficial',Instagram:'https://www.instagram.com/zyntra_official_bot',YouTube:'https://www.youtube.com/@ZyntraEarn'}[p];
+window.open(u,'_blank');alert('+1000 BTTC for '+p);
+}
+
+// BUTTONS FIXED - AB 100% DABEGA
+document.getElementById('btnAd').onclick=watchAd;
+document.getElementById('btnMainAd').onclick=watchAd;
+document.getElementById('btnTask').onclick=()=>alert('20 Ads = 10000 BTTC\nSocial = 3000 BTTC\nInvite = 1000 BTTC per friend (kam kar diya)');
+document.getElementById('btnInvite').onclick=()=>{
+let id=window.Telegram?.WebApp?.initDataUnsafe?.user?.id||'3493602';
+prompt('Invite Link - 1 Invite = 1000 BTTC (kam):','https://t.me/ZyntraBotOfficial?start='+id);
+bttc+=1000;localStorage.setItem('bttc',bttc);update();
+};
+document.getElementById('btnWallet').onclick=()=>{update();document.getElementById('walletBox').style.display='block';}
+document.getElementById('btnWith').onclick=()=>{update();document.getElementById('walletBox').style.display='block';}
+document.getElementById('btnSocial').onclick=()=>document.getElementById('socialBox').scrollIntoView({behavior:'smooth'});
+document.getElementById('sTele').onclick=()=>social('Telegram');
+document.getElementById('sInsta').onclick=()=>social('Instagram');
+document.getElementById('sYou').onclick=()=>social('YouTube');
+document.getElementById('closeBox').onclick=()=>document.getElementById('walletBox').style.display='none';
+
+document.getElementById('doWith').onclick=async()=>{
+let addr=document.getElementById('addr').value.trim();
+if(!addr.startsWith('0x')){alert('Sahi 0x address dalo');return;}
+if(bttc<10000){alert('Min 10000 BTTC chahiye, abhi '+bttc+' hai');return;}
+let user=window.Telegram?.WebApp?.initDataUnsafe?.user;
+let msg=`🚨 NEW BTTC WITHDRAW\n\n👤 ${user?.first_name||'User'} ID:${user?.id||'?'}\n💰 ${bttc} BTTC\n🏦 ${addr}\n\nTrust Wallet se bhej de!`;
+if(BOT_TOKEN.includes('YOUR_TOKEN')){
+alert('✅ Request Note Kar Liya!\n\n'+msg+'\n\nBOT_TOKEN dalna baki hai isliye auto message nahi gaya. Ye wallet copy kar le aur Trust Wallet se bhej de.');
+} else {
+await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_ID}&text=${encodeURIComponent(msg)}`);
+alert('✅ Withdraw request tere Telegram pe bhej diya! Wallet: '+addr);
+}
+bttc=0;localStorage.setItem('bttc','0');update();
+document.getElementById('walletBox').style.display='none';
+};
+</script>
+</body>
+  </html>

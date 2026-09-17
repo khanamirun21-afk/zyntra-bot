@@ -3,28 +3,72 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zyntra Network</title>
+<title>Zyntra Network - BTTC Rewards</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src='//libtl.com/sdk.js' data-zone='11817232' data-sdk='show_11817232'></script>
 <style>
 body{background:#0a0a0a;color:#fff;font-family:sans-serif;margin:0;padding:15px}
-.header{text-align:center;padding:15px 0}
-.header h1{color:#a855f7;margin:0;font-size:28px}
 .card{background:linear-gradient(135deg,#a855f7,#6366f1);border-radius:20px;padding:20px;text-align:center}
-.card h2{font-size:32px;margin:5px 0}
+.bttc-card{background:linear-gradient(135deg,#f59e0b,#ef4444);border-radius:16px;padding:12px;margin-top:10px;text-align:center}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}
 .btn{background:#1e1e1e;border:1px solid #333;border-radius:16px;padding:18px 8px;text-align:center;cursor:pointer}
-.btn:active{transform:scale(0.95)}
-.btn span{font-size:26px;display:block}
-.btn p{margin:6px 0 0 0;font-size:13px;font-weight:bold}
-.full{grid-column:span 2}
-.ad-main{background:linear-gradient(135deg,#22c55e,#16a34a);border:none;width:100%;padding:16px;border-radius:14px;color:#fff;font-weight:bold;font-size:16px;margin-top:15px;cursor:pointer}
+.btn span{font-size:26px;display:block}.full{grid-column:span 2}
+.ad-main{background:linear-gradient(135deg,#22c55e,#16a34a);border:none;width:100%;padding:16px;border-radius:14px;color:#fff;font-weight:bold;font-size:16px;margin-top:15px}
 .progress{background:#333;height:10px;border-radius:10px;margin:10px 0;overflow:hidden}
-.fill{background:#22c55e;height:100%;width:0%;transition:0.5s}
-.social{margin-top:20px}
+.fill{background:#22c55e;height:100%;width:0%}
 .slink{display:flex;justify-content:space-between;align-items:center;background:#1e1e1e;padding:14px;border-radius:12px;margin:8px 0;text-decoration:none;color:#fff;border:1px solid #333}
 </style>
 </head>
 <body>
-<div class="header"><h1>ZYNTRA NETWORK</h1><p style="opacity:0.6;font-size:12px">ID: 3493602 | Official App</p></div>
-<div class="
+<div style="text-align:center"><h1 style="color:#a855f7;margin:5px">ZYNTRA NETWORK</h1><p style="opacity:0.6;font-size:11px">BTTC REWARDS ENABLED</p></div>
+
+<div class="card">
+<p style="margin:0">My Balance</p>
+<h2 id="bal" style="margin:5px;font-size:28px">$ 0.000</h2>
+<p id="acnt">0 / 20 Ads Today</p>
+<div class="progress"><div class="fill" id="prog"></div></div>
+</div>
+
+<div class="bttc-card">
+<p style="margin:0;font-size:12px;opacity:0.9">🪙 BTTC Rewards</p>
+<h3 id="bttc" style="margin:5px">0 BTTC</h3>
+<p style="margin:0;font-size:11px">1 Ad = 500 BTTC + $0.01</p>
+</div>
+
+<div class="grid">
+<div class="btn" onclick="watchAd()"><span>📺</span><p>Watch 20 Ads</p></div>
+<div class="btn" onclick="openTasks()"><span>📋</span><p>Tasks</p></div>
+<div class="btn" onclick="invite()"><span>👥</span><p>Invite = 5000 BTTC</p></div>
+<div class="btn" onclick="wallet()"><span>💰</span><p>Wallet</p></div>
+<div class="btn full" onclick="document.getElementById('socialBox').scrollIntoView({behavior:'smooth'})"><span>📱</span><p>Follow - YouTube/Insta/Telegram</p></div>
+</div>
+
+<button class="ad-main" onclick="watchAd()">▶ WATCH AD & EARN $0.01 + 500 BTTC</button>
+
+<div id="socialBox" style="margin-top:20px">
+<a class="slink" href="https://t.me/ZyntraBotOfficial" target="_blank"><span>✈️ @ZyntraBotOfficial</span><span>Join</span></a>
+<a class="slink" href="https://www.instagram.com/zyntra_official_bot" target="_blank"><span>📸 zyntra_official_bot</span><span>Follow</span></a>
+<a class="slink" href="https://www.youtube.com/@ZyntraEarn" target="_blank"><span>▶️ @ZyntraEarn</span><span>Sub</span></a>
+</div>
+
+<script>
+let bal=parseFloat(localStorage.getItem('zyntra_bal')||'0');
+let bttc=parseInt(localStorage.getItem('zyntra_bttc')||'0');
+let ads=parseInt(localStorage.getItem('zyntra_ads')||'0');
+let last=localStorage.getItem('zyntra_date');
+let today=new Date().toDateString();
+if(last!==today){ads=0;localStorage.setItem('zyntra_ads','0');localStorage.setItem('zyntra_date',today);}
+function upd(){document.getElementById('bal').innerText='$ '+bal.toFixed(3);document.getElementById('bttc').innerText=bttc+' BTTC';document.getElementById('acnt').innerText=ads+' / 20 Ads Today';document.getElementById('prog').style.width=(ads/20*100)+'%';}
+upd();
+function watchAd(){
+ if(ads>=20){alert('20 Ads Complete! Kal aao');return;}
+ if(typeof show_11817232==='function'){
+  show_11817232().then(()=>{ads++;bal+=0.01;bttc+=500;localStorage.setItem('zyntra_ads',ads);localStorage.setItem('zyntra_bal',bal);localStorage.setItem('zyntra_bttc',bttc);localStorage.setItem('zyntra_date',today);upd();alert('✅ +$0.01 + 500 BTTC Mila! Total: '+ads+'/20');}).catch(()=>alert('Ad fail, dobara try karo'));
+ } else alert('Ad loading... 2 sec baad try karo');
+}
+function openTasks(){alert('Tasks: 20 Ads = $0.20 + 10000 BTTC');}
+function invite(){let id=window.Telegram?.WebApp?.initDataUnsafe?.user?.id||'3493602';let link='https://t.me/ZyntraBotOfficial?start='+id; prompt('Invite Link (1 Invite = 5000 BTTC):',link);}
+function wallet(){alert('Wallet:\\n$'+bal.toFixed(3)+' + '+bttc+' BTTC\\nMin: $1 + 10000 BTTC');}
+</script>
+</body>
+  </html>

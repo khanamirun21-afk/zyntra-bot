@@ -1,76 +1,117 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BTTC Miner</title>
+<title>Zyntra BTTC Only</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src='//libtl.com/sdk.js' data-zone='11817232' data-sdk='show_11817232'></script>
 <style>
-body{font-family:Arial;background:#0f0f0f;color:#fff;text-align:center;padding:20px}
-.card{background:#1c1c1c;padding:20px;border-radius:15px;max-width:400px;margin:auto}
-button{background:#ff0040;color:#fff;border:none;padding:12px 20px;border-radius:10px;width:100%;margin-top:10px;font-weight:bold;font-size:16px;cursor:pointer}
-input{width:92%;padding:10px;border-radius:8px;border:none;margin-top:10px;background:#2a2a2a;color:#fff}
-.small{font-size:12px;opacity:0.7;margin-top:10px}
-.box{background:#2a2a2a;padding:12px;border-radius:10px;margin-top:12px}
-a{color:#00e5ff;text-decoration:none}
+body{background:#0a0a0a;color:#fff;font-family:sans-serif;margin:0;padding:15px}
+.card{background:linear-gradient(135deg,#f59e0b,#ef4444);border-radius:20px;padding:20px;text-align:center}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}
+button.btn{background:#1e1e1e;border:1px solid #333;border-radius:16px;padding:18px;color:#fff;font-weight:bold;cursor:pointer;font-size:14px}
+button.btn:active{transform:scale(0.95);background:#333}
+.full{grid-column:span 2}
+.main{background:#22c55e;color:#fff;border:none;width:100%;padding:18px;border-radius:14px;font-weight:bold;font-size:16px;margin-top:12px}
+.with{background:#ef4444;color:#fff;border:none;width:100%;padding:16px;border-radius:14px;font-weight:bold;margin-top:10px}
+.progress{background:#333;height:10px;border-radius:10px;margin:10px 0;overflow:hidden}.fill{background:#22c55e;height:100%;width:0%}
+.slink{background:#1e1e1e;padding:14px;border-radius:12px;margin:8px 0;display:flex;justify-content:space-between;border:1px solid #333;cursor:pointer}
+#walletBox{display:none;position:fixed;left:0;top:0;width:100%;height:100%;background:#000000f0;padding:20px;z-index:99}
+.inner{background:#1e1e1e;border-radius:20px;padding:20px}
+input{width:100%;padding:14px;border-radius:10px;border:none;margin:10px 0;font-size:16px}
 </style>
 </head>
 <body>
+<h1 style="text-align:center;color:#a855f7">ZYNTRA NETWORK</h1>
 <div class="card">
-<h2>🔥 BTTC Miner</h2>
-<p>Balance: <b id="bal">0</b> BTT</p>
-<p>Referral: <b id="ref">0</b></p>
-
-<div class="box">
-<p style="margin:5px">Ads Left Today: <b id="adsLeft">20</b>/20</p>
-<button id="mineBtn" onclick="watchAd()">📺 Watch Ad & Earn 1000 BTT</button>
+<h2 id="bttcBal" style="font-size:36px;margin:5px">0 BTTC</h2>
+<p id="adCount">0 / 20 Ads Today</p>
+<div class="progress"><div id="prog" class="fill"></div></div>
 </div>
 
-<input id="wallet" placeholder="T... TRON Address (Trust Wallet / TronLink)" />
-<input id="amount" type="number" placeholder="Min 50000 BTT" value="50000" />
-<button onclick="withdraw()">💸 Withdraw BTT (TRC20)</button>
-
-<div class="box">
-<p style="margin:5px">📢 Meri Social ID:</p>
-<button onclick="window.open('https://t.me/YOUR_CHANNEL','_blank')" style="background:#0088cc">📲 Join Telegram - @YOUR_CHANNEL</button>
-<button onclick="window.open('https://youtube.com/@YOUR_ID','_blank')" style="background:#ff0000">▶️ YouTube - @YOUR_ID</button>
-<p class="small">Daily 20 Ads = 20000 BTT. Invite = 1000 BTT</p>
+<div class="grid">
+<button class="btn" id="btnAd">📺 Watch Ads<br>500 BTTC</button>
+<button class="btn" id="btnTask">📋 Tasks</button>
+<button class="btn" id="btnInvite">👥 Invite<br>1000 BTTC</button>
+<button class="btn" id="btnWallet">💰 Wallet</button>
+<button class="btn full" id="btnSocial">📱 Follow & Earn</button>
 </div>
 
-<p class="small">TRON TRC20 Network. Fee 0% (TronLink se bhejunga)</p>
+<button class="main" id="btnMainAd">▶ WATCH AD + 500 BTTC</button>
+<button class="with" id="btnWith">💸 WITHDRAW REAL BTTC</button>
+
+<div id="socialBox" style="margin-top:20px">
+<h3>Follow = 1000 BTTC Each</h3>
+<div class="slink" id="sTele">✈️ Telegram <span>+1000 ➔</span></div>
+<div class="slink" id="sInsta">📸 Instagram <span>+1000 ➔</span></div>
+<div class="slink" id="sYou">▶️ YouTube <span>+1000 ➔</span></div>
 </div>
+
+<div id="walletBox"><div class="inner">
+<h2>Withdraw Real BTTC</h2>
+<p id="wBal">0 BTTC</p>
+<input id="addr" placeholder="BTTC BEP20 Address 0x...">
+<p style="font-size:11px;opacity:0.7">Min 10000 BTTC | Tu Trust Wallet se bhejega<br>Message tere Telegram pe ayega</p>
+<button class="main" id="doWith">✅ Request Withdraw</button>
+<button class="with" id="closeBox">Close</button>
+</div></div>
 
 <script>
-const tg = window.Telegram.WebApp; tg.expand();
-let balance = parseInt(localStorage.getItem('bttc_bal')||'17000');
-let adsWatched = parseInt(localStorage.getItem('bttc_ads')||'0');
-let lastDate = localStorage.getItem('bttc_date');
+const BOT_TOKEN = "7737891822:AAH_YOUR_TOKEN"; // <-- Yaha BotFather ka token dal
+const ADMIN_ID = "6991713312"; // <-- Tera personal Telegram ID ( @userinfobot se le )
+
+let bttc = parseInt(localStorage.getItem('bttc')||'0');
+let ads = parseInt(localStorage.getItem('ads')||'0');
 let today = new Date().toDateString();
-if(lastDate !== today){ adsWatched=0; localStorage.setItem('bttc_ads','0'); localStorage.setItem('bttc_date',today); }
-document.getElementById('bal').innerText=balance;
-document.getElementById('adsLeft').innerText=20-adsWatched;
+if(localStorage.getItem('date')!==today){ads=0;localStorage.setItem('ads','0');localStorage.setItem('date',today);}
+function update(){document.getElementById('bttcBal').innerText=bttc+' BTTC';document.getElementById('wBal').innerText=bttc+' BTTC';document.getElementById('adCount').innerText=ads+' / 20 Ads Today';document.getElementById('prog').style.width=(ads/20*100)+'%';}
+update();
 
 function watchAd(){
-  if(adsWatched>=20){ alert('Aaj ke 20 Ads khatam! Kal aana!'); return; }
-  adsWatched++; balance+=1000;
-  localStorage.setItem('bttc_bal',balance); localStorage.setItem('bttc_ads',adsWatched);
-  document.getElementById('bal').innerText=balance;
-  document.getElementById('adsLeft').innerText=20-adsWatched;
-  tg.HapticFeedback.notificationOccurred('success');
+if(ads>=20){alert('20 Ads Done');return;}
+if(typeof show_11817232=='function'){show_11817232().then(()=>{ads++;bttc+=500;localStorage.setItem('ads',ads);localStorage.setItem('bttc',bttc);update();alert('+500 BTTC Mila!');});}
+else {alert('Ad loading... 2 sec baad dabao');}
 }
-function withdraw(){
-  let a=document.getElementById('wallet').value.trim();
-  let b=parseInt(document.getElementById('amount').value);
-  if(!a.startsWith('T')){ alert('T... wala TRON Address daal!'); return; }
-  if(b<50000){ alert('Min 50000!'); return; }
-  if(b>balance){ alert('Balance kam hai! Ad dekh le!'); return; }
-  let u=tg.initDataUnsafe?.user;
-  let msg=`🚨 WITHDRAW\nUser:${u?.id} ${u?.first_name}\nAmount:${b} BTT TRC20\nWallet:${a}`;
-  tg.sendData(msg);
-  balance-=b; localStorage.setItem('bttc_bal',balance);
-  document.getElementById('bal').innerText=balance;
-  alert('Request bhej diya!');
+function social(p){
+if(localStorage.getItem('s_'+p)){alert('Already claimed');return;}
+bttc+=1000;localStorage.setItem('bttc',bttc);localStorage.setItem('s_'+p,'1');update();
+let u={Telegram:'https://t.me/ZyntraBotOfficial',Instagram:'https://www.instagram.com/zyntra_official_bot',YouTube:'https://www.youtube.com/@ZyntraEarn'}[p];
+window.open(u,'_blank');alert('+1000 BTTC for '+p);
 }
+
+// BUTTONS FIXED - AB 100% DABEGA
+document.getElementById('btnAd').onclick=watchAd;
+document.getElementById('btnMainAd').onclick=watchAd;
+document.getElementById('btnTask').onclick=()=>alert('20 Ads = 10000 BTTC\nSocial = 3000 BTTC\nInvite = 1000 BTTC per friend (kam kar diya)');
+document.getElementById('btnInvite').onclick=()=>{
+let id=window.Telegram?.WebApp?.initDataUnsafe?.user?.id||'3493602';
+prompt('Invite Link - 1 Invite = 1000 BTTC (kam):','https://t.me/ZyntraBotOfficial?start='+id);
+bttc+=1000;localStorage.setItem('bttc',bttc);update();
+};
+document.getElementById('btnWallet').onclick=()=>{update();document.getElementById('walletBox').style.display='block';}
+document.getElementById('btnWith').onclick=()=>{update();document.getElementById('walletBox').style.display='block';}
+document.getElementById('btnSocial').onclick=()=>document.getElementById('socialBox').scrollIntoView({behavior:'smooth'});
+document.getElementById('sTele').onclick=()=>social('Telegram');
+document.getElementById('sInsta').onclick=()=>social('Instagram');
+document.getElementById('sYou').onclick=()=>social('YouTube');
+document.getElementById('closeBox').onclick=()=>document.getElementById('walletBox').style.display='none';
+
+document.getElementById('doWith').onclick=async()=>{
+let addr=document.getElementById('addr').value.trim();
+if(!addr.startsWith('0x')){alert('Sahi 0x address dalo');return;}
+if(bttc<10000){alert('Min 10000 BTTC chahiye, abhi '+bttc+' hai');return;}
+let user=window.Telegram?.WebApp?.initDataUnsafe?.user;
+let msg=`🚨 NEW BTTC WITHDRAW\n\n👤 ${user?.first_name||'User'} ID:${user?.id||'?'}\n💰 ${bttc} BTTC\n🏦 ${addr}\n\nTrust Wallet se bhej de!`;
+if(BOT_TOKEN.includes('YOUR_TOKEN')){
+alert('✅ Request Note Kar Liya!\n\n'+msg+'\n\nBOT_TOKEN dalna baki hai isliye auto message nahi gaya. Ye wallet copy kar le aur Trust Wallet se bhej de.');
+} else {
+await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_ID}&text=${encodeURIComponent(msg)}`);
+alert('✅ Withdraw request tere Telegram pe bhej diya! Wallet: '+addr);
+}
+bttc=0;localStorage.setItem('bttc','0');update();
+document.getElementById('walletBox').style.display='none';
+};
 </script>
 </body>
 </html>

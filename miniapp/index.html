@@ -59,18 +59,15 @@ input{width:100%;padding:14px;border-radius:10px;border:none;margin:10px 0;font-
 <p style="font-size:11px;opacity:0.7">Min 10000 BTTC + 20 Ads Compulsory<br>Binance ID se free me bhejunga</p>
 <button class="main" id="doWith">✅ Request Withdraw</button>
 <button class="with" id="closeBox">Close</button>
-<p style="font-size:10px;color:#888;margin-top:10px">Note: Bot token ko backend me rakho, frontend me mat chhodo warna koi misuse karega!</p>
 </div></div>
 
 <script>
 const BOT_TOKEN = "8602044518:AAG7DJvCHI31rvlHPWGnsx3fyJ4LSkhmWa0";
 const ADMIN_ID = "8537942261";
 
-// --- ANTI-CHEAT SECURE STORAGE ---
 let data = JSON.parse(localStorage.getItem('zyntra_v2')||'{"bttc":0,"ads":0,"date":"","lastAd":0,"social":{}}');
 let today = new Date().toDateString();
 if(data.date!==today){data.ads=0;data.date=today;save();}
-
 function save(){localStorage.setItem('zyntra_v2', JSON.stringify(data));}
 function update(){
 document.getElementById('bttcBal').innerText=data.bttc+' BTTC';
@@ -93,20 +90,16 @@ if(!canWatch) return;
 if(data.ads>=20){alert('Aaj ke 20 Ads Done! Kal aana');return;}
 let now=Date.now();
 let diff = now - data.lastAd;
-if(diff < 20000){ alert(`Cheating rok! ${Math.ceil((20000-diff)/1000)} sec ruko agle ad ke liye`); return;}
-
+if(diff < 20000){ alert(`Cheating rok! ${Math.ceil((20000-diff)/1000)} sec ruko`); return;}
 canWatch=false;
 document.getElementById('timer').innerText='Ad Loading...';
-
 if(typeof show_11817232=='function'){
 show_11817232().then(()=>{
-// Ad pura dekha tabhi count
 data.ads++; data.bttc+=500; data.lastAd=Date.now(); save(); update();
 document.getElementById('timer').innerText=''; canWatch=true;
 alert('+500 BTTC Mila!');
 }).catch(()=>{
-document.getElementById('timer').innerText='Ad pura nahi dekha! Count nahi hua';
-canWatch=true;
+document.getElementById('timer').innerText='Ad pura nahi dekha!'; canWatch=true;
 });
 } else {alert('Ad loading... 2 sec baad try karo'); canWatch=true;}
 }
@@ -120,7 +113,7 @@ window.open(u,'_blank');
 
 document.getElementById('btnAd').onclick=watchAd;
 document.getElementById('btnMainAd').onclick=watchAd;
-document.getElementById('btnTask').onclick=()=>alert('Rule: 20 Ads = 10000 BTTC = Withdraw\n1 Ad har 20 sec me');
+document.getElementById('btnTask').onclick=()=>alert('Rule: 20 Ads = 10000 BTTC = Withdraw');
 document.getElementById('btnInvite').onclick=()=>{
 let id=window.Telegram?.WebApp?.initDataUnsafe?.user?.id||'3493602';
 prompt('Invite Link:','https://t.me/ZyntraBotOfficial?start='+id);
@@ -135,29 +128,25 @@ document.getElementById('closeBox').onclick=()=>document.getElementById('walletB
 
 document.getElementById('doWith').onclick=async()=>{
 let addr=document.getElementById('addr').value.trim();
-if(addr.length < 5){alert('Sahi Binance ID / Email dalo');return;}
-// Binance ID validation - 6-10 digit ya email
-let isValid = /^[0-9]{6,12}$/.test(addr) || addr.includes('@') || /^[0-9]{10}$/.test(addr);
-if(!isValid){alert('Binance ID (ex: 58399211) ya Binance wala Email dalo');return;}
+if(addr.length < 5){alert('Sahi Binance ID dalo');return;}
 if(data.bttc<10000){alert('Min 10000 BTTC chahiye');return;}
-if(data.ads<20){alert('20 Ads pura dekho pehle! Abhi '+data.ads+'/20 hai');return;}
+if(data.ads<20){alert('20 Ads pura dekho!');return;}
 
 let user=window.Telegram?.WebApp?.initDataUnsafe?.user;
-let msg=`🚨 NEW BTTC WITHDRAW - BINANCE ID
+let msg=`🚨 NEW BTTC WITHDRAW
 
 👤 Name: ${user?.first_name||'User'} 
 🆔 TG ID: ${user?.id||'Unknown'}
 💰 Amount: ${data.bttc} BTTC
-🏦 Binance ID/Email: ${addr}
-📺 Ads Watched: ${data.ads}/20
+🏦 Binance ID: ${addr}
+📺 Ads: ${data.ads}/20`;
 
-Binance se Binance ID pe bhej de!`;
-
-if(BOT_TOKEN.includes('YOUR_TOKEN')){
-alert('✅ Request Save Ho Gayi!\n\n'+msg+'\n\nBOT_TOKEN abhi nahi dala, isliye Telegram pe nahi gaya. Isko copy kar le.');
-} else {
-await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_ID}&text=${encodeURIComponent(msg)}`);
-alert('✅ Withdraw request bhej diya! Binance ID: '+addr);
+try{
+let tgUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_ID}&text=${encodeURIComponent(msg)}`;
+await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(tgUrl)}`);
+alert('✅ Withdraw request bhej diya! ID: '+addr);
+}catch(e){
+alert('Error: '+e.message);
 }
 data.bttc=0; save(); update();
 document.getElementById('walletBox').style.display='none';

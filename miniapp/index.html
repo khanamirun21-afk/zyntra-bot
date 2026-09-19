@@ -1,13 +1,8 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html><html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Zyntra Network</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="//libtl.com/sdk.js" data-zone="11817232" data-sdk="show_11817232"></script>
-
-<style>
+<title>Zyntra Network</title><script src="https://telegram.org/js/telegram-web-app.js"></script><script src="//libtl.com/sdk.js" data-zone="11817232" data-sdk="show_11817232"></script><style>
 *{box-sizing:border-box}
 body{
  margin:0;padding:15px;background:#090909;color:white;
@@ -64,114 +59,52 @@ input{
  border:0;border-radius:10px;font-size:16px
 }
 .close{background:#555}
-</style>
-</head>
-
-<body>
-
-<h1>ZYNTRA NETWORK</h1>
-
-<div class="card">
+</style></head><body><h1>ZYNTRA NETWORK</h1><div class="card">
  <div class="balance" id="balance">0 BTTC</div>
- <p id="ads">0 / 20 Ads Today</p>
-
- <div class="progress">
+ <p id="ads">0 / 20 Ads Today</p> <div class="progress">
    <div class="fill" id="progress"></div>
- </div>
-
- <p id="status">20 Ads complete karo</p>
-</div>
-
-<div class="grid">
-
-<button class="btn" onclick="watchAd()">
+ </div> <p id="status">20 Ads complete karo</p>
+</div><div class="grid"><button class="btn" onclick="watchAd()">
  📺<br>Watch Ads<br>+500 BTTC
-</button>
-
-<button class="btn" onclick="showTasks()">
+</button><button class="btn" onclick="showTasks()">
  📋<br>Tasks
-</button>
-
-<button class="btn" onclick="invite()">
+</button><button class="btn" onclick="invite()">
  👥<br>Invite<br>+1000 BTTC
-</button>
-
-<button class="btn" onclick="openWallet()">
+</button><button class="btn" onclick="openWallet()">
  💰<br>Wallet
-</button>
-
-<button class="btn full" onclick="social()">
+</button><button class="btn full" onclick="social()">
  📱 Follow & Earn
-</button>
-
-</div>
-
-<button class="main" onclick="watchAd()">
+</button></div><button class="main" onclick="watchAd()">
 ▶ WATCH AD +500 BTTC
-</button>
-
-<button class="withdraw" id="withdrawBtn" onclick="openWithdraw()" disabled>
+</button><button class="withdraw" id="withdrawBtn" onclick="openWithdraw()" disabled>
 🔒 20 Ads Ke Baad Withdraw
-</button>
-
-<div class="section">
-
-<h3>📱 Follow & Earn</h3>
-
-<div class="task" onclick="follow('Telegram')">
+</button><div class="section"><h3>📱 Follow & Earn</h3><div class="task" onclick="follow('Telegram')">
  ✈️ Telegram <span>+1000</span>
-</div>
-
-<div class="task" onclick="follow('Instagram')">
+</div><div class="task" onclick="follow('Instagram')">
  📸 Instagram <span>+1000</span>
-</div>
-
-<div class="task" onclick="follow('YouTube')">
+</div><div class="task" onclick="follow('YouTube')">
  ▶️ YouTube <span>+1000</span>
-</div>
+</div></div><!-- WITHDRAW MODAL --><div class="modal" id="withdrawModal"><div class="box"><h2>💸 Withdraw BTTC</h2><p>Available Balance:</p>
+<h2 id="withdrawBalance">0 BTTC</h2><input
+id="binanceUID"
+type="text"
+inputmode="numeric"
+placeholder="Enter Binance UID"
 
-</div>
-
-
-<!-- WITHDRAW MODAL -->
-
-<div class="modal" id="withdrawModal">
-
-<div class="box">
-
-<h2>💸 Withdraw BTTC</h2>
-
-<p>Available Balance:</p>
-<h2 id="withdrawBalance">0 BTTC</h2>
-
-<input
- id="binanceUID"
- type="text"
- inputmode="numeric"
- placeholder="Enter Binance UID"
->
+«»
 
 <p style="font-size:12px;opacity:.7">
 Minimum 10,000 BTTC + 20 Ads required.
-</p>
-
-<button class="main" onclick="submitWithdraw()">
+</p><button class="main" onclick="submitWithdraw()">
 ✅ Submit Withdrawal
-</button>
-
-<button class="withdraw close" onclick="closeWithdraw()">
+</button><button class="withdraw close" onclick="closeWithdraw()">
 Close
-</button>
+</button><p id="withdrawStatus"></p></div>
+</div><script>
 
-<p id="withdrawStatus"></p>
+/* VERCEL BACKEND */
+const API_URL = "/api";
 
-</div>
-</div>
-
-
-<script>
-
-const API_URL = "YOUR_BACKEND_URL";
 
 let data = JSON.parse(
  localStorage.getItem("zyntra_v3") ||
@@ -352,7 +285,7 @@ function closeWithdraw(){
 
 async function submitWithdraw(){
 
- let uid=
+ let uid =
  document.getElementById("binanceUID")
  .value.trim();
 
@@ -376,15 +309,22 @@ async function submitWithdraw(){
  let tgUser =
  window.Telegram?.WebApp?.initDataUnsafe?.user;
 
+ if(!tgUser?.id){
+
+  alert("Telegram user information nahi mili. Zyntra ko Telegram ke andar open karo.");
+  return;
+
+ }
+
  let payload={
 
-  telegram_id:tgUser?.id || null,
+  telegram_id:tgUser.id,
 
   name:
-   tgUser?.first_name || "User",
+   tgUser.first_name || "User",
 
   username:
-   tgUser?.username || "",
+   tgUser.username || "",
 
   amount:data.bttc,
 
@@ -399,8 +339,8 @@ async function submitWithdraw(){
 
  try{
 
-  let response=await fetch(
-   API_URL+"/withdraw",
+  let response = await fetch(
+   "/api/withdraw",
    {
     method:"POST",
     headers:{
@@ -410,7 +350,22 @@ async function submitWithdraw(){
    }
   );
 
-  let result=await response.json();
+  if(!response.ok){
+
+   let errorText = await response.text();
+
+   console.error(
+    "Withdrawal API Error:",
+    response.status,
+    errorText
+   );
+
+   throw new Error(
+    "API Error "+response.status
+   );
+  }
+
+  let result = await response.json();
 
   if(result.success){
 
@@ -428,19 +383,28 @@ async function submitWithdraw(){
 
   }else{
 
-   alert(result.message || "Request failed.");
+   alert(
+    result.message ||
+    "Withdrawal request failed."
+   );
 
   }
 
  }catch(e){
 
-  alert("Server connection error.");
+  console.error("Withdrawal Error:",e);
+
+  document.getElementById("withdrawStatus")
+  .innerText="❌ Server connection error.";
+
+  alert(
+   "❌ Server connection error.\n\n"+
+   "Please try again."
+  );
 
  }
 
 }
 
-</script>
-
-</body>
+</script></body>
 </html>

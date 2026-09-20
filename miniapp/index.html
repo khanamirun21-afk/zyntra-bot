@@ -1,410 +1,916 @@
-<!DOCTYPE html><html>
+<!DOCTYPE html>
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Zyntra Network</title><script src="https://telegram.org/js/telegram-web-app.js"></script><script src="//libtl.com/sdk.js" data-zone="11817232" data-sdk="show_11817232"></script><style>
-*{box-sizing:border-box}
-body{
- margin:0;padding:15px;background:#090909;color:white;
- font-family:Arial,sans-serif
+
+<title>Zyntra Network</title>
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<script
+src="//libtl.com/sdk.js"
+data-zone="11817232"
+data-sdk="show_11817232">
+</script>
+
+<style>
+*{
+    box-sizing:border-box;
 }
-h1{text-align:center;color:#a855f7;margin:8px 0 18px}
+
+body{
+    margin:0;
+    padding:15px;
+    background:#090909;
+    color:white;
+    font-family:Arial,sans-serif;
+}
+
+h1{
+    text-align:center;
+    color:#a855f7;
+    margin:8px 0 18px;
+}
 
 .card{
- background:linear-gradient(135deg,#f59e0b,#ef4444);
- border-radius:22px;padding:20px;text-align:center
+    background:linear-gradient(135deg,#f59e0b,#ef4444);
+    border-radius:22px;
+    padding:20px;
+    text-align:center;
 }
-.balance{font-size:36px;font-weight:bold;margin:5px}
-.progress{height:10px;background:#333;border-radius:10px;overflow:hidden}
-.fill{height:100%;width:0;background:#22c55e}
+
+.balance{
+    font-size:36px;
+    font-weight:bold;
+    margin:5px;
+}
+
+.progress{
+    height:10px;
+    background:#333;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.fill{
+    height:100%;
+    width:0;
+    background:#22c55e;
+}
 
 .grid{
- display:grid;grid-template-columns:1fr 1fr;
- gap:10px;margin-top:15px
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:15px;
 }
+
 .btn{
- background:#1b1b1b;color:white;border:1px solid #333;
- border-radius:16px;padding:18px 8px;font-weight:bold;
- font-size:14px
+    background:#1b1b1b;
+    color:white;
+    border:1px solid #333;
+    border-radius:16px;
+    padding:18px 8px;
+    font-weight:bold;
+    font-size:14px;
 }
-.full{grid-column:span 2}
+
+.full{
+    grid-column:span 2;
+}
+
 .main{
- width:100%;margin-top:12px;padding:18px;border:0;
- border-radius:15px;background:#22c55e;color:white;
- font-size:16px;font-weight:bold
+    width:100%;
+    margin-top:12px;
+    padding:18px;
+    border:0;
+    border-radius:15px;
+    background:#22c55e;
+    color:white;
+    font-size:16px;
+    font-weight:bold;
 }
+
 .withdraw{
- width:100%;margin-top:10px;padding:16px;border:0;
- border-radius:15px;background:#ef4444;color:white;
- font-weight:bold
+    width:100%;
+    margin-top:10px;
+    padding:16px;
+    border:0;
+    border-radius:15px;
+    background:#ef4444;
+    color:white;
+    font-weight:bold;
 }
+
+.withdraw:disabled{
+    opacity:.6;
+}
+
 .section{
- margin-top:20px;background:#151515;
- padding:16px;border-radius:18px
+    margin-top:20px;
+    background:#151515;
+    padding:16px;
+    border-radius:18px;
 }
+
 .task{
- background:#202020;padding:15px;margin:8px 0;
- border-radius:12px;display:flex;justify-content:space-between
+    background:#202020;
+    padding:15px;
+    margin:8px 0;
+    border-radius:12px;
+    display:flex;
+    justify-content:space-between;
 }
+
 .modal{
- display:none;position:fixed;inset:0;background:#000e;
- z-index:99;padding:20px
+    display:none;
+    position:fixed;
+    inset:0;
+    background:#000e;
+    z-index:99;
+    padding:20px;
 }
+
 .box{
- margin-top:30px;background:#181818;
- border-radius:20px;padding:20px
+    margin-top:30px;
+    background:#181818;
+    border-radius:20px;
+    padding:20px;
 }
+
 input{
- width:100%;padding:15px;margin:8px 0;
- border:0;border-radius:10px;font-size:16px
+    width:100%;
+    padding:15px;
+    margin:8px 0;
+    border:0;
+    border-radius:10px;
+    font-size:16px;
 }
-.close{background:#555}
-</style></head><body><h1>ZYNTRA NETWORK</h1><div class="card">
- <div class="balance" id="balance">0 BTTC</div>
- <p id="ads">0 / 20 Ads Today</p> <div class="progress">
-   <div class="fill" id="progress"></div>
- </div> <p id="status">20 Ads complete karo</p>
-</div><div class="grid"><button class="btn" onclick="watchAd()">
- 📺<br>Watch Ads<br>+500 BTTC
-</button><button class="btn" onclick="showTasks()">
- 📋<br>Tasks
-</button><button class="btn" onclick="invite()">
- 👥<br>Invite<br>+1000 BTTC
-</button><button class="btn" onclick="openWallet()">
- 💰<br>Wallet
-</button><button class="btn full" onclick="social()">
- 📱 Follow & Earn
-</button></div><button class="main" onclick="watchAd()">
-▶ WATCH AD +500 BTTC
-</button><button class="withdraw" id="withdrawBtn" onclick="openWithdraw()" disabled>
-🔒 20 Ads Ke Baad Withdraw
-</button><div class="section"><h3>📱 Follow & Earn</h3><div class="task" onclick="follow('Telegram')">
- ✈️ Telegram <span>+1000</span>
-</div><div class="task" onclick="follow('Instagram')">
- 📸 Instagram <span>+1000</span>
-</div><div class="task" onclick="follow('YouTube')">
- ▶️ YouTube <span>+1000</span>
-</div></div><!-- WITHDRAW MODAL --><div class="modal" id="withdrawModal"><div class="box"><h2>💸 Withdraw BTTC</h2><p>Available Balance:</p>
-<h2 id="withdrawBalance">0 BTTC</h2><input
-id="binanceUID"
-type="text"
-inputmode="numeric"
-placeholder="Enter Binance UID"
 
-«»
+.close{
+    background:#555;
+}
 
-<p style="font-size:12px;opacity:.7">
-Minimum 10,000 BTTC + 20 Ads required.
-</p><button class="main" onclick="submitWithdraw()">
-✅ Submit Withdrawal
-</button><button class="withdraw close" onclick="closeWithdraw()">
-Close
-</button><p id="withdrawStatus"></p></div>
-</div><script>
+#withdrawStatus{
+    margin-top:12px;
+    line-height:1.5;
+}
+</style>
+</head>
 
-/* VERCEL BACKEND */
+<body>
+
+<h1>ZYNTRA NETWORK</h1>
+
+<div class="card">
+
+    <div class="balance" id="balance">
+        0 BTTC
+    </div>
+
+    <p id="ads">
+        0 / 20 Ads Today
+    </p>
+
+    <div class="progress">
+        <div class="fill" id="progress"></div>
+    </div>
+
+    <p id="status">
+        20 Ads complete karo
+    </p>
+
+</div>
+
+<div class="grid">
+
+    <button class="btn" onclick="watchAd()">
+        📺<br>
+        Watch Ads<br>
+        +500 BTTC
+    </button>
+
+    <button class="btn" onclick="showTasks()">
+        📋<br>
+        Tasks
+    </button>
+
+    <button class="btn" onclick="invite()">
+        👥<br>
+        Invite<br>
+        +1000 BTTC
+    </button>
+
+    <button class="btn" onclick="openWallet()">
+        💰<br>
+        Wallet
+    </button>
+
+    <button class="btn full" onclick="social()">
+        📱 Follow & Earn
+    </button>
+
+</div>
+
+<button class="main" onclick="watchAd()">
+    ▶ WATCH AD +500 BTTC
+</button>
+
+<button
+    class="withdraw"
+    id="withdrawBtn"
+    onclick="openWithdraw()"
+    disabled>
+    🔒 20 Ads + 10,000 BTTC Required
+</button>
+
+<div class="section">
+
+    <h3>📱 Follow & Earn</h3>
+
+    <div
+        class="task"
+        onclick="follow('Telegram')">
+        ✈️ Telegram
+        <span>+1000</span>
+    </div>
+
+    <div
+        class="task"
+        onclick="follow('Instagram')">
+        📸 Instagram
+        <span>+1000</span>
+    </div>
+
+    <div
+        class="task"
+        onclick="follow('YouTube')">
+        ▶️ YouTube
+        <span>+1000</span>
+    </div>
+
+</div>
+
+<!-- WITHDRAW MODAL -->
+
+<div class="modal" id="withdrawModal">
+
+    <div class="box">
+
+        <h2>💸 Withdraw BTTC</h2>
+
+        <p>Available Balance:</p>
+
+        <h2 id="withdrawBalance">
+            0 BTTC
+        </h2>
+
+        <input
+            id="binanceUID"
+            type="text"
+            inputmode="numeric"
+            placeholder="Enter Binance UID">
+
+        <p style="font-size:12px;opacity:.7">
+            Minimum 10,000 BTTC + 20 Ads required.
+        </p>
+
+        <button
+            class="main"
+            onclick="submitWithdraw()">
+            ✅ Submit Withdrawal
+        </button>
+
+        <button
+            class="withdraw close"
+            onclick="closeWithdraw()">
+            Close
+        </button>
+
+        <p id="withdrawStatus"></p>
+
+    </div>
+
+</div>
+
+<script>
+
+/* =========================
+   TELEGRAM
+========================= */
+
+const tg = window.Telegram?.WebApp;
+
+if(tg){
+    tg.ready();
+    tg.expand();
+}
+
+
+/* =========================
+   BACKEND
+========================= */
+
 const API_URL = "/api";
 
 
-let data = JSON.parse(
- localStorage.getItem("zyntra_v3") ||
- '{"bttc":0,"ads":0,"date":"","social":{}}'
-);
+/* =========================
+   LOCAL DATA
+========================= */
+
+let data;
+
+try{
+
+    data = JSON.parse(
+        localStorage.getItem("zyntra_v3") ||
+        '{"bttc":0,"ads":0,"date":"","social":{}}'
+    );
+
+}catch(error){
+
+    data = {
+        bttc:0,
+        ads:0,
+        date:"",
+        social:{}
+    };
+
+}
+
+
+/* Make sure fields exist */
+
+if(typeof data.bttc !== "number"){
+    data.bttc = Number(data.bttc) || 0;
+}
+
+if(typeof data.ads !== "number"){
+    data.ads = Number(data.ads) || 0;
+}
+
+if(!data.social || typeof data.social !== "object"){
+    data.social = {};
+}
+
+
+/* =========================
+   DATE
+========================= */
 
 let today = new Date().toDateString();
 
 if(data.date !== today){
- data.ads = 0;
- data.date = today;
- save();
+
+    data.ads = 0;
+    data.date = today;
+
+    save();
 }
 
+
+/* =========================
+   SAVE
+========================= */
+
 function save(){
- localStorage.setItem("zyntra_v3",JSON.stringify(data));
+
+    localStorage.setItem(
+        "zyntra_v3",
+        JSON.stringify(data)
+    );
+
 }
+
+
+/* =========================
+   UPDATE UI
+========================= */
 
 function update(){
 
- document.getElementById("balance").innerText =
- data.bttc+" BTTC";
+    document.getElementById("balance").innerText =
+        data.bttc + " BTTC";
 
- document.getElementById("ads").innerText =
- data.ads+" / 20 Ads Today";
+    document.getElementById("ads").innerText =
+        data.ads + " / 20 Ads Today";
 
- document.getElementById("progress").style.width =
- Math.min(data.ads/20*100,100)+"%";
+    document.getElementById("progress").style.width =
+        Math.min(
+            data.ads / 20 * 100,
+            100
+        ) + "%";
 
- if(data.ads >= 20 && data.bttc >= 10000){
 
-  document.getElementById("withdrawBtn").disabled=false;
-  document.getElementById("withdrawBtn").innerText =
-  "💸 WITHDRAW BTTC";
+    const withdrawBtn =
+        document.getElementById("withdrawBtn");
 
-  document.getElementById("status").innerText =
-  "✅ Withdraw Ready";
 
- }else{
+    if(
+        data.ads >= 20 &&
+        data.bttc >= 10000
+    ){
 
-  document.getElementById("withdrawBtn").disabled=true;
+        withdrawBtn.disabled = false;
 
-  document.getElementById("withdrawBtn").innerText =
-  "🔒 20 Ads + 10,000 BTTC Required";
- }
+        withdrawBtn.innerText =
+            "💸 WITHDRAW BTTC";
+
+        document.getElementById("status").innerText =
+            "✅ Withdraw Ready";
+
+    }else{
+
+        withdrawBtn.disabled = true;
+
+        withdrawBtn.innerText =
+            "🔒 20 Ads + 10,000 BTTC Required";
+
+        document.getElementById("status").innerText =
+            "20 Ads complete karo";
+
+    }
+
 }
+
 
 update();
 
 
+/* =========================
+   WATCH AD
+========================= */
+
 async function watchAd(){
 
- if(data.ads >= 20){
-  alert("Aaj ke 20 Ads complete!");
-  return;
- }
+    if(data.ads >= 20){
 
- if(typeof show_11817232 !== "function"){
-  alert("Ad system load nahi hua.");
-  return;
- }
+        alert(
+            "Aaj ke 20 Ads complete ho gaye!"
+        );
 
- try{
+        return;
+    }
 
-  await show_11817232();
 
-  data.ads++;
-  data.bttc += 500;
+    if(typeof show_11817232 !== "function"){
 
-  save();
-  update();
+        alert(
+            "Ad system load nahi hua. Thodi der baad try karo."
+        );
 
-  alert("+500 BTTC Mila!");
+        return;
+    }
 
- }catch(e){
 
-  alert("Ad complete nahi hua.");
+    try{
 
- }
+        await show_11817232();
+
+
+        data.ads += 1;
+        data.bttc += 500;
+
+
+        save();
+        update();
+
+
+        alert(
+            "+500 BTTC Mila!"
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "Ad Error:",
+            error
+        );
+
+        alert(
+            "Ad complete nahi hua."
+        );
+
+    }
+
 }
 
+
+/* =========================
+   SOCIAL TASK
+========================= */
 
 function follow(type){
 
- if(data.social[type]){
-  alert("Already claimed!");
-  return;
- }
+    if(data.social[type]){
 
- data.social[type]=1;
- data.bttc+=1000;
+        alert(
+            "Already claimed!"
+        );
 
- save();
- update();
+        return;
+    }
 
- let links={
-  Telegram:"https://t.me/ZyntraBotOfficial",
-  Instagram:"https://www.instagram.com/zyntra_official_bot",
-  YouTube:"https://www.youtube.com/@ZyntraEarn"
- };
 
- window.open(links[type],"_blank");
+    data.social[type] = 1;
 
- alert("+1000 BTTC");
+    data.bttc += 1000;
+
+    save();
+    update();
+
+
+    const links = {
+
+        Telegram:
+        "https://t.me/ZyntraBotOfficial",
+
+        Instagram:
+        "https://www.instagram.com/zyntra_official_bot",
+
+        YouTube:
+        "https://www.youtube.com/@ZyntraEarn"
+
+    };
+
+
+    if(links[type]){
+
+        window.open(
+            links[type],
+            "_blank"
+        );
+
+    }
+
+
+    alert(
+        "+1000 BTTC"
+    );
+
 }
 
+
+/* =========================
+   INVITE
+========================= */
 
 function invite(){
 
- let user =
- window.Telegram?.WebApp?.initDataUnsafe?.user;
+    const user =
+        window.Telegram?.WebApp
+        ?.initDataUnsafe?.user;
 
- let id=user?.id || "";
 
- let link=
- "https://t.me/ZyntraBotOfficial?start="+id;
+    const id =
+        user?.id || "";
 
- prompt("Your Zyntra Invite Link:",link);
+
+    if(!id){
+
+        alert(
+            "Telegram user information nahi mili."
+        );
+
+        return;
+    }
+
+
+    const link =
+        "https://t.me/ZyntraBotOfficial?start=" +
+        id;
+
+
+    prompt(
+        "Your Zyntra Invite Link:",
+        link
+    );
+
 }
 
+
+/* =========================
+   TASKS
+========================= */
 
 function showTasks(){
 
- alert(
- "📋 ZYNTRA TASKS\n\n"+
- "📺 Watch Ads: +500 BTTC\n"+
- "👥 Invite: +1000 BTTC\n"+
- "📱 Social Tasks: +1000 BTTC\n\n"+
- "Minimum Withdraw: 10,000 BTTC"
- );
+    alert(
+        "📋 ZYNTRA TASKS\n\n" +
+        "📺 Watch Ads: +500 BTTC\n" +
+        "👥 Invite: +1000 BTTC\n" +
+        "📱 Social Tasks: +1000 BTTC\n\n" +
+        "Minimum Withdraw: 10,000 BTTC"
+    );
 
 }
 
+
+/* =========================
+   SOCIAL SECTION
+========================= */
 
 function social(){
 
- document.querySelector(".section")
- .scrollIntoView({behavior:"smooth"});
+    document
+        .querySelector(".section")
+        .scrollIntoView({
+            behavior:"smooth"
+        });
 
 }
 
+
+/* =========================
+   WALLET
+========================= */
 
 function openWallet(){
 
- openWithdraw();
+    openWithdraw();
 
 }
 
+
+/* =========================
+   OPEN WITHDRAW
+========================= */
 
 function openWithdraw(){
 
- if(data.ads < 20){
-  alert("Pehle 20 Ads complete karo.");
-  return;
- }
+    if(data.ads < 20){
 
- if(data.bttc < 10000){
-  alert("Minimum 10,000 BTTC required.");
-  return;
- }
+        alert(
+            "Pehle 20 Ads complete karo."
+        );
 
- document.getElementById("withdrawBalance")
- .innerText=data.bttc+" BTTC";
+        return;
+    }
 
- document.getElementById("withdrawModal")
- .style.display="block";
+
+    if(data.bttc < 10000){
+
+        alert(
+            "Minimum 10,000 BTTC required."
+        );
+
+        return;
+    }
+
+
+    document.getElementById(
+        "withdrawBalance"
+    ).innerText =
+        data.bttc + " BTTC";
+
+
+    document.getElementById(
+        "withdrawStatus"
+    ).innerText = "";
+
+
+    document.getElementById(
+        "withdrawModal"
+    ).style.display = "block";
 
 }
 
+
+/* =========================
+   CLOSE WITHDRAW
+========================= */
 
 function closeWithdraw(){
 
- document.getElementById("withdrawModal")
- .style.display="none";
+    document.getElementById(
+        "withdrawModal"
+    ).style.display = "none";
 
 }
 
+
+/* =========================
+   SUBMIT WITHDRAW
+========================= */
 
 async function submitWithdraw(){
 
- let uid =
- document.getElementById("binanceUID")
- .value.trim();
+    const uid =
+        document
+        .getElementById("binanceUID")
+        .value
+        .trim();
 
- if(!/^[0-9]{5,20}$/.test(uid)){
 
-  alert("Valid Binance UID enter karo.");
-  return;
+    /* Binance UID */
 
- }
+    if(!/^[0-9]{5,20}$/.test(uid)){
 
- if(data.ads < 20){
-  alert("20 Ads required.");
-  return;
- }
+        alert(
+            "Valid Binance UID enter karo."
+        );
 
- if(data.bttc < 10000){
-  alert("Minimum 10,000 BTTC required.");
-  return;
- }
+        return;
+    }
 
- let tgUser =
- window.Telegram?.WebApp?.initDataUnsafe?.user;
 
- if(!tgUser?.id){
+    /* Ads */
 
-  alert("Telegram user information nahi mili. Zyntra ko Telegram ke andar open karo.");
-  return;
+    if(data.ads < 20){
 
- }
+        alert(
+            "20 Ads required."
+        );
 
- let payload={
+        return;
+    }
 
-  telegram_id:tgUser.id,
 
-  name:
-   tgUser.first_name || "User",
+    /* Balance */
 
-  username:
-   tgUser.username || "",
+    if(data.bttc < 10000){
 
-  amount:data.bttc,
+        alert(
+            "Minimum 10,000 BTTC required."
+        );
 
-  ads:data.ads,
+        return;
+    }
 
-  binance_uid:uid
 
- };
+    /* Telegram user */
 
- document.getElementById("withdrawStatus")
- .innerText="⏳ Request sending...";
+    const tgUser =
+        window.Telegram?.WebApp
+        ?.initDataUnsafe?.user;
 
- try{
 
-  let response = await fetch(
-   "/api/withdraw",
-   {
-    method:"POST",
-    headers:{
-     "Content-Type":"application/json"
-    },
-    body:JSON.stringify(payload)
-   }
-  );
+    if(!tgUser?.id){
 
-  if(!response.ok){
+        alert(
+            "Telegram user information nahi mili.\n\n" +
+            "Zyntra ko Telegram ke andar open karo."
+        );
 
-   let errorText = await response.text();
+        return;
+    }
 
-   console.error(
-    "Withdrawal API Error:",
-    response.status,
-    errorText
-   );
 
-   throw new Error(
-    "API Error "+response.status
-   );
-  }
+    /* Payload */
 
-  let result = await response.json();
+    const payload = {
 
-  if(result.success){
+        telegram_id:
+            tgUser.id,
 
-   alert(
-    "✅ Withdrawal request sent!\n\n"+
-    "Admin verification ke baad payment hogi."
-   );
+        name:
+            tgUser.first_name ||
+            "User",
 
-   data.bttc=0;
-   data.ads=0;
+        username:
+            tgUser.username ||
+            "",
 
-   save();
-   update();
-   closeWithdraw();
+        amount:
+            data.bttc,
 
-  }else{
+        ads:
+            data.ads,
 
-   alert(
-    result.message ||
-    "Withdrawal request failed."
-   );
+        binance_uid:
+            uid
 
-  }
+    };
 
- }catch(e){
 
-  console.error("Withdrawal Error:",e);
+    const status =
+        document.getElementById(
+            "withdrawStatus"
+        );
 
-  document.getElementById("withdrawStatus")
-  .innerText="❌ Server connection error.";
 
-  alert(
-   "❌ Server connection error.\n\n"+
-   "Please try again."
-  );
+    status.innerText =
+        "⏳ Request sending...";
 
- }
+
+    try{
+
+        const response =
+            await fetch(
+                API_URL + "/withdraw",
+                {
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify(payload)
+                }
+            );
+
+
+        let result;
+
+
+        try{
+
+            result =
+                await response.json();
+
+        }catch(error){
+
+            result = {
+                success:false,
+                message:
+                    "Server ne valid response nahi diya."
+            };
+
+        }
+
+
+        console.log(
+            "Withdrawal API:",
+            response.status,
+            result
+        );
+
+
+        if(!response.ok || !result.success){
+
+            const msg =
+                result.message ||
+                "Withdrawal failed.";
+
+
+            status.innerText =
+                "❌ " + msg;
+
+
+            alert(
+                "❌ " + msg
+            );
+
+            return;
+        }
+
+
+        /* SUCCESS */
+
+        status.innerText =
+            "✅ Withdrawal request sent";
+
+
+        alert(
+            "✅ Withdrawal request sent!\n\n" +
+            "Admin verification ke baad payment hogi."
+        );
+
+
+        /* Reset after success */
+
+        data.bttc = 0;
+        data.ads = 0;
+
+
+        save();
+        update();
+
+
+        document.getElementById(
+            "binanceUID"
+        ).value = "";
+
+
+        closeWithdraw();
+
+
+    }catch(error){
+
+        console.error(
+            "Withdrawal Error:",
+            error
+        );
+
+
+        status.innerText =
+            "❌ Server connection error.";
+
+
+        alert(
+            "❌ Server connection error.\n\n" +
+            "Please try again."
+        );
+
+    }
 
 }
 
-</script></body>
-</html>
+</script>
+
+</body>
+ </html>

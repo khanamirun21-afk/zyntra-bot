@@ -24,7 +24,9 @@ class handler(BaseHTTPRequestHandler):
 
         self.wfile.write(body)
 
-    # ---------------- GET ----------------
+    # ==============================
+    # GET
+    # ==============================
 
     def do_GET(self):
         self.send_json({
@@ -32,18 +34,23 @@ class handler(BaseHTTPRequestHandler):
             "message": "Zyntra Withdraw API Online"
         })
 
-    # ---------------- OPTIONS ----------------
+    # ==============================
+    # OPTIONS
+    # ==============================
 
     def do_OPTIONS(self):
         self.send_json({
             "success": True
         })
 
-    # ---------------- POST ----------------
+    # ==============================
+    # POST
+    # ==============================
 
     def do_POST(self):
 
         try:
+
             length = int(
                 self.headers.get("Content-Length", 0)
             )
@@ -69,9 +76,96 @@ class handler(BaseHTTPRequestHandler):
                     "message": "Server configuration missing"
                 }, 500)
 
-            # ==================================
-            # TELEGRAM WEBHOOK UPDATE
-            # ==================================
+            # ==========================================
+            # TELEGRAM WEBHOOK - /START MESSAGE
+            # ==========================================
+
+            if "message" in data:
+
+                message_data = data.get(
+                    "message",
+                    {}
+                )
+
+                chat = message_data.get(
+                    "chat",
+                    {}
+                )
+
+                user = message_data.get(
+                    "from",
+                    {}
+                )
+
+                text = message_data.get(
+                    "text",
+                    ""
+                )
+
+                chat_id = chat.get("id")
+
+                # /start or /start referral
+                if text.startswith("/start"):
+
+                    first_name = user.get(
+                        "first_name",
+                        "Friend"
+                    )
+
+                    welcome_text = (
+                        "🚀 <b>WELCOME TO ZYNTRA NETWORK</b> 🚀\n\n"
+
+                        f"Hey <b>{first_name}</b>! 👋\n\n"
+
+                        "Welcome to <b>Zyntra</b> — "
+                        "your digital rewards network. 🌐\n\n"
+
+                        "🎯 <b>Explore Zyntra</b>\n\n"
+
+                        "📺 Watch Ads & Earn Rewards\n"
+                        "📋 Complete Daily Tasks\n"
+                        "🎁 Collect Rewards\n"
+                        "👥 Invite Friends\n"
+                        "🏆 Discover New Features\n\n"
+
+                        "━━━━━━━━━━━━━━━━━━\n\n"
+
+                        "🔥 <b>YOUR JOURNEY STARTS HERE!</b>\n\n"
+
+                        "Tap the button below to open "
+                        "Zyntra and start exploring. 🚀\n\n"
+
+                        "⚡ More exciting features are coming soon!\n\n"
+
+                        "💜 <b>Welcome to the Zyntra community!</b>"
+                    )
+
+                    keyboard = {
+                        "inline_keyboard": [
+                            [
+                                {
+                                    "text": "🚀 OPEN ZYNTRA",
+                                    "url": "https://zyntra-bot.vercel.app/"
+                                }
+                            ]
+                        ]
+                    }
+
+                    self.send_telegram_message(
+                        bot_token,
+                        chat_id,
+                        welcome_text,
+                        keyboard
+                    )
+
+                    return self.send_json({
+                        "success": True,
+                        "message": "Welcome message sent"
+                    })
+
+            # ==========================================
+            # TELEGRAM WEBHOOK - BUTTON CALLBACK
+            # ==========================================
 
             if "callback_query" in data:
 
@@ -112,9 +206,9 @@ class handler(BaseHTTPRequestHandler):
                         "message": "Unauthorized"
                     }, 403)
 
-                # -----------------------------
+                # ==================================
                 # APPROVE
-                # -----------------------------
+                # ==================================
 
                 if callback_data.startswith(
                     "approve:"
@@ -140,11 +234,12 @@ class handler(BaseHTTPRequestHandler):
                     self.send_user_message(
                         bot_token,
                         user_id,
-                        "✅ ZYNTRA WITHDRAWAL SUCCESS\n\n"
-                        "Your withdrawal request has been approved "
-                        "by the Zyntra admin.\n\n"
-                        "💰 Payment will be sent to your Binance UID "
-                        "after manual verification."
+                        "✅ <b>ZYNTRA WITHDRAWAL SUCCESS</b>\n\n"
+                        "Your withdrawal request has been "
+                        "approved by the Zyntra admin.\n\n"
+                        "💰 Payment will be sent to your "
+                        "Binance UID after manual verification.",
+                        None
                     )
 
                     return self.send_json({
@@ -152,9 +247,9 @@ class handler(BaseHTTPRequestHandler):
                         "message": "Withdrawal approved"
                     })
 
-                # -----------------------------
+                # ==================================
                 # REJECT
-                # -----------------------------
+                # ==================================
 
                 if callback_data.startswith(
                     "reject:"
@@ -180,9 +275,10 @@ class handler(BaseHTTPRequestHandler):
                     self.send_user_message(
                         bot_token,
                         user_id,
-                        "❌ ZYNTRA WITHDRAWAL REJECTED\n\n"
+                        "❌ <b>ZYNTRA WITHDRAWAL REJECTED</b>\n\n"
                         "Your withdrawal request was rejected "
-                        "by the Zyntra admin."
+                        "by the Zyntra admin.",
+                        None
                     )
 
                     return self.send_json({
@@ -194,9 +290,9 @@ class handler(BaseHTTPRequestHandler):
                     "success": True
                 })
 
-            # ==================================
+            # ==========================================
             # NORMAL WITHDRAWAL REQUEST
-            # ==================================
+            # ==========================================
 
             telegram_id = data.get(
                 "telegram_id"
@@ -220,6 +316,7 @@ class handler(BaseHTTPRequestHandler):
             ).strip()
 
             try:
+
                 amount = int(
                     data.get(
                         "amount",
@@ -241,7 +338,6 @@ class handler(BaseHTTPRequestHandler):
                     "message": "Invalid amount or ads"
                 }, 400)
 
-            # Telegram ID check
             if not telegram_id:
 
                 return self.send_json({
@@ -249,7 +345,6 @@ class handler(BaseHTTPRequestHandler):
                     "message": "Telegram user not found"
                 }, 400)
 
-            # Binance UID check
             if not binance_uid.isdigit():
 
                 return self.send_json({
@@ -257,7 +352,6 @@ class handler(BaseHTTPRequestHandler):
                     "message": "Valid Binance UID required"
                 }, 400)
 
-            # Minimum amount
             if amount < 10000:
 
                 return self.send_json({
@@ -265,7 +359,6 @@ class handler(BaseHTTPRequestHandler):
                     "message": "Minimum 10000 BTTC required"
                 }, 400)
 
-            # Minimum ads
             if ads < 20:
 
                 return self.send_json({
@@ -273,9 +366,9 @@ class handler(BaseHTTPRequestHandler):
                     "message": "20 ads required"
                 }, 400)
 
-            # ==================================
-            # ADMIN MESSAGE
-            # ==================================
+            # ==========================================
+            # ADMIN WITHDRAWAL MESSAGE
+            # ==========================================
 
             message = (
                 "🚨 NEW ZYNTRA WITHDRAWAL\n\n"
@@ -335,14 +428,12 @@ class handler(BaseHTTPRequestHandler):
 
                 return self.send_json({
                     "success": True,
-                    "message":
-                        "Withdrawal request sent"
+                    "message": "Withdrawal request sent"
                 })
 
             return self.send_json({
                 "success": False,
-                "message":
-                    "Telegram notification failed"
+                "message": "Telegram notification failed"
             }, 500)
 
         except json.JSONDecodeError:
@@ -364,9 +455,50 @@ class handler(BaseHTTPRequestHandler):
                 "message": "Server error"
             }, 500)
 
-    # ======================================
-    # TELEGRAM FUNCTIONS
-    # ======================================
+    # ==========================================
+    # SEND TELEGRAM MESSAGE
+    # ==========================================
+
+    def send_telegram_message(
+        self,
+        bot_token,
+        chat_id,
+        text,
+        keyboard=None
+    ):
+
+        url = (
+            f"https://api.telegram.org/"
+            f"bot{bot_token}/sendMessage"
+        )
+
+        payload = {
+            "chat_id": chat_id,
+            "text": text,
+            "parse_mode": "HTML"
+        }
+
+        if keyboard:
+            payload["reply_markup"] = keyboard
+
+        try:
+
+            requests.post(
+                url,
+                json=payload,
+                timeout=10
+            )
+
+        except Exception as e:
+
+            print(
+                "Telegram message error:",
+                e
+            )
+
+    # ==========================================
+    # ANSWER CALLBACK
+    # ==========================================
 
     def answer_callback(
         self,
@@ -399,6 +531,10 @@ class handler(BaseHTTPRequestHandler):
                 e
             )
 
+    # ==========================================
+    # EDIT ADMIN MESSAGE
+    # ==========================================
+
     def edit_message(
         self,
         bot_token,
@@ -409,9 +545,7 @@ class handler(BaseHTTPRequestHandler):
         chat_id = callback_message.get(
             "chat",
             {}
-        ).get(
-            "id"
-        )
+        ).get("id")
 
         message_id = callback_message.get(
             "message_id"
@@ -422,7 +556,6 @@ class handler(BaseHTTPRequestHandler):
             ""
         )
 
-        # Remove old status
         lines = old_text.split("\n")
 
         new_lines = []
@@ -432,17 +565,23 @@ class handler(BaseHTTPRequestHandler):
             if line.startswith(
                 "⏳ Status:"
             ):
-
                 continue
 
             new_lines.append(line)
 
         new_lines.append("")
-        new_lines.append(
-            f"✅ Status: {status}"
-            if status == "SUCCESS"
-            else f"❌ Status: {status}"
-        )
+
+        if status == "SUCCESS":
+
+            new_lines.append(
+                "✅ Status: SUCCESS"
+            )
+
+        else:
+
+            new_lines.append(
+                "❌ Status: REJECTED"
+            )
 
         new_text = "\n".join(
             new_lines
@@ -472,32 +611,21 @@ class handler(BaseHTTPRequestHandler):
                 e
             )
 
+    # ==========================================
+    # SEND MESSAGE TO USER
+    # ==========================================
+
     def send_user_message(
         self,
         bot_token,
         user_id,
-        text
+        text,
+        keyboard=None
     ):
 
-        url = (
-            f"https://api.telegram.org/"
-            f"bot{bot_token}/sendMessage"
-        )
-
-        try:
-
-            requests.post(
-                url,
-                json={
-                    "chat_id": user_id,
-                    "text": text
-                },
-                timeout=10
-            )
-
-        except Exception as e:
-
-            print(
-                "User message error:",
-                e
+        self.send_telegram_message(
+            bot_token,
+            user_id,
+            text,
+            keyboard
         )

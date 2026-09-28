@@ -140,12 +140,18 @@ class handler(BaseHTTPRequestHandler):
                         "💜 <b>Welcome to the Zyntra community!</b>"
                     )
 
+                    # ==========================================
+                    # TELEGRAM MINI APP BUTTON
+                    # ==========================================
+
                     keyboard = {
                         "inline_keyboard": [
                             [
                                 {
                                     "text": "🚀 OPEN ZYNTRA",
-                                    "url": "https://zyntra-bot.vercel.app/"
+                                    "web_app": {
+                                        "url": "https://zyntra-bot.vercel.app/"
+                                    }
                                 }
                             ]
                         ]
@@ -628,4 +634,4 @@ class handler(BaseHTTPRequestHandler):
             user_id,
             text,
             keyboard
-        )
+            )

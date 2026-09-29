@@ -1,13 +1,14 @@
 // ============================================================
 // ZYNTRA NETWORK - PROFESSIONAL FEATURES
-// Version 2.1 - Fixed & Compatible
+// Version 3.0
+// Compatible with current Zyntra index.html
 // ============================================================
 
 (function () {
 
     "use strict";
 
-    console.log("🚀 Zyntra Professional Features Loaded ✅");
+    console.log("🚀 Zyntra Features v3.0 Loaded ✅");
 
 
     // ============================================================
@@ -15,12 +16,23 @@
     // ============================================================
 
     function getData() {
+
         try {
-            if (typeof data !== "undefined" && data) {
+
+            if (
+                typeof data !== "undefined" &&
+                data
+            ) {
                 return data;
             }
+
         } catch (e) {
-            console.log("Data unavailable:", e);
+
+            console.log(
+                "Data error:",
+                e
+            );
+
         }
 
         return null;
@@ -28,16 +40,27 @@
 
 
     function refresh() {
+
         try {
-            if (typeof save === "function") {
+
+            if (
+                typeof save === "function"
+            ) {
                 save();
             }
 
-            if (typeof update === "function") {
+            if (
+                typeof update === "function"
+            ) {
                 update();
             }
+
         } catch (e) {
-            console.log("Refresh error:", e);
+
+            console.log(
+                "Refresh error:",
+                e
+            );
         }
     }
 
@@ -47,12 +70,19 @@
         const d = getData();
 
         if (!d) {
-            showToast("❌ Account data unavailable");
+
+            showToast(
+                "❌ Account data unavailable"
+            );
+
             return false;
         }
 
-        d.bttc = Number(d.bttc) || 0;
-        d.bttc += Number(amount);
+        d.bttc =
+            Number(d.bttc) || 0;
+
+        d.bttc +=
+            Number(amount);
 
         refresh();
 
@@ -61,13 +91,16 @@
 
 
     // ============================================================
-    // FEATURE 1 - TOAST NOTIFICATION
+    // FEATURE 1
+    // TOAST NOTIFICATION
     // ============================================================
 
-    window.showToast = function (msg) {
+    window.showToast = function (message) {
 
         const old =
-            document.getElementById("zyntraToast");
+            document.getElementById(
+                "zyntraToast"
+            );
 
         if (old) {
             old.remove();
@@ -75,35 +108,41 @@
 
 
         const toast =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
+
 
         toast.id =
             "zyntraToast";
 
+
         toast.innerText =
-            msg;
+            message;
 
 
         toast.style.cssText =
             "position:fixed;" +
             "left:50%;" +
-            "bottom:20px;" +
+            "bottom:22px;" +
             "transform:translateX(-50%);" +
-            "background:#1f1f1f;" +
-            "border:1px solid #333;" +
-            "color:white;" +
+            "background:#181818;" +
+            "border:1px solid #444;" +
+            "color:#fff;" +
             "padding:12px 20px;" +
             "border-radius:30px;" +
             "z-index:999999;" +
             "font-size:14px;" +
             "font-weight:600;" +
-            "box-shadow:0 10px 30px rgba(0,0,0,.55);" +
-            "transition:all .3s ease;" +
+            "box-shadow:0 10px 30px rgba(0,0,0,.5);" +
             "max-width:90%;" +
-            "text-align:center;";
+            "text-align:center;" +
+            "transition:all .3s ease;";
 
 
-        document.body.appendChild(toast);
+        document.body.appendChild(
+            toast
+        );
 
 
         setTimeout(function () {
@@ -112,28 +151,35 @@
                 "0";
 
             toast.style.transform =
-                "translateX(-50%) translateY(20px)";
+                "translateX(-50%) translateY(15px)";
 
         }, 2500);
 
 
         setTimeout(function () {
 
-            if (toast.parentNode) {
+            if (
+                toast &&
+                toast.parentNode
+            ) {
                 toast.remove();
             }
 
         }, 3000);
+
     };
 
 
     // ============================================================
-    // FEATURE 2 - DAILY STREAK
+    // FEATURE 2
+    // DAILY STREAK
     // ============================================================
 
     let streak = {
+
         count: 0,
         last: ""
+
     };
 
 
@@ -150,8 +196,10 @@
     } catch (e) {
 
         streak = {
+
             count: 0,
             last: ""
+
         };
     }
 
@@ -162,14 +210,19 @@
 
     const yesterdayStr =
         new Date(
-            Date.now() - 86400000
+            Date.now() -
+            86400000
         ).toDateString();
 
 
-    if (streak.last !== todayStr) {
+    if (
+        streak.last !==
+        todayStr
+    ) {
 
         if (
-            streak.last === yesterdayStr
+            streak.last ===
+            yesterdayStr
         ) {
 
             streak.count += 1;
@@ -177,6 +230,7 @@
         } else {
 
             streak.count = 1;
+
         }
 
 
@@ -190,87 +244,120 @@
         );
 
 
-        // Streak reward starts from Day 2
-        if (streak.count > 1) {
+        /*
+         * Streak bonus:
+         * Day 1 = no bonus
+         * Day 2+ = streak x 100 BTTC
+         */
+
+        if (
+            streak.count > 1
+        ) {
 
             const bonus =
                 streak.count * 100;
 
 
-            setTimeout(function () {
+            setTimeout(
+                function () {
 
-                if (
-                    addBTTC(bonus)
-                ) {
+                    if (
+                        addBTTC(
+                            bonus
+                        )
+                    ) {
 
-                    showToast(
-                        "🔥 " +
-                        streak.count +
-                        " Day Streak! +" +
-                        bonus +
-                        " BTTC"
-                    );
-                }
+                        showToast(
+                            "🔥 " +
+                            streak.count +
+                            " Day Streak! +" +
+                            bonus +
+                            " BTTC"
+                        );
 
-            }, 1500);
+                    }
+
+                },
+                1500
+            );
         }
     }
 
 
     // ============================================================
-    // FEATURE 3 - LEVEL SYSTEM
+    // FEATURE 3
+    // LEVEL SYSTEM
     // ============================================================
 
-    function getLevel(bttc) {
+    function getLevel(balance) {
 
-        bttc =
-            Number(bttc) || 0;
+        balance =
+            Number(balance) || 0;
 
 
-        if (bttc >= 50000) {
+        if (
+            balance >= 50000
+        ) {
 
             return {
+
                 level: 5,
                 name: "Diamond 💎"
+
             };
 
         }
 
 
-        if (bttc >= 25000) {
+        if (
+            balance >= 25000
+        ) {
 
             return {
+
                 level: 4,
                 name: "Platinum 🏆"
+
             };
 
         }
 
 
-        if (bttc >= 10000) {
+        if (
+            balance >= 10000
+        ) {
 
             return {
+
                 level: 3,
                 name: "Gold 🥇"
+
             };
 
         }
 
 
-        if (bttc >= 3000) {
+        if (
+            balance >= 3000
+        ) {
 
             return {
+
                 level: 2,
                 name: "Silver 🥈"
+
             };
 
         }
 
 
         return {
+
             level: 1,
             name: "Bronze 🥉"
+
         };
+
     }
 
 
@@ -278,140 +365,116 @@
         getLevel;
 
 
-    // ============================================================
-    // LEVEL DISPLAY
-    // ============================================================
+    function updateLevel() {
 
-    function updateLevelDisplay() {
-
-        try {
-
-            const d =
-                getData();
+        const d =
+            getData();
 
 
-            if (!d) {
-                return;
-            }
-
-
-            const statusEl =
-                document.getElementById(
-                    "status"
-                );
-
-
-            if (!statusEl) {
-                return;
-            }
-
-
-            const level =
-                getLevel(d.bttc);
-
-
-            let baseStatus =
-                statusEl.getAttribute(
-                    "data-zyntra-base-status"
-                );
-
-
-            if (!baseStatus) {
-
-                baseStatus =
-                    statusEl.innerText ||
-                    "Active";
-
-
-                statusEl.setAttribute(
-                    "data-zyntra-base-status",
-                    baseStatus
-                );
-            }
-
-
-            // Remove previously added level
-            if (
-                baseStatus.indexOf(
-                    "Level "
-                ) === 0
-            ) {
-
-                const separator =
-                    baseStatus.indexOf("|");
-
-
-                if (separator !== -1) {
-
-                    baseStatus =
-                        baseStatus.substring(
-                            separator + 1
-                        ).trim();
-                }
-            }
-
-
-            statusEl.innerText =
-                "Level " +
-                level.level +
-                " - " +
-                level.name +
-                " | " +
-                baseStatus;
-
-        } catch (e) {
-
-            console.log(
-                "Level error:",
-                e
-            );
+        if (!d) {
+            return;
         }
+
+
+        const status =
+            document.getElementById(
+                "status"
+            );
+
+
+        if (!status) {
+            return;
+        }
+
+
+        const level =
+            getLevel(
+                d.bttc
+            );
+
+
+        let base =
+            status.getAttribute(
+                "data-zyntra-status"
+            );
+
+
+        if (!base) {
+
+            base =
+                status.innerText ||
+                "20 Ads complete karo";
+
+
+            status.setAttribute(
+                "data-zyntra-status",
+                base
+            );
+
+        }
+
+
+        status.innerText =
+            "Level " +
+            level.level +
+            " - " +
+            level.name +
+            " | " +
+            base;
+
     }
 
 
-    // Hook existing update()
-    const oldUpdate =
+    /*
+     * Hook existing update()
+     * without replacing the main balance logic.
+     */
+
+    const originalUpdate =
         window.update;
 
 
     if (
-        typeof oldUpdate ===
+        typeof originalUpdate ===
         "function"
     ) {
 
         window.update =
             function () {
 
-                oldUpdate.apply(
+                originalUpdate.apply(
                     this,
                     arguments
                 );
 
-                updateLevelDisplay();
+
+                updateLevel();
+
             };
+
     }
 
 
-    // Initial level display
     setTimeout(
-        updateLevelDisplay,
+        updateLevel,
         500
     );
 
 
     // ============================================================
-    // FEATURE 4 - AD COOLDOWN
+    // FEATURE 4
+    // AD COOLDOWN
     // ============================================================
 
     let lastAdTime = 0;
 
 
-    const oldWatchAd =
+    const originalWatchAd =
         window.watchAd;
 
 
     if (
-        typeof oldWatchAd ===
+        typeof originalWatchAd ===
         "function"
     ) {
 
@@ -427,8 +490,9 @@
 
 
                 if (
-                    lastAdTime > 0 &&
-                    now - lastAdTime <
+                    lastAdTime !== 0 &&
+                    now -
+                    lastAdTime <
                     cooldown
                 ) {
 
@@ -452,8 +516,15 @@
 
 
                     return;
+
                 }
 
+
+                /*
+                 * Start cooldown only when
+                 * the original ad function
+                 * is actually called.
+                 */
 
                 lastAdTime =
                     now;
@@ -461,37 +532,37 @@
 
                 try {
 
-                    return await oldWatchAd.apply(
+                    return await originalWatchAd.apply(
                         this,
                         arguments
                     );
 
                 } catch (error) {
 
-                    lastAdTime = 0;
+                    /*
+                     * If original ad function
+                     * fails, allow retry.
+                     */
+
+                    lastAdTime =
+                        0;
+
 
                     console.log(
                         "Ad error:",
                         error
                     );
 
-
-                    showToast(
-                        "❌ Ad system error"
-                    );
                 }
+
             };
 
-    } else {
-
-        console.log(
-            "⚠️ watchAd() not found"
-        );
     }
 
 
     // ============================================================
-    // FEATURE 5 - DAILY CHECK-IN BONUS
+    // FEATURE 5
+    // DAILY CHECK-IN BONUS
     // ============================================================
 
     window.claimDailyBonus =
@@ -513,11 +584,14 @@
                 );
 
                 return;
+
             }
 
 
             const success =
-                addBTTC(1000);
+                addBTTC(
+                    1000
+                );
 
 
             if (!success) {
@@ -545,131 +619,136 @@
             if (modal) {
                 modal.remove();
             }
+
         };
 
 
     // Daily Bonus Modal
-    setTimeout(function () {
 
-        const lastClaim =
-            localStorage.getItem(
-                "zyntra_daily_claim"
+    setTimeout(
+        function () {
+
+            const lastClaim =
+                localStorage.getItem(
+                    "zyntra_daily_claim"
+                );
+
+
+            if (
+                lastClaim ===
+                todayStr
+            ) {
+                return;
+            }
+
+
+            if (
+                document.getElementById(
+                    "dailyModal"
+                )
+            ) {
+                return;
+            }
+
+
+            const modal =
+                document.createElement(
+                    "div"
+                );
+
+
+            modal.id =
+                "dailyModal";
+
+
+            modal.style.cssText =
+                "position:fixed;" +
+                "inset:0;" +
+                "background:rgba(0,0,0,.82);" +
+                "z-index:99998;" +
+                "display:flex;" +
+                "align-items:center;" +
+                "justify-content:center;" +
+                "padding:20px;";
+
+
+            modal.innerHTML =
+
+                '<div style="' +
+
+                'background:#181818;' +
+                'color:white;' +
+                'border:1px solid #333;' +
+                'border-radius:20px;' +
+                'padding:25px;' +
+                'text-align:center;' +
+                'max-width:320px;' +
+                'width:100%;' +
+
+                '">' +
+
+                '<div style="font-size:45px;">🎁</div>' +
+
+                '<h2>Daily Bonus</h2>' +
+
+                '<p>Claim your daily 1000 BTTC!</p>' +
+
+                '<p style="font-size:12px;opacity:.7;">' +
+                '🔥 Streak: ' +
+                streak.count +
+                ' days' +
+                '</p>' +
+
+                '<button ' +
+                'onclick="claimDailyBonus()" ' +
+
+                'style="' +
+                'width:100%;' +
+                'padding:15px;' +
+                'border:0;' +
+                'border-radius:12px;' +
+                'background:#22c55e;' +
+                'color:white;' +
+                'font-weight:bold;' +
+                'font-size:15px;' +
+                '">' +
+
+                '🎁 Claim +1000 BTTC' +
+
+                '</button>' +
+
+                '<button ' +
+                'onclick="document.getElementById(\'dailyModal\').remove()" ' +
+
+                'style="' +
+                'width:100%;' +
+                'padding:12px;' +
+                'border:0;' +
+                'border-radius:12px;' +
+                'background:#333;' +
+                'color:white;' +
+                'margin-top:8px;' +
+                '">' +
+
+                'Later' +
+
+                '</button>' +
+
+                '</div>';
+
+
+            document.body.appendChild(
+                modal
             );
 
-
-        if (
-            lastClaim ===
-            todayStr
-        ) {
-            return;
-        }
-
-
-        if (
-            document.getElementById(
-                "dailyModal"
-            )
-        ) {
-            return;
-        }
-
-
-        const modal =
-            document.createElement(
-                "div"
-            );
-
-
-        modal.id =
-            "dailyModal";
-
-
-        modal.style.cssText =
-            "position:fixed;" +
-            "inset:0;" +
-            "background:rgba(0,0,0,.80);" +
-            "z-index:99998;" +
-            "display:flex;" +
-            "align-items:center;" +
-            "justify-content:center;" +
-            "padding:20px;" +
-            "box-sizing:border-box;";
-
-
-        modal.innerHTML =
-
-            '<div style="' +
-            'background:#181818;' +
-            'color:white;' +
-            'border:1px solid #333;' +
-            'border-radius:20px;' +
-            'padding:25px;' +
-            'text-align:center;' +
-            'max-width:320px;' +
-            'width:100%;' +
-            'box-sizing:border-box;' +
-            '">' +
-
-            '<div style="font-size:45px;">🎁</div>' +
-
-            '<h2>Daily Bonus</h2>' +
-
-            '<p style="opacity:.8;">' +
-            'Claim your daily 1000 BTTC!' +
-            '</p>' +
-
-            '<p style="font-size:12px;opacity:.65;">' +
-            '🔥 Streak: ' +
-            streak.count +
-            ' days' +
-            '</p>' +
-
-            '<button ' +
-            'onclick="claimDailyBonus()" ' +
-            'style="' +
-            'width:100%;' +
-            'padding:15px;' +
-            'border:0;' +
-            'border-radius:12px;' +
-            'background:#22c55e;' +
-            'color:white;' +
-            'font-weight:bold;' +
-            'cursor:pointer;' +
-            '">' +
-
-            '🎁 Claim +1000 BTTC' +
-
-            '</button>' +
-
-            '<button ' +
-            'onclick="document.getElementById(\'dailyModal\').remove()" ' +
-            'style="' +
-            'width:100%;' +
-            'padding:12px;' +
-            'border:0;' +
-            'border-radius:12px;' +
-            'background:#333;' +
-            'color:white;' +
-            'margin-top:8px;' +
-            'cursor:pointer;' +
-            '">' +
-
-            'Later' +
-
-            '</button>' +
-
-            '</div>';
-
-
-        document.body.appendChild(
-            modal
-        );
-
-    }, 2000);
+        },
+        2000
+    );
 
 
     // ============================================================
-    // FEATURE 6 - DAILY SPIN
+    // FEATURE 6
+    // DAILY SPIN
     // ============================================================
 
     window.spinWheel =
@@ -691,15 +770,18 @@
                 );
 
                 return;
+
             }
 
 
             const rewards = [
+
                 100,
                 200,
                 500,
                 1000,
                 2000
+
             ];
 
 
@@ -713,7 +795,9 @@
 
 
             const success =
-                addBTTC(win);
+                addBTTC(
+                    win
+                );
 
 
             if (!success) {
@@ -732,76 +816,92 @@
                 win +
                 " BTTC!"
             );
+
         };
 
 
-    // Add Spin Button
-    setTimeout(function () {
+    // Add Daily Spin button
 
-        const grid =
-            document.querySelector(
-                ".grid"
+    setTimeout(
+        function () {
+
+            const grid =
+                document.querySelector(
+                    ".grid"
+                );
+
+
+            if (!grid) {
+                return;
+            }
+
+
+            if (
+                document.getElementById(
+                    "spinBtn"
+                )
+            ) {
+                return;
+            }
+
+
+            const btn =
+                document.createElement(
+                    "button"
+                );
+
+
+            btn.id =
+                "spinBtn";
+
+
+            btn.className =
+                "btn full";
+
+
+            btn.innerHTML =
+                "🎡<br>Daily Spin";
+
+
+            btn.onclick =
+                window.spinWheel;
+
+
+            btn.style.background =
+                "linear-gradient(135deg,#a855f7,#ec4899)";
+
+
+            grid.appendChild(
+                btn
             );
 
-
-        if (
-            !grid ||
-            document.getElementById(
-                "spinBtn"
-            )
-        ) {
-            return;
-        }
-
-
-        const btn =
-            document.createElement(
-                "button"
-            );
-
-
-        btn.id =
-            "spinBtn";
-
-
-        btn.className =
-            "btn full";
-
-
-        btn.innerHTML =
-            "🎡<br>Daily Spin";
-
-
-        btn.onclick =
-            window.spinWheel;
-
-
-        btn.style.background =
-            "linear-gradient(135deg,#a855f7,#ec4899)";
-
-
-        grid.appendChild(btn);
-
-    }, 700);
+        },
+        700
+    );
 
 
     // ============================================================
-    // FEATURE 7 - RETURN REMINDER
+    // FEATURE 7
+    // RETURN REMINDER
     // ============================================================
 
-    let hiddenAt = 0;
+    let hiddenAt =
+        0;
 
 
     document.addEventListener(
         "visibilitychange",
         function () {
 
-            if (document.hidden) {
+            if (
+                document.hidden
+            ) {
 
                 hiddenAt =
                     Date.now();
 
                 return;
+
             }
 
 
@@ -812,75 +912,86 @@
             }
 
 
-            const diff =
+            const awayTime =
                 Date.now() -
                 hiddenAt;
 
 
             if (
-                diff >=
+                awayTime >=
                 2 * 60 * 60 * 1000
             ) {
 
                 showToast(
                     "👋 Welcome back! Keep earning on Zyntra."
                 );
+
             }
 
 
-            hiddenAt = 0;
+            hiddenAt =
+                0;
+
         }
     );
 
 
     // ============================================================
-    // FEATURE 8 - LOCAL BACKUP
-    // ============================================================
-    //
-    // Backup is ONLY for emergency/local testing.
-    // It is NOT used to authorize withdrawals.
+    // FEATURE 8
+    // LOCAL BACKUP
     // ============================================================
 
-    setInterval(function () {
+    setInterval(
+        function () {
 
-        const d =
-            getData();
-
-
-        if (!d) {
-            return;
-        }
+            const d =
+                getData();
 
 
-        try {
+            if (!d) {
+                return;
+            }
 
-            localStorage.setItem(
-                "zyntra_backup",
-                JSON.stringify({
-                    bttc:
-                        Number(d.bttc) || 0,
 
-                    ads:
-                        Number(d.ads) || 0,
+            try {
 
-                    time:
-                        Date.now()
-                })
-            );
+                localStorage.setItem(
+                    "zyntra_backup",
+                    JSON.stringify({
 
-        } catch (e) {
+                        bttc:
+                            Number(
+                                d.bttc
+                            ) || 0,
 
-            console.log(
-                "Backup error:",
-                e
-            );
-        }
+                        ads:
+                            Number(
+                                d.ads
+                            ) || 0,
 
-    }, 10000);
+                        time:
+                            Date.now()
+
+                    })
+                );
+
+            } catch (e) {
+
+                console.log(
+                    "Backup error:",
+                    e
+                );
+
+            }
+
+        },
+        10000
+    );
 
 
     // ============================================================
-    // FEATURE 9 - WEEKEND EVENT NOTICE
+    // FEATURE 9
+    // WEEKEND EVENT NOTICE
     // ============================================================
 
     const day =
@@ -902,11 +1013,13 @@
             },
             3000
         );
+
     }
 
 
     // ============================================================
-    // FEATURE 10 - PROFESSIONAL BRANDING
+    // FEATURE 10
+    // PROFESSIONAL BRANDING
     // ============================================================
 
     console.log(
@@ -921,26 +1034,38 @@
     );
 
 
-    // ============================================================
-    // READY
-    // ============================================================
-
     console.log(
-        "✅ All 10 Zyntra features initialized"
+        "✅ All 10 features initialized successfully"
     );
+
 
 })();
 
 [/writing block]
 
-"index.html" mein ye line zaroor honi chahiye
+Ab "index.html" mein kya karna hai?
 
-"</body>" ke just pehle:
+Tumhare current "index.html" ke bilkul end mein:
 
 <script src="zyntra-features.js"></script>
 
-Ek important correction: is version mein bhi "localStorage" hai, kyunki Daily Streak, Daily Bonus aur Daily Spin ko page reload ke baad remember karna hai. Lekin local backup ko withdrawal authorization ke liye use nahi kiya gaya hai.
+Ye "</body>" se just pehle lagao:
 
-Aur bhai, real BTTC withdrawal ke liye frontend mein "data.bttc += reward" ko final security system mat samajhna. User browser se ise manipulate kar sakta hai. Production mein reward/withdrawal verification backend par rakhna zaroori hai.
+</script>
 
-Agar tum ab apna current "index.html" bhej do, main check karke bata sakta hoon ki ye "zyntra-features.js" uske saath exactly compatible hai ya koi function conflict ho raha hai.
+<script src="zyntra-features.js"></script>
+
+</body>
+</html>
+
+⚠️ Ek bahut important baat
+
+Tumhare current "index.html" mein main balance/ads system already localStorage par hai:
+
+localStorage.getItem("zyntra_v3")
+
+Isliye abhi "features.js" se localStorage ko completely remove karna possible nahi hai bina tumhare main "index.html" ko bhi change kiye.
+
+Aur real withdrawal security ke liye current system mein ek aur important weakness hai: "submitWithdraw()" frontend se "amount", "ads" aur "telegram_id" bhej raha hai. User browser-side values manipulate kar sakta hai. Isliye production Zyntra mein backend ko khud balance/ads verify karna chahiye.
+
+Abhi ke liye, tum sirf ye "zyntra-features.js" replace karo aur "index.html" mein script line add karo. Tumhara existing Monetag + withdrawal code main is file se intentionally nahi chhed raha hoon.

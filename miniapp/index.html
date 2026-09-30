@@ -243,6 +243,7 @@ input{
         <div class="balance" id="balance">0 BTTC</div>
 
         <div class="grid">
+
             <div class="stat">
                 Ads Watched
                 <b id="ads">0/20</b>
@@ -252,126 +253,257 @@ input{
                 Level
                 <b id="levelDisplay">Level 1</b>
             </div>
+
         </div>
 
         <div class="progress-box">
-            <div class="small" id="status">Watch 20 ads to unlock withdrawal.</div>
+
+            <div class="small" id="status">
+                Watch 20 ads to unlock withdrawal.
+            </div>
+
             <div class="progress-bg">
                 <div class="progress" id="progress"></div>
             </div>
+
         </div>
 
-        <button onclick="watchAd()">🎬 Watch Ad +500 BTTC</button>
-        <button class="secondary" onclick="showTasks()">📋 Tasks</button>
-        <button class="secondary" onclick="invite()">👥 Invite Friends</button>
-        <button class="secondary" onclick="openWallet()">💰 Wallet</button>
+        <button onclick="watchAd()">
+            🎬 Watch Ad +500 BTTC
+        </button>
+
+        <button class="secondary" onclick="showTasks()">
+            📋 Tasks
+        </button>
+
+        <button class="secondary" onclick="invite()">
+            👥 Invite Friends
+        </button>
+
+        <button class="secondary" onclick="openWallet()">
+            💰 Wallet
+        </button>
+
     </div>
 
 
     <div class="card">
-        <div class="section-title">🎮 Zyntra Features</div>
 
-        <button onclick="spinWheel()">🎡 Daily Spin</button>
-        <button class="secondary" onclick="claimDailyBonus()">🎁 Daily Bonus +1000 BTTC</button>
-        <button class="secondary" onclick="social()">🌐 Social Tasks</button>
+        <div class="section-title">
+            🎮 Zyntra Features
+        </div>
+
+        <button onclick="spinWheel()">
+            🎡 Daily Spin
+        </button>
+
+        <button class="secondary" onclick="claimDailyBonus()">
+            🎁 Daily Bonus +1000 BTTC
+        </button>
+
+        <button class="secondary" onclick="social()">
+            🌐 Social Tasks
+        </button>
+
     </div>
 
 
     <div class="card" id="tasksSection">
-        <div class="section-title">📋 Tasks</div>
+
+        <div class="section-title">
+            📋 Tasks
+        </div>
 
         <div class="task">
+
             <div class="task-row">
+
                 <div>
                     <b>Watch Advertisements</b>
-                    <div class="small">Earn 500 BTTC per ad.</div>
+
+                    <div class="small">
+                        Earn 500 BTTC per ad.
+                    </div>
                 </div>
-                <button onclick="watchAd()">Watch</button>
+
+                <button onclick="watchAd()">
+                    Watch
+                </button>
+
             </div>
+
         </div>
 
+
         <div class="task">
+
             <div class="task-row">
+
                 <div>
                     <b>Daily Bonus</b>
-                    <div class="small">Claim once every day.</div>
+
+                    <div class="small">
+                        Claim once every day.
+                    </div>
                 </div>
-                <button onclick="claimDailyBonus()">Claim</button>
+
+                <button onclick="claimDailyBonus()">
+                    Claim
+                </button>
+
             </div>
+
         </div>
 
+
         <div class="task">
+
             <div class="task-row">
+
                 <div>
                     <b>Daily Spin</b>
-                    <div class="small">Try your luck once daily.</div>
+
+                    <div class="small">
+                        Try your luck once daily.
+                    </div>
                 </div>
-                <button onclick="spinWheel()">Spin</button>
+
+                <button onclick="spinWheel()">
+                    Spin
+                </button>
+
             </div>
+
         </div>
+
     </div>
 
 
     <div class="card" id="socialSection">
-        <div class="section-title">🌐 Social Tasks</div>
+
+        <div class="section-title">
+            🌐 Social Tasks
+        </div>
+
 
         <div class="task">
+
             <div class="task-row">
+
                 <div>
                     <b>Telegram</b>
-                    <div class="small">Follow Zyntra Telegram.</div>
+
+                    <div class="small">
+                        Follow Zyntra Telegram.
+                    </div>
                 </div>
-                <button onclick="follow('Telegram')">Open</button>
+
+                <button onclick="follow('Telegram')">
+                    Open
+                </button>
+
             </div>
+
         </div>
 
+
         <div class="task">
+
             <div class="task-row">
+
                 <div>
                     <b>Instagram</b>
-                    <div class="small">Follow Zyntra Instagram.</div>
+
+                    <div class="small">
+                        Follow Zyntra Instagram.
+                    </div>
                 </div>
-                <button onclick="follow('Instagram')">Open</button>
+
+                <button onclick="follow('Instagram')">
+                    Open
+                </button>
+
             </div>
+
         </div>
+
 
         <div class="task">
+
             <div class="task-row">
+
                 <div>
                     <b>YouTube</b>
-                    <div class="small">Subscribe to Zyntra YouTube.</div>
+
+                    <div class="small">
+                        Subscribe to Zyntra YouTube.
+                    </div>
                 </div>
-                <button onclick="follow('YouTube')">Open</button>
+
+                <button onclick="follow('YouTube')">
+                    Open
+                </button>
+
             </div>
+
         </div>
+
     </div>
 
 
     <div class="card">
-        <div class="section-title">💎 Level System</div>
+
+        <div class="section-title">
+            💎 Level System
+        </div>
 
         <div class="small">
+
             Your level increases as your BTTC balance grows.
+
             <br><br>
+
             Current Level:
-            <span class="highlight" id="levelText">Level 1</span>
+
+            <span class="highlight" id="levelText">
+                Level 1
+            </span>
+
         </div>
+
     </div>
 
 
     <div class="card">
-        <div class="section-title">💸 Withdrawal</div>
 
-        <div class="small">
-            Minimum withdrawal:
-            <span class="highlight">10,000 BTTC</span>
-            and at least
-            <span class="highlight">20 ads watched</span>.
+        <div class="section-title">
+            💸 Withdrawal
         </div>
 
-        <button id="withdrawButton" onclick="openWithdraw()" disabled>
+        <div class="small">
+
+            Minimum withdrawal:
+
+            <span class="highlight">
+                10,000 BTTC
+            </span>
+
+            and at least
+
+            <span class="highlight">
+                20 ads watched
+            </span>.
+
+        </div>
+
+        <button
+            id="withdrawButton"
+            onclick="openWithdraw()"
+            disabled
+        >
             Withdraw BTTC
         </button>
+
     </div>
 
 </div>
@@ -383,7 +515,9 @@ input{
 
     <div class="modal-box">
 
-        <div class="section-title">💸 Withdraw BTTC</div>
+        <div class="section-title">
+            💸 Withdraw BTTC
+        </div>
 
         <div class="small">
             Enter your Binance UID carefully.
@@ -396,11 +530,17 @@ input{
             autocomplete="off"
         >
 
-        <button id="submitWithdrawButton" onclick="submitWithdraw()">
+        <button
+            id="submitWithdrawButton"
+            onclick="submitWithdraw()"
+        >
             Submit Withdrawal
         </button>
 
-        <button class="close" onclick="closeWithdraw()">
+        <button
+            class="close"
+            onclick="closeWithdraw()"
+        >
             Cancel
         </button>
 
@@ -420,42 +560,74 @@ if(
     window.Telegram &&
     window.Telegram.WebApp
 ){
+
     tg = window.Telegram.WebApp;
+
     tg.ready();
+
     tg.expand();
+
 }
 
 
 var API_URL = "/api";
 
-var today = new Date().toDateString();
+var today =
+    new Date().toDateString();
+
 
 var data = {
-    bttc: 0,
-    ads: 0,
-    date: today,
-    streak: 0,
-    lastBonus: "",
-    lastSpin: "",
-    social: {}
+
+    bttc:0,
+
+    ads:0,
+
+    date:today,
+
+    streak:0,
+
+    lastBonus:"",
+
+    lastSpin:"",
+
+    social:{}
+
 };
 
 
 try{
 
-    var saved = localStorage.getItem("zyntra_v3");
+    var saved =
+        localStorage.getItem("zyntra_v3");
+
 
     if(saved){
-        var parsed = JSON.parse(saved);
 
-        if(parsed && typeof parsed === "object"){
-            data = Object.assign(data, parsed);
+        var parsed =
+            JSON.parse(saved);
+
+
+        if(
+            parsed &&
+            typeof parsed === "object"
+        ){
+
+            data =
+                Object.assign(
+                    data,
+                    parsed
+                );
+
         }
+
     }
 
 }catch(e){
 
-    console.log("Storage load error:", e);
+    console.log(
+        "Storage load error:",
+        e
+    );
 
 }
 
@@ -463,21 +635,30 @@ try{
 if(data.date !== today){
 
     data.date = today;
+
     data.ads = 0;
 
     saveData();
+
 }
 
 
 function saveData(){
 
     try{
+
         localStorage.setItem(
             "zyntra_v3",
             JSON.stringify(data)
         );
+
     }catch(e){
-        console.log("Storage save error:", e);
+
+        console.log(
+            "Storage save error:",
+            e
+        );
+
     }
 
 }
@@ -485,45 +666,67 @@ function saveData(){
 
 function showToast(message){
 
-    var toast = document.getElementById("toast");
+    var toast =
+        document.getElementById("toast");
+
 
     if(!toast){
         return;
     }
 
-    toast.innerText = message;
-    toast.style.display = "block";
 
-    clearTimeout(window.toastTimer);
+    toast.innerText =
+        message;
 
-    window.toastTimer = setTimeout(function(){
 
-        toast.style.display = "none";
+    toast.style.display =
+        "block";
 
-    },2500);
+
+    clearTimeout(
+        window.toastTimer
+    );
+
+
+    window.toastTimer =
+        setTimeout(
+            function(){
+
+                toast.style.display =
+                    "none";
+
+            },
+            2500
+        );
 
 }
 
 
 function getLevel(){
 
-    var balance = Number(data.bttc) || 0;
+    var balance =
+        Number(data.bttc) || 0;
+
 
     if(balance >= 100000){
         return 5;
     }
 
+
     if(balance >= 50000){
         return 4;
     }
+
 
     if(balance >= 25000){
         return 3;
     }
 
+
     if(balance >= 10000){
         return 2;
     }
+
 
     return 1;
 
@@ -532,34 +735,60 @@ function getLevel(){
 
 function update(){
 
-    var balance = Number(data.bttc) || 0;
-    var ads = Number(data.ads) || 0;
+    var balance =
+        Number(data.bttc) || 0;
 
-    document.getElementById("balance").innerText =
-        balance.toLocaleString() + " BTTC";
 
-    document.getElementById("ads").innerText =
+    var ads =
+        Number(data.ads) || 0;
+
+
+    document.getElementById(
+        "balance"
+    ).innerText =
+        balance.toLocaleString() +
+        " BTTC";
+
+
+    document.getElementById(
+        "ads"
+    ).innerText =
         ads + "/20";
 
-    var level = getLevel();
 
-    document.getElementById("levelDisplay").innerText =
+    var level =
+        getLevel();
+
+
+    document.getElementById(
+        "levelDisplay"
+    ).innerText =
         "Level " + level;
 
-    document.getElementById("levelText").innerText =
+
+    document.getElementById(
+        "levelText"
+    ).innerText =
         "Level " + level;
 
-    var percent = Math.min(
-        (ads / 20) * 100,
-        100
-    );
 
-    document.getElementById("progress").style.width =
+    var percent =
+        Math.min(
+            (ads / 20) * 100,
+            100
+        );
+
+
+    document.getElementById(
+        "progress"
+    ).style.width =
         percent + "%";
 
 
     var withdrawButton =
-        document.getElementById("withdrawButton");
+        document.getElementById(
+            "withdrawButton"
+        );
 
 
     if(
@@ -567,19 +796,31 @@ function update(){
         balance >= 10000
     ){
 
-        withdrawButton.disabled = false;
+        withdrawButton.disabled =
+            false;
 
-        document.getElementById("status").innerText =
+
+        document.getElementById(
+            "status"
+        ).innerText =
             "Withdrawal unlocked.";
 
     }else{
 
-        withdrawButton.disabled = true;
+        withdrawButton.disabled =
+            true;
+
 
         var remaining =
-            Math.max(0,10000 - balance);
+            Math.max(
+                0,
+                10000 - balance
+            );
 
-        document.getElementById("status").innerText =
+
+        document.getElementById(
+            "status"
+        ).innerText =
             "Need " +
             remaining.toLocaleString() +
             " more BTTC and 20 ads.";
@@ -602,7 +843,8 @@ function watchAd(){
 
 
     if(
-        typeof window.show_11817232 === "function"
+        typeof window.show_11817232 ===
+        "function"
     ){
 
         try{
@@ -613,22 +855,27 @@ function watchAd(){
 
             if(
                 adResult &&
-                typeof adResult.then === "function"
+                typeof adResult.then ===
+                "function"
             ){
 
                 adResult
-                .then(function(){
+                .then(
+                    function(){
 
-                    rewardAd();
+                        rewardAd();
 
-                })
-                .catch(function(){
+                    }
+                )
+                .catch(
+                    function(){
 
-                    showToast(
-                        "Ad could not be completed."
-                    );
+                        showToast(
+                            "Ad could not be completed."
+                        );
 
-                });
+                    }
+                );
 
             }else{
 
@@ -663,11 +910,16 @@ function rewardAd(){
         return;
     }
 
+
     data.ads += 1;
+
     data.bttc += 500;
 
+
     saveData();
+
     update();
+
 
     showToast(
         "+500 BTTC received!"
@@ -689,11 +941,19 @@ function claimDailyBonus(){
 
 
     data.bttc += 1000;
-    data.lastBonus = today;
-    data.streak = Number(data.streak || 0) + 1;
+
+    data.lastBonus =
+        today;
+
+
+    data.streak =
+        Number(data.streak || 0) + 1;
+
 
     saveData();
+
     update();
+
 
     showToast(
         "+1000 BTTC Daily Bonus!"
@@ -714,7 +974,8 @@ function spinWheel(){
     }
 
 
-    data.lastSpin = today;
+    data.lastSpin =
+        today;
 
 
     var rewards = [
@@ -726,18 +987,23 @@ function spinWheel(){
         2500
     ];
 
+
     var reward =
         rewards[
             Math.floor(
-                Math.random() * rewards.length
+                Math.random() *
+                rewards.length
             )
         ];
 
 
     data.bttc += reward;
 
+
     saveData();
+
     update();
+
 
     showToast(
         "🎉 You won " +
@@ -751,7 +1017,10 @@ function spinWheel(){
 function showTasks(){
 
     var section =
-        document.getElementById("tasksSection");
+        document.getElementById(
+            "tasksSection"
+        );
+
 
     section.scrollIntoView({
         behavior:"smooth"
@@ -763,7 +1032,10 @@ function showTasks(){
 function social(){
 
     var section =
-        document.getElementById("socialSection");
+        document.getElementById(
+            "socialSection"
+        );
+
 
     section.scrollIntoView({
         behavior:"smooth"
@@ -788,15 +1060,21 @@ function follow(type){
     };
 
 
-    var url = urls[type];
+    var url =
+        urls[type];
+
 
     if(!url){
         return;
     }
 
 
-    data.social[type] = true;
+    data.social[type] =
+        true;
+
+
     saveData();
+
 
     if(tg){
 
@@ -834,6 +1112,7 @@ function invite(){
 
     var userId = "";
 
+
     if(
         tg &&
         tg.initDataUnsafe &&
@@ -841,7 +1120,8 @@ function invite(){
     ){
 
         userId =
-            tg.initDataUnsafe.user.id || "";
+            tg.initDataUnsafe.user.id ||
+            "";
 
     }
 
@@ -858,21 +1138,25 @@ function invite(){
 
         navigator.clipboard
         .writeText(link)
-        .then(function(){
+        .then(
+            function(){
 
-            showToast(
-                "Invite link copied!"
-            );
+                showToast(
+                    "Invite link copied!"
+                );
 
-        })
-        .catch(function(){
+            }
+        )
+        .catch(
+            function(){
 
-            prompt(
-                "Copy your invite link:",
-                link
-            );
+                prompt(
+                    "Copy your invite link:",
+                    link
+                );
 
-        });
+            }
+        );
 
     }else{
 
@@ -889,7 +1173,10 @@ function invite(){
 function openWallet(){
 
     var section =
-        document.getElementById("withdrawButton");
+        document.getElementById(
+            "withdrawButton"
+        );
+
 
     section.scrollIntoView({
         behavior:"smooth"
@@ -920,7 +1207,8 @@ function openWithdraw(){
 
     document.getElementById(
         "withdrawModal"
-    ).style.display = "flex";
+    ).style.display =
+        "flex";
 
 }
 
@@ -929,7 +1217,8 @@ function closeWithdraw(){
 
     document.getElementById(
         "withdrawModal"
-    ).style.display = "none";
+    ).style.display =
+        "none";
 
 }
 
@@ -971,11 +1260,17 @@ async function submitWithdraw(){
         );
 
 
-    button.disabled = true;
-    button.innerText = "Submitting...";
+    button.disabled =
+        true;
 
 
-    var telegramUser = null;
+    button.innerText =
+        "Submitting...";
+
+
+    var telegramUser =
+        null;
+
 
     if(
         tg &&
@@ -996,21 +1291,32 @@ async function submitWithdraw(){
             telegramUser.id :
             "",
 
+
         name:
             telegramUser ?
-            (telegramUser.first_name || "User") :
+            (
+                telegramUser.first_name ||
+                "User"
+            ) :
             "User",
+
 
         username:
             telegramUser ?
-            (telegramUser.username || "") :
+            (
+                telegramUser.username ||
+                ""
+            ) :
             "",
+
 
         amount:
             data.bttc,
 
+
         ads:
             data.ads,
+
 
         binance_uid:
             uid
@@ -1022,8 +1328,10 @@ async function submitWithdraw(){
 
         var response =
             await fetch(
-                API_URL + "/withdraw",
+                API_URL +
+                "/withdraw",
                 {
+
                     method:"POST",
 
                     headers:{
@@ -1032,7 +1340,10 @@ async function submitWithdraw(){
                     },
 
                     body:
-                        JSON.stringify(payload)
+                        JSON.stringify(
+                            payload
+                        )
+
                 }
             );
 
@@ -1047,6 +1358,7 @@ async function submitWithdraw(){
                 result.message ||
                 "Withdrawal submitted successfully."
             );
+
 
             closeWithdraw();
 
@@ -1064,23 +1376,6 @@ async function submitWithdraw(){
 
         console.log(error);
 
+
         showToast(
-            "Server connection error."
-        );
-
-    }
-
-
-    button.disabled = false;
-    button.innerText =
-        "Submit Withdrawal";
-
-}
-
-
-update();
-
-</script>
-
-</body>
-    </html>
+            "Ser

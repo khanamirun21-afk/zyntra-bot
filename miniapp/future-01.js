@@ -1,6 +1,6 @@
 // =====================================================
 // ZYNTRA FUTURE 01
-// 👤 PROFILE SYSTEM + 👥 REFERRAL SYSTEM
+// 👤 PROFILE + 👥 REFERRAL SYSTEM
 // =====================================================
 
 (function () {
@@ -9,11 +9,11 @@
 
     console.log("Zyntra Future 01 Loaded ✅");
 
-    // -------------------------------------------------
-    // PROFILE
-    // -------------------------------------------------
+    // ===============================
+    // GET TELEGRAM USER
+    // ===============================
 
-    function getTelegramUser() {
+    function getUser() {
 
         try {
 
@@ -23,32 +23,48 @@
                 window.Telegram.WebApp.initDataUnsafe &&
                 window.Telegram.WebApp.initDataUnsafe.user
             ) {
-                return window.Telegram.WebApp.initDataUnsafe.user;
+
+                return window.Telegram.WebApp
+                    .initDataUnsafe.user;
+
             }
 
         } catch (e) {
-            console.log("Telegram user error:", e);
+
+            console.log(e);
+
         }
 
         return null;
     }
 
 
+    // ===============================
+    // PROFILE DATA
+    // ===============================
+
     function getProfile() {
 
-        var user = getTelegramUser();
+        var user = getUser();
 
         var profile = {
 
             id: user ? (user.id || "") : "",
 
-            firstName: user ? (user.first_name || "User") : "User",
+            firstName:
+                user ?
+                (user.first_name || "User") :
+                "User",
 
-            lastName: user ? (user.last_name || "") : "",
+            lastName:
+                user ?
+                (user.last_name || "") :
+                "",
 
-            username: user ? (user.username || "") : "",
-
-            language: user ? (user.language_code || "") : "",
+            username:
+                user ?
+                (user.username || "") :
+                "",
 
             referrals: 0,
 
@@ -56,27 +72,32 @@
 
         };
 
+
         try {
 
             var saved =
-                localStorage.getItem("zyntra_profile");
+                localStorage.getItem(
+                    "zyntra_profile"
+                );
 
             if (saved) {
 
-                var oldProfile =
+                var old =
                     JSON.parse(saved);
 
                 if (
-                    oldProfile &&
-                    typeof oldProfile === "object"
+                    old &&
+                    typeof old === "object"
                 ) {
 
                     profile.referrals =
-                        Number(oldProfile.referrals || 0);
+                        Number(
+                            old.referrals || 0
+                        );
 
                     profile.referralEarnings =
                         Number(
-                            oldProfile.referralEarnings || 0
+                            old.referralEarnings || 0
                         );
 
                 }
@@ -85,13 +106,21 @@
 
         } catch (e) {
 
-            console.log("Profile storage error:", e);
+            console.log(
+                "Profile load error:",
+                e
+            );
 
         }
 
         return profile;
+
     }
 
+
+    // ===============================
+    // SAVE PROFILE
+    // ===============================
 
     function saveProfile(profile) {
 
@@ -114,211 +143,210 @@
     }
 
 
-    // -------------------------------------------------
-    // REFERRAL LINK
-    // -------------------------------------------------
+    // ===============================
+    // BALANCE
+    // ===============================
 
-    function getReferralLink() {
-
-        var profile = getProfile();
-
-        var botUsername =
-            "ZyntraBotOfficial";
-
-        var userId =
-            profile.id || "";
-
-        return (
-            "https://t.me/" +
-            botUsername +
-            "?start=" +
-            encodeURIComponent(userId)
-        );
-
-    }
-
-
-    // -------------------------------------------------
-    // COPY REFERRAL LINK
-    // -------------------------------------------------
-
-    function copyReferralLink() {
-
-        var link =
-            getReferralLink();
-
-        if (
-            navigator.clipboard &&
-            navigator.clipboard.writeText
-        ) {
-
-            navigator.clipboard
-                .writeText(link)
-                .then(function () {
-
-                    if (
-                        typeof window.showToast ===
-                        "function"
-                    ) {
-
-                        window.showToast(
-                            "Referral link copied! 👥"
-                        );
-
-                    } else {
-
-                        alert(
-                            "Referral link copied!"
-                        );
-
-                    }
-
-                })
-                .catch(function () {
-
-                    prompt(
-                        "Copy your referral link:",
-                        link
-                    );
-
-                });
-
-        } else {
-
-            prompt(
-                "Copy your referral link:",
-                link
-            );
-
-        }
-
-    }
-
-
-    // -------------------------------------------------
-    // SHARE REFERRAL
-    // -------------------------------------------------
-
-    function shareReferral() {
-
-        var link =
-            getReferralLink();
-
-        var message =
-            "🚀 Join Zyntra Network!\n\n" +
-            "Earn • Play • Grow 💰\n\n" +
-            "Join using my referral link:\n" +
-            link;
-
-        var shareUrl =
-            "https://t.me/share/url?url=" +
-            encodeURIComponent(link) +
-            "&text=" +
-            encodeURIComponent(
-                message
-            );
+    function getBalance() {
 
         try {
 
             if (
-                window.Telegram &&
-                window.Telegram.WebApp &&
-                typeof window.Telegram.WebApp.openTelegramLink ===
-                "function"
+                typeof data !== "undefined"
             ) {
 
-                window.Telegram.WebApp
-                    .openTelegramLink(
-                        shareUrl
-                    );
-
-                return;
+                return Number(
+                    data.bttc || 0
+                );
 
             }
 
-        } catch (e) {
+        } catch (e) {}
 
-            console.log(
-                "Telegram share error:",
-                e
-            );
+        return 0;
 
-        }
+    }
 
-        window.open(
-            shareUrl,
-            "_blank"
+
+    // ===============================
+    // LEVEL
+    // ===============================
+
+    function getLevel(balance) {
+
+        if (balance >= 100000)
+            return 5;
+
+        if (balance >= 50000)
+            return 4;
+
+        if (balance >= 25000)
+            return 3;
+
+        if (balance >= 10000)
+            return 2;
+
+        return 1;
+
+    }
+
+
+    // ===============================
+    // REFERRAL LINK
+    // ===============================
+
+    function getReferralLink() {
+
+        var profile =
+            getProfile();
+
+        return (
+            "https://t.me/" +
+            "ZyntraBotOfficial" +
+            "?start=" +
+            encodeURIComponent(
+                profile.id || ""
+            )
         );
 
     }
 
 
-    // -------------------------------------------------
+    // ===============================
+    // TOAST
+    // ===============================
+
+    function toast(message) {
+
+        if (
+            typeof window.showToast ===
+            "function"
+        ) {
+
+            window.showToast(
+                message
+            );
+
+        } else {
+
+            alert(message);
+
+        }
+
+    }
+
+
+    // ===============================
+    // CREATE MAIN BUTTONS
+    // ===============================
+
+    function createButtons() {
+
+        if (
+            document.getElementById(
+                "zyntraFutureButtons"
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        var container =
+            document.querySelector(
+                ".container"
+            );
+
+        if (!container)
+            return;
+
+
+        var box =
+            document.createElement(
+                "div"
+            );
+
+        box.id =
+            "zyntraFutureButtons";
+
+
+        box.className =
+            "card";
+
+
+        box.innerHTML =
+
+            '<div class="section-title">' +
+            '👤 Zyntra Account' +
+            '</div>' +
+
+            '<button id="zyntraProfileBtn">' +
+            '👤 My Profile' +
+            '</button>' +
+
+            '<button ' +
+            'class="secondary" ' +
+            'id="zyntraReferralBtn">' +
+            '👥 Invite & Earn' +
+            '</button>';
+
+
+        container.appendChild(
+            box
+        );
+
+
+        document
+            .getElementById(
+                "zyntraProfileBtn"
+            )
+            .onclick =
+            openProfile;
+
+
+        document
+            .getElementById(
+                "zyntraReferralBtn"
+            )
+            .onclick =
+            openReferral;
+
+    }
+
+
+    // ===============================
     // PROFILE MODAL
-    // -------------------------------------------------
+    // ===============================
 
     function openProfile() {
-
-        var profile =
-            getProfile();
 
         var old =
             document.getElementById(
                 "zyntraProfileModal"
             );
 
-        if (old) {
-
+        if (old)
             old.remove();
 
-        }
+
+        var profile =
+            getProfile();
+
+        var balance =
+            getBalance();
+
+        var level =
+            getLevel(
+                balance
+            );
 
 
         var username =
             profile.username
-                ? "@" + profile.username
+                ? "@" +
+                  profile.username
                 : "Not set";
-
-
-        var firstName =
-            profile.firstName ||
-            "User";
-
-
-        var balance = 0;
-
-        try {
-
-            if (
-                typeof data !==
-                "undefined"
-            ) {
-
-                balance =
-                    Number(
-                        data.bttc || 0
-                    );
-
-            }
-
-        } catch (e) {
-
-            balance = 0;
-
-        }
-
-
-        var level = 1;
-
-        if (balance >= 100000) {
-            level = 5;
-        } else if (balance >= 50000) {
-            level = 4;
-        } else if (balance >= 25000) {
-            level = 3;
-        } else if (balance >= 10000) {
-            level = 2;
-        }
 
 
         var modal =
@@ -326,48 +354,37 @@
                 "div"
             );
 
+
         modal.id =
             "zyntraProfileModal";
 
 
-        modal.style.cssText =
-            "position:fixed;" +
-            "inset:0;" +
-            "background:rgba(0,0,0,.78);" +
-            "display:flex;" +
-            "align-items:center;" +
-            "justify-content:center;" +
-            "padding:20px;" +
-            "z-index:9998;";
+        modal.className =
+            "modal";
+
+
+        modal.style.display =
+            "flex";
 
 
         modal.innerHTML =
 
-            '<div style="' +
-
-            'width:100%;' +
-            'max-width:420px;' +
-            'background:#151521;' +
-            'border:1px solid #38384b;' +
-            'border-radius:20px;' +
-            'padding:22px;' +
-
-            '">' +
+            '<div class="modal-box">' +
 
             '<div style="' +
             'text-align:center;' +
-            'font-size:42px;' +
-            'margin-bottom:8px;' +
+            'font-size:45px;' +
             '">👤</div>' +
 
             '<div style="' +
             'text-align:center;' +
-            'font-size:23px;' +
+            'font-size:24px;' +
             'font-weight:bold;' +
             'color:#ff7a00;' +
+            'margin-top:5px;' +
             '">' +
 
-            firstName +
+            profile.firstName +
 
             '</div>' +
 
@@ -381,56 +398,218 @@
 
             '</div>' +
 
-            '<div style="' +
-            'background:#0c0c14;' +
-            'border-radius:14px;' +
-            'padding:15px;' +
+            '<div class="task" style="' +
             'margin-top:18px;' +
             '">' +
 
-            '<div style="margin:8px 0;">' +
-            '💰 Balance: <b>' +
+            '<div class="small">' +
+            '💰 BTTC Balance' +
+            '</div>' +
+
+            '<b style="font-size:20px;">' +
+
             balance.toLocaleString() +
+
             ' BTTC</b>' +
+
             '</div>' +
 
-            '<div style="margin:8px 0;">' +
-            '⭐ Level: <b>' +
+            '<div class="task">' +
+
+            '<div class="small">' +
+            '⭐ Current Level' +
+            '</div>' +
+
+            '<b style="font-size:20px;">' +
+
+            'Level ' +
             level +
+
             '</b>' +
+
             '</div>' +
 
-            '<div style="margin:8px 0;">' +
-            '👥 Referrals: <b>' +
+            '<div class="task">' +
+
+            '<div class="small">' +
+            '👥 Total Referrals' +
+            '</div>' +
+
+            '<b style="font-size:20px;">' +
+
             profile.referrals +
+
             '</b>' +
+
             '</div>' +
 
-            '<div style="margin:8px 0;">' +
-            '🎁 Referral Earnings: <b>' +
+            '<div class="task">' +
+
+            '<div class="small">' +
+            '🎁 Referral Earnings' +
+            '</div>' +
+
+            '<b style="font-size:20px;">' +
+
             Number(
-                profile.referralEarnings || 0
+                profile.referralEarnings ||
+                0
             ).toLocaleString() +
+
             ' BTTC</b>' +
-            '</div>' +
 
             '</div>' +
 
-            '<button ' +
-            'id="zyntraCopyReferral">' +
-            '🔗 Copy Referral Link' +
+            '<button id="profileInviteBtn">' +
+            '👥 Invite Friends' +
             '</button>' +
 
             '<button ' +
-            'id="zyntraShareReferral">' +
-            '📤 Share Referral Link' +
+            'class="close" ' +
+            'id="profileCloseBtn">' +
+            'Close' +
             '</button>' +
 
-            '<button ' +
-            'id="zyntraCloseProfile" ' +
-            'style="' +
-            'background:#292936;' +
+            '</div>';
+
+
+        document.body.appendChild(
+            modal
+        );
+
+
+        document
+            .getElementById(
+                "profileInviteBtn"
+            )
+            .onclick =
+            openReferral;
+
+
+        document
+            .getElementById(
+                "profileCloseBtn"
+            )
+            .onclick =
+            function () {
+
+                modal.remove();
+
+            };
+
+    }
+
+
+    // ===============================
+    // REFERRAL MODAL
+    // ===============================
+
+    function openReferral() {
+
+        var old =
+            document.getElementById(
+                "zyntraReferralModal"
+            );
+
+        if (old)
+            old.remove();
+
+
+        var profile =
+            getProfile();
+
+
+        var modal =
+            document.createElement(
+                "div"
+            );
+
+
+        modal.id =
+            "zyntraReferralModal";
+
+
+        modal.className =
+            "modal";
+
+
+        modal.style.display =
+            "flex";
+
+
+        modal.innerHTML =
+
+            '<div class="modal-box">' +
+
+            '<div class="section-title">' +
+            '👥 Invite & Earn' +
+            '</div>' +
+
+            '<div class="small">' +
+
+            'Invite your friends to Zyntra ' +
+            'and grow your network. 🚀' +
+
+            '</div>' +
+
+            '<div class="task" style="' +
+            'margin-top:15px;' +
             '">' +
+
+            '<div class="small">' +
+            'Your Referrals' +
+            '</div>' +
+
+            '<b style="font-size:24px;">' +
+
+            profile.referrals +
+
+            '</b>' +
+
+            '</div>' +
+
+            '<div class="task">' +
+
+            '<div class="small">' +
+            'Referral Earnings' +
+            '</div>' +
+
+            '<b style="font-size:24px;">' +
+
+            Number(
+                profile.referralEarnings ||
+                0
+            ).toLocaleString() +
+
+            ' BTTC</b>' +
+
+            '</div>' +
+
+            '<input ' +
+            'id="zyntraReferralInput" ' +
+            'readonly ' +
+            'value="' +
+            getReferralLink() +
+            '">' +
+
+            '<button ' +
+            'id="copyReferralBtn">' +
+
+            '🔗 Copy Referral Link' +
+
+            '</button>' +
+
+            '<button ' +
+            'id="shareReferralBtn" ' +
+            'class="secondary">' +
+
+            '📤 Share with Friends' +
+
+            '</button>' +
+
+            '<button ' +
+            'id="referralCloseBtn" ' +
+            'class="close">' +
 
             'Close' +
 
@@ -446,15 +625,15 @@
 
         document
             .getElementById(
-                "zyntraCopyReferral"
+                "copyReferralBtn"
             )
             .onclick =
-            copyReferralLink;
+            copyReferral;
 
 
         document
             .getElementById(
-                "zyntraShareReferral"
+                "shareReferralBtn"
             )
             .onclick =
             shareReferral;
@@ -462,7 +641,7 @@
 
         document
             .getElementById(
-                "zyntraCloseProfile"
+                "referralCloseBtn"
             )
             .onclick =
             function () {
@@ -474,61 +653,158 @@
     }
 
 
-    // -------------------------------------------------
-    // REFERRAL COUNTER
-    // -------------------------------------------------
+    // ===============================
+    // COPY LINK
+    // ===============================
 
-    function addReferralReward(amount) {
+    function copyReferral() {
 
-        var profile =
-            getProfile();
+        var link =
+            getReferralLink();
 
-        amount =
-            Number(amount || 0);
 
-        profile.referrals += 1;
+        if (
+            navigator.clipboard &&
+            navigator.clipboard.writeText
+        ) {
 
-        profile.referralEarnings +=
-            amount;
+            navigator.clipboard
+                .writeText(link)
+                .then(function () {
 
-        saveProfile(
-            profile
-        );
+                    toast(
+                        "Referral link copied! 🔗"
+                    );
 
-        console.log(
-            "Referral recorded:",
-            amount
+                })
+                .catch(function () {
+
+                    prompt(
+                        "Copy referral link:",
+                        link
+                    );
+
+                });
+
+        } else {
+
+            prompt(
+                "Copy referral link:",
+                link
+            );
+
+        }
+
+    }
+
+
+    // ===============================
+    // SHARE LINK
+    // ===============================
+
+    function shareReferral() {
+
+        var link =
+            getReferralLink();
+
+
+        var text =
+            "🚀 Join Zyntra Network!\n\n" +
+            "Earn • Play • Grow 💰\n\n" +
+            "Join using my referral link:\n" +
+            link;
+
+
+        var shareUrl =
+            "https://t.me/share/url?url=" +
+            encodeURIComponent(link) +
+            "&text=" +
+            encodeURIComponent(text);
+
+
+        try {
+
+            if (
+                window.Telegram &&
+                window.Telegram.WebApp &&
+                typeof window.Telegram.WebApp
+                    .openTelegramLink ===
+                    "function"
+            ) {
+
+                window.Telegram.WebApp
+                    .openTelegramLink(
+                        shareUrl
+                    );
+
+                return;
+
+            }
+
+        } catch (e) {
+
+            console.log(e);
+
+        }
+
+
+        window.open(
+            shareUrl,
+            "_blank"
         );
 
     }
 
 
-    // -------------------------------------------------
+    // ===============================
     // PUBLIC FUNCTIONS
-    // -------------------------------------------------
+    // ===============================
 
     window.openZyntraProfile =
         openProfile;
 
+    window.openZyntraReferral =
+        openReferral;
+
     window.copyZyntraReferral =
-        copyReferralLink;
+        copyReferral;
 
     window.shareZyntraReferral =
         shareReferral;
 
-    window.addZyntraReferral =
-        addReferralReward;
+
+    // ===============================
+    // START
+    // ===============================
+
+    function start() {
+
+        var profile =
+            getProfile();
+
+        saveProfile(
+            profile
+        );
+
+        createButtons();
+
+    }
 
 
-    // -------------------------------------------------
-    // INITIALIZE
-    // -------------------------------------------------
+    if (
+        document.readyState ===
+        "loading"
+    ) {
 
-    var profile =
-        getProfile();
+        document.addEventListener(
+            "DOMContentLoaded",
+            start
+        );
 
-    saveProfile(
-        profile
-    );
+    } else {
+
+        start();
+
+    }
 
 })();

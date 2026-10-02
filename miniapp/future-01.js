@@ -1,9 +1,7 @@
-// PART 1 / 2 - ZYNTRA FINAL
-// ZYNTRA FUTURE 01 - FINAL MERGED - 2 PART HD
+// // ZYNTRA FINAL - PART 1/3 - HD
+// ZYNTRA FUTURE 01 - FINAL MERGED - FIXED
 (function(){
 "use strict";
-console.log("Zyntra Final Loaded");
-
 function getUser(){
   try{
     if(window.Telegram && Telegram.WebApp && Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.user)
@@ -87,8 +85,6 @@ function pageHeader(t,b){
   return '<div class="zyntra-page-head"><button class="zyntra-back" id="'+b+'"><</button><div class="zyntra-page-title">'+t+'</div></div>';
 }
 
-// --- PART 1 END - PART 2 STARTS NEXT ---
-
 function openProfile(){
   var pg=createPage("zyntraProfilePage");
   var bal=getBalance();
@@ -104,7 +100,10 @@ function openReferral(){
   pg.innerHTML='<div class="zyntra-page-inner">'+pageHeader("Friends","friendsBack")+'<div class="zyntra-card" style="text-align:center"><div style="font-size:52px">👥</div><h3>Invite Friends</h3><p>Get bonus for each invited friend!</p></div><div class="zyntra-card"><div class="zyntra-stat-label">Your Referral Link</div><div class="zyntra-link-box">'+esc(link)+'</div></div><button class="zyntra-btn" id="copyReferral">Copy Link</button><button class="zyntra-btn zyntra-btn-sec" id="shareReferral">Share</button></div>';
   document.getElementById("friendsBack").onclick=closePage;
   document.getElementById("copyReferral").onclick=function(){navigator.clipboard.writeText(link).then(function(){toast("Link copied!");});};
-  document.getElementById("shareReferral").onclick=function(){var url="https://t.me/share/url?url="+encodeURIComponent(link)+"&text="+encodeURIComponent("Join Zyntra Future!");window.open(url,"_blank");};
+  document.getElementById("shareReferral").onclick=function(){
+    var url="https://t.me/share/url?url="+encodeURIComponent(link)+"&text="+encodeURIComponent("Join Zyntra Future!");
+    window.open(url,"_blank");
+  };
 }
 
 var mining={active:false,startedAt:0,duration:3600,earned:0};

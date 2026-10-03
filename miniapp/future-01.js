@@ -12,8 +12,8 @@
     // MINING IMAGES
     // ========================================================
 
-    const BOY_IMG = "./assets/zyntra-boy.png";
-    const GIRL_IMG = "./assets/zyntra-girl.png";
+    const BOY_IMG = "./zyntra-boy.png";
+    const GIRL_IMG = "./zyntra-girl.png";
 
     // ========================================================
     // SETTINGS

@@ -1,353 +1,205 @@
+// ============================================================
 // ZYNTRA FUTURE-01
-// PROFESSIONAL MINING SYSTEM
-
-(function () {
-
-    "use strict";
-
-    const BOY_IMG = "./assets/zyntra-boy.png";
-    const GIRL_IMG = "./assets/zyntra-girl.png";
-
-    const MINING_REWARD = 500;
-    const MINING_DURATION = 60 * 60;
-
-    let gender = localStorage.getItem("zyntra_gender");
-
-    let mining = {
-        active: false,
-        startedAt: 0,
-        duration: MINING_DURATION,
-        reward: MINING_REWARD,
-        claimed: false
-    };
-
-    function loadMining() {
-        try {
-            const saved = localStorage.getItem("zyntra_mining_final");
-
-            if (saved) {
-                return JSON.parse(saved);
-            }
-        } catch (e) {
-            console.log("Mining data error");
-        }
-
-        return mining;
-    }
-
-    function saveMining() {
-        localStorage.setItem(
-            "zyntra_mining_final",
-            JSON.stringify(mining)
-        );
-    }
-
-    mining = loadMining();
-  // =====================================
-// MINING START FUNCTION
-// =====================================
-
-function startMining() {
-
-    if (mining.active) return;
-
-    mining.active = true;
-    mining.startTime = Date.now();
-    mining.claimed = false;
-
-    saveMining();
-
-    updateMiningUI();
-}
-
-// =====================================
-// STOP MINING
-// =====================================
-
-function stopMining() {
-
-    mining.active = false;
-
-    saveMining();
-
-    updateMiningUI();
-}
-
-function getRemainingSeconds() {
-
-    if (!mining.active) {
-        return 0;
-    }
-
-    const elapsed = Math.floor(
-        (Date.now() - mining.startedAt) / 1000
-    );
-
-    return Math.max(
-        0,
-        mining.duration - elapsed
-    );
-}
-  // =====================================
-// START MINING
-// =====================================
-
-function startMining() {
-
-    if (mining.active) {
-        toast("Mining already active ⛏️");
-        return;
-    }
-
-    mining.active = true;
-    mining.startedAt = Date.now();
-    mining.claimed = false;
-
-    saveMining();
-
-    updateMiningUI();
-
-    toast("Mining Started 🚀");
-}
-
-// =====================================
-// CLAIM REWARD
-// =====================================
-
-function claimMining() {
-
-    if (!mining.active) {
-        return;
-    }
-
-    if (getRemainingSeconds() > 0) {
-        toast("Mining is still running ⛏️");
-        return;
-    }
-
-    const reward =
-        Number(mining.reward || MINING_REWARD);
-
-    mining.active = false;
-    mining.claimed = true;
-
-    saveMining();
-
-    if (typeof addBalance === "function") {
-        addBalance(reward);
-    }
-
-    updateMiningUI();
-
-    toast("+" + reward + " BTTC Claimed 🎉");
-}
-  // =====================================
-// MINING UI UPDATE
-// =====================================
-
-function updateMiningUI() {
-
-    const counter =
-        document.getElementById("zm-counter");
-
-    const status =
-        document.getElementById("zm-status");
-
-    const button =
-        document.getElementById("zm-main-button");
-
-    if (!counter || !status || !button) {
-        return;
-    }
-
-    if (mining.active) {
-
-        const remaining =
-            getRemainingSeconds();
-
-        if (remaining <= 0) {
-
-            status.innerText =
-                "● MINING COMPLETE";
-
-            button.innerText =
-                "CLAIM REWARD";
-
-        } else {
-
-            status.innerText =
-                "● MINING ACTIVE";
-
-            button.innerText =
-                "MINING IN PROGRESS...";
-
-        }
-
-    } else {
-
-        status.innerText =
-            "● MINING READY";
-
-        button.innerText =
-            mining.claimed
-                ? "START NEW MINING"
-                : "START MINING";
-    }
-}
-  // ===== FEATURE 5: DAILY STREAK SYSTEM =====
-
-window.zyntraStreak = function(){
-
-    const today = new Date().toDateString();
-
-    let lastDay = localStorage.getItem("zyntra_last_streak_day");
-    let streak = parseInt(
-        localStorage.getItem("zyntra_streak_count") || "0"
-    );
-
-    if(lastDay === today){
-        if(typeof showToast === "function"){
-            showToast("🔥 Daily streak already claimed!");
-        }
-        return;
-    }
-
-    if(lastDay){
-        const oldDate = new Date(lastDay);
-        const currentDate = new Date();
-
-        const difference = Math.floor(
-            (currentDate - oldDate) / (1000 * 60 * 60 * 24)
-        );
-
-        if(difference === 1){
-            streak++;
-        }else{
-            streak = 1;
-        }
-    }else{
-        streak = 1;
-    }
-
-    localStorage.setItem(
-        "zyntra_streak_count",
-        streak
-    );
-
-    localStorage.setItem(
-        "zyntra_last_streak_day",
-        today
-    );
-
-    // Reward
-    const reward = streak >= 7 ? 2000 : 500;
-
-    let balance = parseInt(
-        localStorage.getItem("zyntra_balance") || "0"
-    );
-
-    balance += reward;
-
-    localStorage.setItem(
-        "zyntra_balance",
-        balance
-    );
-
-    // Update balance on screen
-    const balanceElements = document.querySelectorAll(
-        "#balance, .balance, .coin-balance"
-    );
-
-    balanceElements.forEach(function(el){
-        el.innerText = balance + " BTTC";
-    });
-
-    if(typeof showToast === "function"){
-        showToast(
-            "🔥 Day " + streak +
-            " Streak! +" + reward + " BTTC"
-        );
-    }
-
-    console.log(
-        "Zyntra Streak:",
-        streak,
-        "Reward:",
-        reward
-    );
-};
-
-console.log("Feature 5 Loaded ✅");
-  // ===== FEATURE 6: DAILY BONUS SYSTEM =====
+// PROFESSIONAL MINING + UI ENHANCEMENT SYSTEM
+// PART 1 OF 3
+// ============================================================
 
 (function(){
 
-    console.log("Zyntra Daily Bonus Loaded 🎁");
+"use strict";
 
-    const BONUS_KEY = "zyntra_daily_bonus";
-    const BONUS_AMOUNT = 1000;
+// ============================================================
+// BASIC SETTINGS
+// ============================================================
 
-    function getToday(){
+var ZYNTRA_F01 = {
 
-        return new Date().toDateString();
+    miningReward: 500,
 
-    }
+    miningDuration: 60 * 60,
 
-    function alreadyClaimed(){
+    miningKey: "zyntra_mining_professional",
 
-        const claimed =
-            localStorage.getItem(BONUS_KEY);
+    genderKey: "zyntra_gender",
 
-        return claimed === getToday();
+    splashKey: "zyntra_splash_done",
 
-    }
+    themeKey: "zyntra_theme"
 
-    function addBonus(amount){
+};
 
-        let balance = parseInt(
-            localStorage.getItem(
-                "zyntra_balance"
-            ) || "0"
-        );
+// ============================================================
+// GLOBAL STATE
+// ============================================================
 
-        balance += amount;
+var zyntraGender =
+    localStorage.getItem(
+        ZYNTRA_F01.genderKey
+    ) || "";
+
+var zyntraMining = null;
+
+var zyntraMiningTimer = null;
+
+var zyntraMiningRunning = false;
+
+// ============================================================
+// SAFE STORAGE
+// ============================================================
+
+function zfSaveMining(){
+
+    try{
 
         localStorage.setItem(
-            "zyntra_balance",
-            balance.toString()
+            ZYNTRA_F01.miningKey,
+            JSON.stringify(zyntraMining)
         );
 
-        const balanceElements =
-            document.querySelectorAll(
-                "#balance, .balance, .coin-balance, #userBalance"
-            );
+    }catch(e){
 
-        balanceElements.forEach(function(element){
-
-            element.innerText =
-                balance + " BTTC";
-
-        });
-
-        return balance;
+        console.log(
+            "Zyntra mining save error:",
+            e
+        );
 
     }
 
-    window.claimZyntraDailyBonus = function(){
+}
 
-        if(alreadyClaimed()){
+// ============================================================
+// LOAD MINING DATA
+// ============================================================
 
-            if(typeof showToast === "function"){
+function zfLoadMining(){
 
-                showToast(
-                    "🎁 Daily Bonus already claimed!"
-                );
+    try{
 
-            }else{
+        var saved =
+            localStorage.getItem(
+                ZYNTRA_F01.miningKey
+            );
 
-                alert(
-                    "Daily Bonus already claimed!"
-                );
+        if(saved){
+
+            var parsed =
+                JSON.parse(saved);
+
+            if(
+                parsed &&
+                typeof parsed === "object"
+            ){
+
+                return parsed;
+
+            }
+
+        }
+
+    }catch(e){
+
+        console.log(
+            "Zyntra mining load error:",
+            e
+        );
+
+    }
+
+    return {
+
+        active:false,
+
+        startedAt:0,
+
+        duration:
+            ZYNTRA_F01.miningDuration,
+
+        reward:
+            ZYNTRA_F01.miningReward,
+
+        claimed:false
+
+    };
+
+}
+
+zyntraMining =
+    zfLoadMining();
+
+// ============================================================
+// BALANCE CONNECTION
+// ============================================================
+
+function zfGetBalance(){
+
+    try{
+
+        if(
+            typeof data !== "undefined" &&
+            data
+        ){
+
+            return Number(
+                data.bttc || 0
+            );
+
+        }
+
+    }catch(e){}
+
+    try{
+
+        return Number(
+            localStorage.getItem(
+                "zyntra_bttc"
+            ) || 0
+        );
+
+    }catch(e){
+
+        return 0;
+
+    }
+
+}
+
+// ============================================================
+// ADD BALANCE
+// ============================================================
+
+function zfAddBalance(amount){
+
+    amount =
+        Number(amount) || 0;
+
+    if(amount <= 0){
+        return;
+    }
+
+    try{
+
+        if(
+            typeof data !== "undefined" &&
+            data
+        ){
+
+            data.bttc =
+                Number(data.bttc || 0)
+                + amount;
+
+            if(
+                typeof saveData === "function"
+            ){
+
+                saveData();
+
+            }
+
+            if(
+                typeof update === "function"
+            ){
+
+                update();
 
             }
 
@@ -355,833 +207,2227 @@ console.log("Feature 5 Loaded ✅");
 
         }
 
-        const newBalance =
-            addBonus(BONUS_AMOUNT);
-
-        localStorage.setItem(
-            BONUS_KEY,
-            getToday()
-        );
-
-        if(typeof showToast === "function"){
-
-            showToast(
-                "🎁 Daily Bonus +1000 BTTC!"
-            );
-
-        }else{
-
-            alert(
-                "🎁 Daily Bonus +1000 BTTC!"
-            );
-
-        }
+    }catch(e){
 
         console.log(
-            "Daily Bonus:",
-            BONUS_AMOUNT,
-            "BTTC"
-        );
-
-        console.log(
-            "New Balance:",
-            newBalance,
-            "BTTC"
-        );
-
-    };
-
-    window.checkZyntraDailyBonus = function(){
-
-        return {
-            claimed: alreadyClaimed(),
-            reward: BONUS_AMOUNT
-        };
-
-    };
-
-    console.log(
-        "Daily Bonus Status:",
-        window.checkZyntraDailyBonus()
-    // ===== FEATURE 7: ZYNTRA LEVEL SYSTEM =====
-
-console.log("Zyntra Level System Loaded ⭐");
-
-const ZYNTRA_LEVEL_KEY = "zyntra_user_level";
-const ZYNTRA_XP_KEY = "zyntra_user_xp";
-
-const zyntraLevels = [
-    {
-        name: "Bronze",
-        minXP: 0,
-        icon: "🥉"
-    },
-    {
-        name: "Silver",
-        minXP: 10000,
-        icon: "🥈"
-    },
-    {
-        name: "Gold",
-        minXP: 25000,
-        icon: "🥇"
-    },
-    {
-        name: "Platinum",
-        minXP: 50000,
-        icon: "💎"
-    },
-    {
-        name: "Diamond",
-        minXP: 100000,
-        icon: "💠"
-    }
-];
-
-function getZyntraXP(){
-
-    return parseInt(
-        localStorage.getItem(
-            ZYNTRA_XP_KEY
-        ) || "0"
-    );
-}
-
-function saveZyntraXP(xp){
-
-    localStorage.setItem(
-        ZYNTRA_XP_KEY,
-        xp.toString()
-    );
-}
-
-function getZyntraCurrentLevel(xp){
-
-    let currentLevel =
-        zyntraLevels[0];
-
-    for(
-        let i = 0;
-        i < zyntraLevels.length;
-        i++
-    ){
-
-        if(
-            xp >=
-            zyntraLevels[i].minXP
-        ){
-
-            currentLevel =
-                zyntraLevels[i];
-
-        }
-    }
-
-    return currentLevel;
-}
-
-function getZyntraNextLevel(xp){
-
-    for(
-        let i = 0;
-        i < zyntraLevels.length;
-        i++
-    ){
-
-        if(
-            xp <
-            zyntraLevels[i].minXP
-        ){
-
-            return zyntraLevels[i];
-
-        }
-    }
-
-    return null;
-}
-
-window.addZyntraXP = function(amount){
-
-    amount = parseInt(amount || 0);
-
-    if(amount <= 0){
-        return;
-    }
-
-    const oldXP =
-        getZyntraXP();
-
-    const newXP =
-        oldXP + amount;
-
-    const oldLevel =
-        getZyntraCurrentLevel(oldXP);
-
-    const newLevel =
-        getZyntraCurrentLevel(newXP);
-
-    saveZyntraXP(newXP);
-
-    if(
-        oldLevel.name !==
-        newLevel.name
-    ){
-
-        if(
-            typeof showToast ===
-            "function"
-        ){
-
-            showToast(
-                "🎉 LEVEL UP! " +
-                newLevel.icon +
-                " " +
-                newLevel.name
-            );
-
-        }
-
-    }
-
-    updateZyntraLevelDisplay();
-
-    console.log(
-        "XP Added:",
-        amount
-    );
-
-    console.log(
-        "Total XP:",
-        newXP
-    );
-
-};
-
-function updateZyntraLevelDisplay(){
-
-    const xp =
-        getZyntraXP();
-
-    const currentLevel =
-        getZyntraCurrentLevel(xp);
-
-    const nextLevel =
-        getZyntraNextLevel(xp);
-
-    const levelElements =
-        document.querySelectorAll(
-            "#userLevel, .user-level, .level-name"
-        );
-
-    levelElements.forEach(
-        function(element){
-
-            element.innerText =
-                currentLevel.icon +
-                " " +
-                currentLevel.name;
-
-        }
-    );
-
-    const xpElements =
-        document.querySelectorAll(
-            "#userXP, .user-xp, .xp-value"
-        );
-
-    xpElements.forEach(
-        function(element){
-
-            element.innerText =
-                xp + " XP";
-
-        }
-    );
-
-    if(nextLevel){
-
-        const currentStart =
-            currentLevel.minXP;
-
-        const nextTarget =
-            nextLevel.minXP;
-
-        const progress =
-            xp - currentStart;
-
-        const required =
-            nextTarget - currentStart;
-
-        const percent =
-            Math.min(
-                100,
-                Math.floor(
-                    (progress /
-                    required) * 100
-                )
-            );
-
-        const progressBars =
-            document.querySelectorAll(
-                "#levelProgress, .level-progress"
-            );
-
-        progressBars.forEach(
-            function(bar){
-
-                bar.style.width =
-                    percent + "%";
-
-            }
+            "Balance update error:",
+            e
         );
 
     }
 
 }
 
-window.getZyntraLevel = function(){
-
-    const xp =
-        getZyntraXP();
-
-    const current =
-        getZyntraCurrentLevel(xp);
-
-    const next =
-        getZyntraNextLevel(xp);
-
-    return {
-
-        xp: xp,
-
-        level:
-            current.name,
-
-        icon:
-            current.icon,
-
-        nextLevel:
-            next
-                ? next.name
-                : "MAX",
-
-        nextXP:
-            next
-                ? next.minXP
-                : xp
-
-    };
-
-};
-
-updateZyntraLevelDisplay();
-
-console.log(
-    "Current Zyntra Level:",
-    window.getZyntraLevel()
-);
-  // ===== FEATURE 8: LUCKY SPIN SYSTEM =====
-
-console.log("Zyntra Lucky Spin Loaded 🎡");
-
-const ZYNTRA_SPIN_KEY =
-    "zyntra_spin_last_date";
-
-const zyntraSpinRewards = [
-    100,
-    250,
-    500,
-    750,
-    1000,
-    1500,
-    2000
-];
-
-function getZyntraSpinDate(){
-
-    return new Date().toDateString();
-
-}
-
-function canZyntraSpin(){
-
-    const lastSpin =
-        localStorage.getItem(
-            ZYNTRA_SPIN_KEY
-        );
-
-    return lastSpin !==
-        getZyntraSpinDate();
-
-}
-
-function addZyntraSpinReward(amount){
-
-    let balance =
-        parseInt(
-            localStorage.getItem(
-                "zyntra_balance"
-            ) || "0"
-        );
-
-    balance += amount;
-
-    localStorage.setItem(
-        "zyntra_balance",
-        balance.toString()
-    );
-
-    const balanceElements =
-        document.querySelectorAll(
-            "#balance, .balance, .coin-balance, #userBalance"
-        );
-
-    balanceElements.forEach(
-        function(element){
-
-            element.innerText =
-                balance + " BTTC";
-
-        }
-    );
-
-    return balance;
-
-}
-
-window.zyntraLuckySpin = function(){
-
-    if(!canZyntraSpin()){
-
-        if(
-            typeof showToast ===
-            "function"
-        ){
-
-            showToast(
-                "🎡 Lucky Spin already used today!"
-            );
-
-        }
-
-        return;
-
-    }
-
-    const randomIndex =
-        Math.floor(
-            Math.random() *
-            zyntraSpinRewards.length
-        );
-
-    const reward =
-        zyntraSpinRewards[randomIndex];
-
-    const newBalance =
-        addZyntraSpinReward(
-            reward
-        );
-
-    localStorage.setItem(
-        ZYNTRA_SPIN_KEY,
-        getZyntraSpinDate()
-    );
-
-    if(
-        typeof showToast ===
-        "function"
-    ){
-
-        showToast(
-            "🎉 You won +" +
-            reward +
-            " BTTC!"
-        );
-
-    }else{
-
-        alert(
-            "🎉 You won +" +
-            reward +
-            " BTTC!"
-        );
-
-    }
-
-    console.log(
-        "Lucky Spin Reward:",
-        reward
-    );
-
-    console.log(
-        "New Balance:",
-        newBalance
-    );
-
-};
-
-window.checkZyntraSpin = function(){
-
-    return {
-        available:
-            canZyntraSpin(),
-
-        rewards:
-            zyntraSpinRewards
-    };
-
-};
-
-console.log(
-    "Lucky Spin Status:",
-    window.checkZyntraSpin()
-);
-  // ===== FEATURE 9: REFERRAL BONUS SYSTEM =====
-
-console.log("Zyntra Referral System Loaded 👥");
-
-const ZYNTRA_REF_KEY =
-    "zyntra_referral_count";
-
-const ZYNTRA_REF_REWARD =
-    1000;
-
-function getZyntraReferralCount(){
-
-    return parseInt(
-        localStorage.getItem(
-            ZYNTRA_REF_KEY
-        ) || "0"
-    );
-
-}
-
-function saveZyntraReferralCount(count){
-
-    localStorage.setItem(
-        ZYNTRA_REF_KEY,
-        count.toString()
-    );
-
-}
-
-function addZyntraReferralReward(amount){
-
-    let balance =
-        parseInt(
-            localStorage.getItem(
-                "zyntra_balance"
-            ) || "0"
-        );
-
-    balance += amount;
-
-    localStorage.setItem(
-        "zyntra_balance",
-        balance.toString()
-    );
-
-    const balanceElements =
-        document.querySelectorAll(
-            "#balance, .balance, .coin-balance, #userBalance"
-        );
-
-    balanceElements.forEach(
-        function(element){
-
-            element.innerText =
-                balance + " BTTC";
-
-        }
-    );
-
-    return balance;
-
-}
-
-window.addZyntraReferral = function(){
-
-    let referrals =
-        getZyntraReferralCount();
-
-    referrals++;
-
-    saveZyntraReferralCount(
-        referrals
-    );
-
-    const reward =
-        ZYNTRA_REF_REWARD;
-
-    const newBalance =
-        addZyntraReferralReward(
-            reward
-        );
-
-    if(
-        typeof showToast ===
-        "function"
-    ){
-
-        showToast(
-            "👥 Referral Joined! +" +
-            reward +
-            " BTTC"
-        );
-
-    }else{
-
-        alert(
-            "👥 Referral Reward +" +
-            reward +
-            " BTTC"
-        );
-
-    }
-
-    // Add XP if level system exists
-    if(
-        typeof addZyntraXP ===
-        "function"
-    ){
-
-        addZyntraXP(500);
-
-    }
-
-    console.log(
-        "Total Referrals:",
-        referrals
-    );
-
-    console.log(
-        "Referral Reward:",
-        reward
-    );
-
-    console.log(
-        "New
-      // ===== FEATURE 10: ZYNTRA TASK REWARD SYSTEM =====
-
-console.log("Zyntra Task Reward System Loaded 🎯");
-
-const ZYNTRA_TASK_KEY =
-    "zyntra_completed_tasks";
-
-const zyntraTasks = {
-
-    daily_login: {
-        name: "Daily Login",
-        reward: 500,
-        xp: 100
-    },
-
-    watch_ads: {
-        name: "Watch Ads",
-        reward: 1000,
-        xp: 250
-    },
-
-    follow_channel: {
-        name: "Follow Channel",
-        reward: 1000,
-        xp: 300
-    },
-
-    invite_friend: {
-        name: "Invite Friend",
-        reward: 1500,
-        xp: 500
-    }
-
-};
-
-function getCompletedZyntraTasks(){
+// ============================================================
+// TOAST
+// ============================================================
+
+function zfToast(message){
 
     try{
 
-        return JSON.parse(
-            localStorage.getItem(
-                ZYNTRA_TASK_KEY
-            ) || "{}"
-        );
-
-    }catch(error){
-
-        return {};
-
-    }
-
-}
-
-function saveCompletedZyntraTasks(tasks){
-
-    localStorage.setItem(
-        ZYNTRA_TASK_KEY,
-        JSON.stringify(tasks)
-    );
-
-}
-
-function addZyntraTaskReward(amount){
-
-    let balance =
-        parseInt(
-            localStorage.getItem(
-                "zyntra_balance"
-            ) || "0"
-        );
-
-    balance += amount;
-
-    localStorage.setItem(
-        "zyntra_balance",
-        balance.toString()
-    );
-
-    const balanceElements =
-        document.querySelectorAll(
-            "#balance, .balance, .coin-balance, #userBalance"
-        );
-
-    balanceElements.forEach(
-        function(element){
-
-            element.innerText =
-                balance + " BTTC";
-
-        }
-    );
-
-    return balance;
-
-}
-
-window.completeZyntraTask = function(taskId){
-
-    if(
-        !zyntraTasks[taskId]
-    ){
-
-        console.log(
-            "Unknown Zyntra Task:",
-            taskId
-        );
-
-        return;
-
-    }
-
-    const completed =
-        getCompletedZyntraTasks();
-
-    if(
-        completed[taskId]
-    ){
-
         if(
-            typeof showToast ===
-            "function"
+            typeof showToast === "function"
         ){
 
-            showToast(
-                "✅ Task already completed!"
-            );
+            showToast(message);
+
+            return;
 
         }
+
+    }catch(e){}
+
+    var old =
+        document.getElementById(
+            "zf-toast"
+        );
+
+    if(old){
+
+        old.innerText =
+            message;
+
+        old.style.display =
+            "block";
+
+        clearTimeout(
+            window.zfToastTimer
+        );
+
+        window.zfToastTimer =
+            setTimeout(function(){
+
+                old.style.display =
+                    "none";
+
+            },2500);
 
         return;
 
     }
 
-    const task =
-        zyntraTasks[taskId];
+}
 
-    completed[taskId] =
-        new Date().toISOString();
+// ============================================================
+// PROFESSIONAL CSS
+// ============================================================
 
-    saveCompletedZyntraTasks(
-        completed
-    );
-
-    const newBalance =
-        addZyntraTaskReward(
-            task.reward
-        );
+function zfAddCSS(){
 
     if(
-        typeof addZyntraXP ===
-        "function"
+        document.getElementById(
+            "zf-professional-style"
+        )
     ){
 
-        addZyntraXP(
-            task.xp
+        return;
+
+    }
+
+    var style =
+        document.createElement(
+            "style"
+        );
+
+    style.id =
+        "zf-professional-style";
+
+    style.innerHTML = `
+
+/* =========================================================
+   ZYNTRA PROFESSIONAL UI
+========================================================= */
+
+:root{
+
+    --zf-primary:#00e5ff;
+
+    --zf-secondary:#1769ff;
+
+    --zf-glow:rgba(0,229,255,.35);
+
+    --zf-card:
+        linear-gradient(
+            145deg,
+            rgba(16,25,45,.96),
+            rgba(8,12,25,.96)
+        );
+
+}
+
+body{
+
+    background:
+        radial-gradient(
+            circle at top,
+            rgba(0,229,255,.08),
+            transparent 35%
+        ),
+        #070910 !important;
+
+    transition:
+        background .4s ease;
+
+}
+
+body.zf-female{
+
+    --zf-primary:#ff2d95;
+
+    --zf-secondary:#9c27b0;
+
+    --zf-glow:
+        rgba(255,45,149,.35);
+
+    background:
+        radial-gradient(
+            circle at top,
+            rgba(255,45,149,.10),
+            transparent 35%
+        ),
+        #0c0710 !important;
+
+}
+
+/* HEADER */
+
+.header{
+
+    padding-top:25px !important;
+
+}
+
+.logo{
+
+    font-size:34px !important;
+
+    letter-spacing:2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--zf-primary),
+            var(--zf-secondary)
+        );
+
+    -webkit-background-clip:text;
+
+    -webkit-text-fill-color:
+        transparent;
+
+    text-shadow:
+        0 0 25px
+        var(--zf-glow);
+
+}
+
+/* CARDS */
+
+.card{
+
+    background:
+        var(--zf-card) !important;
+
+    border:
+        1px solid
+        rgba(255,255,255,.07) !important;
+
+    box-shadow:
+        0 10px 35px
+        rgba(0,0,0,.25);
+
+    backdrop-filter:
+        blur(12px);
+
+}
+
+/* BALANCE */
+
+.balance{
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--zf-primary),
+            var(--zf-secondary)
+        );
+
+    -webkit-background-clip:text;
+
+    -webkit-text-fill-color:
+        transparent;
+
+    text-shadow:
+        0 0 20px
+        var(--zf-glow);
+
+}
+
+/* BUTTONS */
+
+button{
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--zf-primary),
+            var(--zf-secondary)
+        ) !important;
+
+    box-shadow:
+        0 5px 18px
+        var(--zf-glow);
+
+    transition:
+        transform .15s ease,
+        box-shadow .2s ease;
+
+}
+
+button:active{
+
+    transform:
+        scale(.97);
+
+}
+
+/* SECONDARY */
+
+button.secondary{
+
+    background:
+        rgba(255,255,255,.06)
+        !important;
+
+    box-shadow:none;
+
+    border:
+        1px solid
+        rgba(255,255,255,.08);
+
+}
+
+/* STATS */
+
+.stat{
+
+    background:
+        rgba(255,255,255,.035)
+        !important;
+
+    border:
+        1px solid
+        rgba(255,255,255,.05);
+
+}
+
+/* PROGRESS */
+
+.progress{
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--zf-primary),
+            var(--zf-secondary)
+        ) !important;
+
+    box-shadow:
+        0 0 12px
+        var(--zf-glow);
+
+}
+
+/* =========================================================
+   MINING CARD
+========================================================= */
+
+#zf-mining-card{
+
+    position:relative;
+
+    overflow:hidden;
+
+    margin-bottom:15px;
+
+}
+
+#zf-mining-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:180px;
+
+    height:180px;
+
+    border-radius:50%;
+
+    background:
+        var(--zf-glow);
+
+    filter:
+        blur(70px);
+
+    right:-70px;
+
+    top:-80px;
+
+    pointer-events:none;
+
+}
+
+.zf-mining-head{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:10px;
+
+}
+
+.zf-mining-title{
+
+    font-size:21px;
+
+    font-weight:800;
+
+}
+
+.zf-mining-badge{
+
+    font-size:11px;
+
+    padding:6px 9px;
+
+    border-radius:20px;
+
+    background:
+        rgba(0,229,255,.10);
+
+    color:
+        var(--zf-primary);
+
+    border:
+        1px solid
+        rgba(0,229,255,.20);
+
+}
+
+body.zf-female
+.zf-mining-badge{
+
+    background:
+        rgba(255,45,149,.10);
+
+    border-color:
+        rgba(255,45,149,.20);
+
+}
+
+/* MINING AREA */
+
+.zf-mining-area{
+
+    text-align:center;
+
+    padding:
+        22px 5px 8px;
+
+}
+
+.zf-mining-avatar{
+
+    width:125px;
+
+    height:125px;
+
+    margin:auto;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    position:relative;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255,255,255,.08),
+            rgba(0,0,0,.25)
+        );
+
+    border:
+        2px solid
+        var(--zf-primary);
+
+    box-shadow:
+        0 0 30px
+        var(--zf-glow);
+
+    animation:
+        zfFloat 3s ease-in-out infinite;
+
+}
+
+.zf-mining-avatar::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:-10px;
+
+    border-radius:50%;
+
+    border:
+        1px solid
+        var(--zf-primary);
+
+    opacity:.35;
+
+    animation:
+        zfPulse 2s infinite;
+
+}
+
+.zf-mining-avatar img{
+
+    width:92px;
+
+    height:92px;
+
+    object-fit:contain;
+
+    border-radius:50%;
+
+}
+
+.zf-mining-status{
+
+    margin-top:15px;
+
+    color:#aaa;
+
+    font-size:13px;
+
+}
+
+.zf-mining-time{
+
+    margin-top:5px;
+
+    font-size:31px;
+
+    font-weight:900;
+
+    letter-spacing:2px;
+
+    color:
+        var(--zf-primary);
+
+    text-shadow:
+        0 0 15px
+        var(--zf-glow);
+
+}
+
+.zf-mining-reward{
+
+    margin-top:6px;
+
+    font-size:13px;
+
+    color:#aaa;
+
+}
+
+.zf-mining-button{
+
+    margin-top:17px;
+
+    max-width:330px;
+
+}
+
+.zf-mining-button.mining-active{
+
+    background:
+        linear-gradient(
+            135deg,
+            #222,
+            #333
+        ) !important;
+
+    box-shadow:none;
+
+}
+
+.zf-mining-info{
+
+    margin-top:14px;
+
+    padding:10px;
+
+    border-radius:12px;
+
+    background:
+        rgba(255,255,255,.035);
+
+    color:#8f8f9d;
+
+    font-size:12px;
+
+    line-height:1.5;
+
+}
+
+/* =========================================================
+   SPLASH
+========================================================= */
+
+#zf-splash{
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:999999;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    flex-direction:column;
+
+    background:
+        radial-gradient(
+            circle at center,
+            #101b35,
+            #05060b 65%
+        );
+
+    transition:
+        opacity .5s ease;
+
+}
+
+body.zf-female #zf-splash{
+
+    background:
+        radial-gradient(
+            circle at center,
+            #301027,
+            #08050b 65%
+        );
+
+}
+
+.zf-splash-logo{
+
+    font-size:38px;
+
+    font-weight:900;
+
+    letter-spacing:4px;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--zf-primary),
+            var(--zf-secondary)
+        );
+
+    -webkit-background-clip:text;
+
+    -webkit-text-fill-color:
+        transparent;
+
+}
+
+.zf-splash-text{
+
+    margin-top:8px;
+
+    color:#888;
+
+    font-size:13px;
+
+}
+
+.zf-splash-loader{
+
+    width:180px;
+
+    height:4px;
+
+    margin-top:25px;
+
+    background:
+        rgba(255,255,255,.08);
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+}
+
+.zf-splash-loader span{
+
+    display:block;
+
+    height:100%;
+
+    width:0%;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--zf-primary),
+            var(--zf-secondary)
+        );
+
+    animation:
+        zfLoad 1.8s ease forwards;
+
+}
+
+/* =========================================================
+   GENDER SCREEN
+========================================================= */
+
+#zf-gender{
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:999998;
+
+    display:none;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:20px;
+
+    background:
+        rgba(3,4,10,.97);
+
+    backdrop-filter:
+        blur(15px);
+
+}
+
+.zf-gender-box{
+
+    width:100%;
+
+    max-width:420px;
+
+    text-align:center;
+
+}
+
+.zf-gender-title{
+
+    font-size:27px;
+
+    font-weight:900;
+
+}
+
+.zf-gender-sub{
+
+    margin-top:7px;
+
+    color:#8f8f9d;
+
+    font-size:13px;
+
+}
+
+.zf-gender-grid{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:12px;
+
+    margin-top:25px;
+
+}
+
+.zf-gender-card{
+
+    padding:18px 10px;
+
+    border-radius:20px;
+
+    background:
+        rgba(255,255,255,.045);
+
+    border:
+        1px solid
+        rgba(255,255,255,.08);
+
+    cursor:pointer;
+
+    transition:
+        transform .2s ease,
+        border .2s ease;
+
+}
+
+.zf-gender-card:active{
+
+    transform:scale(.96);
+
+}
+
+.zf-gender-card img{
+
+    width:105px;
+
+    height:105px;
+
+    object-fit:contain;
+
+}
+
+.zf-gender-card b{
+
+    display:block;
+
+    margin-top:8px;
+
+    font-size:16px;
+
+}
+
+.zf-gender-card.male{
+
+    border-color:
+        rgba(0,229,255,.25);
+
+}
+
+.zf-gender-card.female{
+
+    border-color:
+        rgba(255,45,149,.25);
+
+}
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes zfFloat{
+
+    0%,100%{
+        transform:translateY(0);
+    }
+
+    50%{
+        transform:translateY(-7px);
+    }
+
+}
+
+@keyframes zfPulse{
+
+    0%{
+        transform:scale(.9);
+        opacity:.2;
+    }
+
+    50%{
+        transform:scale(1.08);
+        opacity:.5;
+    }
+
+    100%{
+        transform:scale(.9);
+        opacity:.2;
+    }
+
+}
+
+@keyframes zfLoad{
+
+    from{
+        width:0%;
+    }
+
+    to{
+        width:100%;
+    }
+
+}
+
+`;
+
+
+    document.head.appendChild(
+        style
+    );
+
+}
+
+// ============================================================
+// THEME
+// ============================================================
+
+function zfApplyTheme(){
+
+    document.body.classList.remove(
+        "zf-female"
+    );
+
+    if(
+        zyntraGender === "female"
+    ){
+
+        document.body.classList.add(
+            "zf-female"
         );
 
     }
 
+}
+
+// ============================================================
+// GET CHARACTER IMAGE
+// ============================================================
+
+function zfGetCharacter(){
+
     if(
-        typeof showToast ===
-        "function"
+        zyntraGender === "female"
     ){
 
-        showToast(
-            "🎯 " +
-            task.name +
-            " +" +
-            task.reward +
-            " BTTC"
+        return "./assets/zyntra-girl.png";
+
+    }
+
+    return "./assets/zyntra-boy.png";
+
+}
+
+// ============================================================
+// SPLASH SCREEN
+// ============================================================
+
+function zfShowSplash(){
+
+    if(
+        document.getElementById(
+            "zf-splash"
+        )
+    ){
+
+        return;
+
+    }
+
+    var splash =
+        document.createElement(
+            "div"
+        );
+
+    splash.id =
+        "zf-splash";
+
+    splash.innerHTML = `
+
+        <div class="zf-splash-logo">
+            ZYNTRA
+        </div>
+
+        <div class="zf-splash-text">
+            Earn • Play • Grow
+        </div>
+
+        <div class="zf-splash-loader">
+            <span></span>
+        </div>
+
+    `;
+
+    document.body.appendChild(
+        splash
+    );
+
+    setTimeout(function(){
+
+        splash.style.opacity =
+            "0";
+
+        setTimeout(function(){
+
+            if(splash){
+
+                splash.remove();
+
+            }
+
+            zfStartExperience();
+
+        },500);
+
+    },1900);
+
+}
+
+// ============================================================
+// GENDER SELECTION
+// ============================================================
+
+function zfShowGender(){
+
+    if(
+        document.getElementById(
+            "zf-gender"
+        )
+    ){
+
+        return;
+
+    }
+
+    var gender =
+        document.createElement(
+            "div"
+        );
+
+    gender.id =
+        "zf-gender";
+
+    gender.style.display =
+        "flex";
+
+    gender.innerHTML = `
+
+        <div class="zf-gender-box">
+
+            <div class="zf-gender-title">
+                Choose Your Style
+            </div>
+
+            <div class="zf-gender-sub">
+                Select your character theme
+            </div>
+
+            <div class="zf-gender-grid">
+
+                <div
+                    class="zf-gender-card male"
+                    onclick="window.zyntraChooseGender('male')"
+                >
+
+                    <img
+                        src="./assets/zyntra-boy.png"
+                        onerror="this.style.display='none'"
+                    >
+
+                    <b>Male</b>
+
+                </div>
+
+                <div
+                    class="zf-gender-card female"
+                    onclick="window.zyntraChooseGender('female')"
+                >
+
+                    <img
+                        src="./assets/zyntra-girl.png"
+                        onerror="this.style.display='none'"
+                    >
+
+                    <b>Female</b>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+    document.body.appendChild(
+        gender
+    );
+
+}
+
+// ============================================================
+// GENDER SELECT
+// ============================================================
+
+window.zyntraChooseGender =
+function(selected){
+
+    if(
+        selected !== "male" &&
+        selected !== "female"
+    ){
+
+        return;
+
+    }
+
+    zyntraGender =
+        selected;
+
+    try{
+
+        localStorage.setItem(
+            ZYNTRA_F01.genderKey,
+            selected
+        );
+
+        localStorage.setItem(
+            ZYNTRA_F01.themeKey,
+            selected
+        );
+
+    }catch(e){}
+
+    zfApplyTheme();
+
+    var gender =
+        document.getElementById(
+            "zf-gender"
+        );
+
+    if(gender){
+
+        gender.remove();
+
+    }
+
+    zfRenderMining();
+
+    zfToast(
+        selected === "female"
+        ? "Pink theme activated 💗"
+        : "Blue theme activated 💙"
+    );
+
+};
+
+// ============================================================
+// START EXPERIENCE
+// ============================================================
+
+function zfStartExperience(){
+
+    zfApplyTheme();
+
+    if(!zyntraGender){
+
+        zfShowGender();
+
+        return;
+
+    }
+
+    zfRenderMining();
+
+}
+
+// ============================================================
+// INITIAL CSS + SPLASH
+// ============================================================
+
+zfAddCSS();
+
+zfApplyTheme();
+
+setTimeout(function(){
+
+    zfShowSplash();
+
+},100);
+    // ============================================================
+// ZYNTRA FUTURE-01
+// PART 2 OF 3
+// ============================================================
+
+// ============================================================
+// MINING CARD
+// ============================================================
+
+function zfRenderMining(){
+
+    var container =
+        document.querySelector(
+            ".container"
+        );
+
+    if(!container){
+
+        setTimeout(
+            zfRenderMining,
+            300
+        );
+
+        return;
+
+    }
+
+    var old =
+        document.getElementById(
+            "zf-mining-card"
+        );
+
+    if(old){
+
+        old.remove();
+
+    }
+
+    var card =
+        document.createElement(
+            "div"
+        );
+
+    card.id =
+        "zf-mining-card";
+
+    card.className =
+        "card";
+
+    card.innerHTML = `
+
+        <div class="zf-mining-head">
+
+            <div class="zf-mining-title">
+                ⛏️ Zyntra Mining
+            </div>
+
+            <div class="zf-mining-badge">
+                MINING
+            </div>
+
+        </div>
+
+        <div class="zf-mining-area">
+
+            <div class="zf-mining-avatar">
+
+                <img
+                    id="zf-mining-image"
+                    src="${zfGetCharacter()}"
+                    onerror="this.style.display='none'"
+                >
+
+            </div>
+
+            <div
+                class="zf-mining-status"
+                id="zf-mining-status"
+            >
+                Ready to mine
+            </div>
+
+            <div
+                class="zf-mining-time"
+                id="zf-mining-time"
+            >
+                01:00:00
+            </div>
+
+            <div class="zf-mining-reward">
+                Mining Reward:
+                <b>
+                    +${ZYNTRA_F01.miningReward.toLocaleString()}
+                    BTTC
+                </b>
+            </div>
+
+            <button
+                class="zf-mining-button"
+                id="zf-mining-button"
+                onclick="window.zyntraStartMining()"
+            >
+                ⛏️ START MINING
+            </button>
+
+            <div class="zf-mining-info">
+
+                Mining runs for
+                <b>1 hour</b>.
+
+                Keep Zyntra open or return later.
+                Your mining session is saved automatically.
+
+            </div>
+
+        </div>
+
+    `;
+
+    var header =
+        container.querySelector(
+            ".header"
+        );
+
+    if(header){
+
+        header.insertAdjacentElement(
+            "afterend",
+            card
         );
 
     }else{
 
-        alert(
-            "🎯 Task Complete! +" +
-            task.reward +
-            " BTTC"
+        container.prepend(
+            card
         );
 
     }
 
-    console.log(
-        "Task Completed:",
-        task.name
+    zfUpdateMiningUI();
+
+}
+
+// ============================================================
+// FORMAT TIME
+// ============================================================
+
+function zfFormatTime(seconds){
+
+    seconds =
+        Math.max(
+            0,
+            Math.floor(
+                Number(seconds) || 0
+            )
+        );
+
+    var hours =
+        Math.floor(
+            seconds / 3600
+        );
+
+    var minutes =
+        Math.floor(
+            (seconds % 3600) / 60
+        );
+
+    var secs =
+        seconds % 60;
+
+    return [
+
+        String(hours)
+            .padStart(2,"0"),
+
+        String(minutes)
+            .padStart(2,"0"),
+
+        String(secs)
+            .padStart(2,"0")
+
+    ].join(":");
+
+}
+
+// ============================================================
+// REMAINING MINING TIME
+// ============================================================
+
+function zfGetRemainingSeconds(){
+
+    if(
+        !zyntraMining ||
+        !zyntraMining.active
+    ){
+
+        return 0;
+
+    }
+
+    var started =
+        Number(
+            zyntraMining.startedAt
+        ) || 0;
+
+    var duration =
+        Number(
+            zyntraMining.duration
+        ) ||
+        ZYNTRA_F01.miningDuration;
+
+    if(!started){
+
+        return duration;
+
+    }
+
+    var elapsed =
+        Math.floor(
+            (Date.now() - started) / 1000
+        );
+
+    return Math.max(
+        0,
+        duration - elapsed
     );
 
-    console.log(
-        "Reward:",
-        task.reward
+}
+
+// ============================================================
+// MINING UI UPDATE
+// ============================================================
+
+function zfUpdateMiningUI(){
+
+    var timeElement =
+        document.getElementById(
+            "zf-mining-time"
+        );
+
+    var statusElement =
+        document.getElementById(
+            "zf-mining-status"
+        );
+
+    var button =
+        document.getElementById(
+            "zf-mining-button"
+        );
+
+    var image =
+        document.getElementById(
+            "zf-mining-image"
+        );
+
+    if(image){
+
+        image.src =
+            zfGetCharacter();
+
+    }
+
+    if(
+        !timeElement ||
+        !statusElement ||
+        !button
+    ){
+
+        return;
+
+    }
+
+    if(
+        !zyntraMining ||
+        !zyntraMining.active
+    ){
+
+        timeElement.innerText =
+            "01:00:00";
+
+        statusElement.innerText =
+            "Ready to mine";
+
+        button.innerText =
+            "⛏️ START MINING";
+
+        button.classList.remove(
+            "mining-active"
+        );
+
+        button.disabled =
+            false;
+
+        return;
+
+    }
+
+    var remaining =
+        zfGetRemainingSeconds();
+
+    if(remaining <= 0){
+
+        zfCompleteMining();
+
+        return;
+
+    }
+
+    timeElement.innerText =
+        zfFormatTime(
+            remaining
+        );
+
+    statusElement.innerText =
+        "Mining in progress...";
+
+    button.innerText =
+        "⛏️ MINING ACTIVE";
+
+    button.classList.add(
+        "mining-active"
     );
 
-    console.log(
-        "New Balance:",
-        newBalance
+    button.disabled =
+        true;
+
+}
+
+// ============================================================
+// START MINING
+// ============================================================
+
+window.zyntraStartMining =
+function(){
+
+    if(
+        zyntraMining &&
+        zyntraMining.active
+    ){
+
+        zfToast(
+            "Mining is already active."
+        );
+
+        return;
+
+    }
+
+    zyntraMining = {
+
+        active:true,
+
+        startedAt:
+            Date.now(),
+
+        duration:
+            ZYNTRA_F01.miningDuration,
+
+        reward:
+            ZYNTRA_F01.miningReward,
+
+        claimed:false
+
+    };
+
+    zfSaveMining();
+
+    zfStartMiningTimer();
+
+    zfUpdateMiningUI();
+
+    zfToast(
+        "⛏️ Mining started! Come back in 1 hour."
     );
 
 };
 
-window.getZyntraTasks = function(){
+// ============================================================
+// MINING TIMER
+// ============================================================
 
-    return zyntraTasks;
+function zfStartMiningTimer(){
+
+    if(zyntraMiningTimer){
+
+        clearInterval(
+            zyntraMiningTimer
+        );
+
+        zyntraMiningTimer =
+            null;
+
+    }
+
+    if(
+        !zyntraMining ||
+        !zyntraMining.active
+    ){
+
+        return;
+
+    }
+
+    if(zyntraMiningRunning){
+
+        return;
+
+    }
+
+    zyntraMiningRunning =
+        true;
+
+    zyntraMiningTimer =
+        setInterval(function(){
+
+            if(
+                !zyntraMining ||
+                !zyntraMining.active
+            ){
+
+                zfStopMiningTimer();
+
+                return;
+
+            }
+
+            var remaining =
+                zfGetRemainingSeconds();
+
+            if(remaining <= 0){
+
+                zfStopMiningTimer();
+
+                zfCompleteMining();
+
+                return;
+
+            }
+
+            var time =
+                document.getElementById(
+                    "zf-mining-time"
+                );
+
+            if(time){
+
+                time.innerText =
+                    zfFormatTime(
+                        remaining
+                    );
+
+            }
+
+        },1000);
+
+}
+
+// ============================================================
+// STOP MINING TIMER
+// ============================================================
+
+function zfStopMiningTimer(){
+
+    if(zyntraMiningTimer){
+
+        clearInterval(
+            zyntraMiningTimer
+        );
+
+        zyntraMiningTimer =
+            null;
+
+    }
+
+    zyntraMiningRunning =
+        false;
+
+}
+
+// ============================================================
+// COMPLETE MINING
+// ============================================================
+
+function zfCompleteMining(){
+
+    if(
+        !zyntraMining ||
+        !zyntraMining.active
+    ){
+
+        return;
+
+    }
+
+    if(
+        zyntraMining.claimed
+    ){
+
+        zyntraMining.active =
+            false;
+
+        zfSaveMining();
+
+        zfUpdateMiningUI();
+
+        return;
+
+    }
+
+    var reward =
+        Number(
+            zyntraMining.reward
+        ) ||
+        ZYNTRA_F01.miningReward;
+
+    zyntraMining.claimed =
+        true;
+
+    zyntraMining.active =
+        false;
+
+    zfSaveMining();
+
+    zfAddBalance(
+        reward
+    );
+
+    zfUpdateMiningUI();
+
+    zfToast(
+        "🎉 Mining complete! +" +
+        reward.toLocaleString() +
+        " BTTC"
+    );
+
+}
+
+// ============================================================
+// RESUME MINING AFTER RELOAD
+// ============================================================
+
+function zfResumeMining(){
+
+    if(
+        !zyntraMining ||
+        !zyntraMining.active
+    ){
+
+        return;
+
+    }
+
+    var remaining =
+        zfGetRemainingSeconds();
+
+    if(remaining <= 0){
+
+        zfCompleteMining();
+
+        return;
+
+    }
+
+    zfStartMiningTimer();
+
+    zfUpdateMiningUI();
+
+}
+
+// ============================================================
+// PROFESSIONAL QUICK NAVIGATION
+// ============================================================
+
+function zfAddQuickNav(){
+
+    if(
+        document.getElementById(
+            "zf-quick-nav"
+        )
+    ){
+
+        return;
+
+    }
+
+    var nav =
+        document.createElement(
+            "div"
+        );
+
+    nav.id =
+        "zf-quick-nav";
+
+    nav.innerHTML = `
+
+        <div
+            onclick="window.zfGoHome()"
+        >
+            🏠
+            <span>Home</span>
+        </div>
+
+        <div
+            onclick="window.zfGoMining()"
+        >
+            ⛏️
+            <span>Mine</span>
+        </div>
+
+        <div
+            onclick="window.zfGoTasks()"
+        >
+            📋
+            <span>Tasks</span>
+        </div>
+
+        <div
+            onclick="window.zfGoFriends()"
+        >
+            👥
+            <span>Friends</span>
+        </div>
+
+        <div
+            onclick="window.zfGoProfile()"
+        >
+            👤
+            <span>Profile</span>
+        </div>
+
+    `;
+
+    var style =
+        document.createElement(
+            "style"
+        );
+
+    style.id =
+        "zf-nav-style";
+
+    style.innerHTML = `
+
+        #zf-quick-nav{
+
+            position:fixed;
+
+            left:50%;
+
+            bottom:10px;
+
+            transform:
+                translateX(-50%);
+
+            width:
+                min(94%,500px);
+
+            padding:
+                8px 7px;
+
+            display:grid;
+
+            grid-template-columns:
+                repeat(5,1fr);
+
+            gap:4px;
+
+            background:
+                rgba(9,10,20,.94);
+
+            border:
+                1px solid
+                rgba(255,255,255,.08);
+
+            border-radius:18px;
+
+            backdrop-filter:
+                blur(15px);
+
+            box-shadow:
+                0 10px 35px
+                rgba(0,0,0,.45);
+
+            z-index:9000;
+
+        }
+
+        #zf-quick-nav div{
+
+            min-width:0;
+
+            padding:
+                7px 2px;
+
+            border-radius:12px;
+
+            text-align:center;
+
+            color:#888;
+
+            font-size:17px;
+
+            cursor:pointer;
+
+        }
+
+        #zf-quick-nav div span{
+
+            display:block;
+
+            margin-top:3px;
+
+            font-size:9px;
+
+        }
+
+        #zf-quick-nav div:active{
+
+            transform:scale(.92);
+
+        }
+
+        body.zf-female
+        #zf-quick-nav div:active{
+
+            background:
+                rgba(255,45,149,.12);
+
+        }
+
+        body:not(.zf-female)
+        #zf-quick-nav div:active{
+
+            background:
+                rgba(0,229,255,.12);
+
+        }
+
+        body{
+
+            padding-bottom:80px !important;
+
+        }
+
+    `;
+
+    document.head.appendChild(
+        style
+    );
+
+    document.body.appendChild(
+        nav
+    );
+
+}
+
+// ============================================================
+// NAVIGATION HELPERS
+// ============================================================
+
+function zfScrollTo(selector){
+
+    var element =
+        document.querySelector(
+            selector
+        );
+
+    if(!element){
+
+        return;
+
+    }
+
+    element.scrollIntoView({
+
+        behavior:"smooth",
+
+        block:"start"
+
+    });
+
+}
+
+window.zfGoHome =
+function(){
+
+    window.scrollTo({
+
+        top:0,
+
+        behavior:"smooth"
+
+    });
 
 };
 
-window.getZyntraCompletedTasks = function(){
+window.zfGoMining =
+function(){
 
-    return getCompletedZyntraTasks();
+    zfScrollTo(
+        "#zf-mining-card"
+    );
 
 };
 
-console.log(
-    "Available Zyntra Tasks:",
-    Object.keys(zyntraTasks)
+window.zfGoTasks =
+function(){
+
+    zfScrollTo(
+        "#tasksSection"
+    );
+
+};
+
+window.zfGoFriends =
+function(){
+
+    zfScrollTo(
+        "#socialSection"
+    );
+
+};
+
+window.zfGoProfile =
+function(){
+
+    zfScrollTo(
+        ".card:last-of-type"
+    );
+
+};
+
+// ============================================================
+// INITIALIZE PROFESSIONAL UI
+// ============================================================
+
+function zfInitialize(){
+
+    zfApplyTheme();
+
+    zfRenderMining();
+
+    zfAddQuickNav();
+
+    zfResumeMining();
+
+}
+
+// ============================================================
+// WAIT FOR INDEX
+// ============================================================
+
+if(
+    document.readyState ===
+    "loading"
+){
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function(){
+
+            setTimeout(
+                zfInitialize,
+                100
+            );
+
+        }
+    );
+
+}else{
+
+    setTimeout(
+        zfInitialize,
+        100
+    );
+
+        }
+    // ============================================================
+// ZYNTRA FUTURE-01
+// PART 3 OF 3 — FINAL
+// ============================================================
+
+// ============================================================
+// PROFILE / BALANCE ENHANCEMENT
+// ============================================================
+
+function zfEnhanceProfile(){
+
+    var cards =
+        document.querySelectorAll(
+            ".card"
+        );
+
+    if(!cards || !cards.length){
+
+        return;
+
+    }
+
+    cards.forEach(function(card){
+
+        card.style.transition =
+            "transform .2s ease, border-color .2s ease";
+
+    });
+
+}
+
+// ============================================================
+// KEEP BALANCE UI UPDATED
+// ============================================================
+
+function zfRefreshMainBalance(){
+
+    try{
+
+        if(
+            typeof update === "function"
+        ){
+
+            update();
+
+        }
+
+    }catch(e){
+
+        console.log(
+            "Zyntra update error:",
+            e
+        );
+
+    }
+
+    zfUpdateMiningUI();
+
+}
+
+// ============================================================
+// VISIBILITY CHECK
+// ============================================================
+
+document.addEventListener(
+    "visibilitychange",
+    function(){
+
+        if(
+            document.visibilityState ===
+            "visible"
+        ){
+
+            zfRefreshMainBalance();
+
+            if(
+                zyntraMining &&
+                zyntraMining.active
+            ){
+
+                var remaining =
+                    zfGetRemainingSeconds();
+
+                if(remaining <= 0){
+
+                    zfCompleteMining();
+
+                }else{
+
+                    zfStartMiningTimer();
+
+                    zfUpdateMiningUI();
+
+                }
+
+            }
+
+        }
+
+    }
 );
 
-console.log(
-    "Zyntra 10 Features Loaded Successfully 🚀"
+// ============================================================
+// PAGE FOCUS CHECK
+// ============================================================
+
+window.addEventListener(
+    "focus",
+    function(){
+
+        zfRefreshMainBalance();
+
+    }
 );
 
-// ===== FINAL CLOSE =====
+// ============================================================
+// SAFE PAGE LOAD
+// ============================================================
+
+window.addEventListener(
+    "load",
+    function(){
+
+        setTimeout(
+            function(){
+
+                zfEnhanceProfile();
+
+                zfRefreshMainBalance();
+
+            },
+            500
+        );
+
+    }
+);
+
+// ============================================================
+// PREVENT DOUBLE MINING START
+// ============================================================
+
+window.addEventListener(
+    "beforeunload",
+    function(){
+
+        if(
+            zyntraMining &&
+            zyntraMining.active
+        ){
+
+            zfSaveMining();
+
+        }
+
+    }
+);
+
+// ============================================================
+// OPTIONAL PUBLIC FUNCTIONS
+// ============================================================
+
+window.zyntraMiningStatus =
+function(){
+
+    return {
+
+        active:
+            !!(
+                zyntraMining &&
+                zyntraMining.active
+            ),
+
+        remaining:
+            zfGetRemainingSeconds(),
+
+        reward:
+            zyntraMining ?
+            zyntraMining.reward :
+            ZYNTRA_F01.miningReward
+
+    };
+
+};
+
+// ============================================================
+// FINAL START CHECK
+// ============================================================
+
+setTimeout(
+    function(){
+
+        try{
+
+            zfApplyTheme();
+
+            if(
+                zyntraGender &&
+                document.getElementById(
+                    "zf-mining-card"
+                )
+            ){
+
+                zfUpdateMiningUI();
+
+            }
+
+        }catch(e){
+
+            console.log(
+                "Zyntra Future-01 final check:",
+                e
+            );
+
+        }
+
+    },
+    1200
+);
+
+// ============================================================
+// ZYNTRA FUTURE-01 END
+// ============================================================
+
+console.log(
+    "Zyntra Future-01 loaded successfully."
+);
+
+// ============================================================
+// FINAL CLOSE
+// ============================================================
 
 })();
